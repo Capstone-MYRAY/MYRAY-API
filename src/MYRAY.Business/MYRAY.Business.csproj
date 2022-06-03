@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Constants" />
+      <Folder Include="DTOs" />
+      <Folder Include="Enums" />
+      <Folder Include="Exceptions" />
+      <Folder Include="Helpers" />
+      <Folder Include="Repositories\Contract" />
+      <Folder Include="Repositories\Object" />
+      <Folder Include="Resources" />
+      <Folder Include="Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MYRAY.DataTier\MYRAY.DataTier.csproj" />
+    </ItemGroup>
+
+</Project>
