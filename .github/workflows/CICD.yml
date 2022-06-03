@@ -19,8 +19,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Delete the Publish Folder
-      run: rmdir publish /S /Q
     - name: Run the Publish
       run: dotnet publish -p:PublishProfile=FolderProfile --output ./publish
     - name: Deploy to IIS
