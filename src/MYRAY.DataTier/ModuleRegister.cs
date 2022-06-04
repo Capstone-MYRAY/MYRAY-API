@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MYRAY.DataTier.Entities;
 
 namespace MYRAY.DataTier;
 
@@ -14,7 +16,7 @@ public static class ModuleRegister
     /// <returns>IServiceCollection</returns>
     public static IServiceCollection RegisterDataTierModule(this IServiceCollection services)
     {
-        
+        services.AddScoped<DbContext, MYRAYContext>();
 
         return services;
     }
