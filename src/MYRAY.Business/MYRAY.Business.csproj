@@ -7,19 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="11.0.1" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Constants" />
-      <Folder Include="DTOs" />
+      <Folder Include="DTOs\Profile" />
       <Folder Include="Enums" />
-      <Folder Include="Exceptions" />
       <Folder Include="Helpers" />
-      <Folder Include="Repositories\Contract" />
       <Folder Include="Repositories\Object" />
       <Folder Include="Resources" />
-      <Folder Include="Services" />
     </ItemGroup>
 
     <ItemGroup>

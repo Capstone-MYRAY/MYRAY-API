@@ -1,4 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
+using MYRAY.Business.DTOs;
+using MYRAY.Business.Repositories;
+using MYRAY.Business.Services;
 
 namespace MYRAY.Business;
 
@@ -15,13 +18,13 @@ public static class ModuleRegister
     public static IServiceCollection RegisterBusinessModule(this IServiceCollection services)
     {
         //--Register (DI) Service Module
-        // services.RegisterRepositoryModule();
+         services.RegisterRepositoryModule();
             
         //--Register (DI) Auto Mapper
-        // services.ConfigureAutoMapper();
+        services.ConfigureAutoMapper();
             
         //--Register (DI) Service Module
-        // services.RegisterServiceModule();
+        services.RegisterServiceModule();
 
         return services;
     }

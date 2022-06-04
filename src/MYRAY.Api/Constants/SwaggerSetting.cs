@@ -1,0 +1,96 @@
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.OpenApi.Models;
+
+namespace MYRAY.Api.Constants;
+
+/// <summary>
+/// Configuration of Swagger 
+/// </summary>
+public static class SwaggerSetting
+{
+    /// <summary>
+    /// Service class for Swagger.
+    /// </summary>
+    /// <param name="services">Service container form Program</param>
+    /// <returns>IServiceCollection</returns>
+    public static IServiceCollection RegisterSwaggerModule(this IServiceCollection services)
+    {
+        //--Add API Versioning to as service to your project.
+        services.AddApiVersioning(config =>
+        {
+            //--Specify the default API Version
+            config.DefaultApiVersion = ApiVersion.Default;
+            
+            //--If no set API, use default API version
+            config.AssumeDefaultVersionWhenUnspecified = true;
+
+            //--Show API version support
+            config.ReportApiVersions = true;
+            
+            //--Support different versioning ways
+            config.ApiVersionReader = ApiVersionReader.Combine(
+                new QueryStringApiVersionReader("api-version"),
+                new HeaderApiVersionReader("X-Version"),
+                new MediaTypeApiVersionReader("ver"));
+        });
+        
+        // Config versioning
+        services.AddVersionedApiExplorer(options =>
+        {
+            //--Format of versioning (v1.0)
+            options.GroupNameFormat = "'v'VVV";
+            
+            //-- Support Endpoints temlate 'api/v{version}/[controller]
+            options.SubstituteApiVersionInUrl = true;
+        });
+
+        services.AddSwaggerGen(c =>
+        {
+            // Set Swagger Description
+            c.SwaggerDoc("v1", new OpenApiInfo()
+            {
+                Title = "Connecting Landowner And Farmer System",
+                Version = "v1",
+                Description = "MYRAY Endpoints",
+                Contact = new OpenApiContact()
+                {
+                    Name = "Forest",
+                    Email = "forest.tl112@gmail.com"
+                }
+            });
+            //--Get Assembly Name Combine extension xml 
+            var xmlFile = $"{typeof(Program).GetTypeInfo().Assembly.GetName().Name}.xml";
+            //--Combine Base Path to xml file name
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            //--Load comment from xml into Swagger UI
+            c.IncludeXmlComments(xmlPath);
+        });
+        
+        return services;
+    }
+    
+    /// <summary>
+    /// Config request Swagger
+    /// </summary>
+    /// <param name="app"></param>
+    /// <returns></returns>
+    public static IApplicationBuilder UseApplicationSwagger(this IApplicationBuilder app)
+    {
+        app.UseSwagger(c =>
+        {
+            c.RouteTemplate = "{documentName}/api-docs";
+        });
+
+        //--Set Router Endpoint Swagger
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("v1/api-docs", "MYRAY WebAPI V1");
+            // c.SwaggerEndpoint("v2/api-docs", "CCFRMS WebAPI V2");
+            c.RoutePrefix = String.Empty;
+        });
+        return app;
+    }
+
+}
