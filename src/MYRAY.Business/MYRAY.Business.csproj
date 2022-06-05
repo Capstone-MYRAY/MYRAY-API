@@ -13,8 +13,6 @@
 
     <ItemGroup>
       <Folder Include="Constants" />
-      <Folder Include="DTOs\Profile" />
-      <Folder Include="Enums" />
       <Folder Include="Helpers" />
       <Folder Include="Repositories\Object" />
       <Folder Include="Resources" />

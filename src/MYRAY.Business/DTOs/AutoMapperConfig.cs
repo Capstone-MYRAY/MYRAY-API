@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
+using MYRAY.Business.DTOs.Profile;
 
 namespace MYRAY.Business.DTOs;
 
@@ -15,7 +16,7 @@ public static class AutoMapperConfig
             
         var mappingConfig = new MapperConfiguration(md =>
         {
-            
+            md.ConfigRoleModule();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

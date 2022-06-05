@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using MYRAY.Business.Services.Role;
 
 namespace MYRAY.Business.Services;
 
@@ -11,7 +12,7 @@ public static class ModuleRegister
     /// <returns>IServiceCollection</returns>
     public static IServiceCollection RegisterServiceModule(this IServiceCollection services)
     {
-        
+        services.AddScoped<IRoleService, RoleService>();
             
         return services;
     }
