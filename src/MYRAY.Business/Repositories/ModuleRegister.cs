@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using MYRAY.Business.Repositories.Area;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.Business.Repositories.Role;
 
@@ -15,6 +16,7 @@ public static class ModuleRegister
         services.AddScoped<IDbContextFactory, DbContextFactory>();
         // Register Data Repositories
         services.AddTransient<IRoleRepository, RoleRepository>();
+        services.AddTransient<IAreaRepository, AreaRepository>();
         
 
         return services;

@@ -19,7 +19,7 @@ public class DbContextFactory : IDbContextFactory, IDisposable
     /// </summary>
     public IConfiguration Configuration { get; set; }
     
-    public Hashtable Contexts { get; set; }
+    public Hashtable? Contexts { get; set; }
 
     public DbContextFactory(IConfiguration configuration)
     {

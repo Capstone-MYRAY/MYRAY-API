@@ -1,12 +1,38 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Google.Apis.Json;
+using Microsoft.AspNetCore.JsonPatch.Converters;
 using MYRAY.Api.Constants;
 using MYRAY.Business;
 using MYRAY.DataTier;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(x =>
+    { 
+        x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    })
+    .AddNewtonsoftJson(o =>
+    {
+        o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        o.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+        o.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+        o.SerializerSettings.ContractResolver = new NewtonsoftJsonContractResolver
+        {
+            NamingStrategy = new SnakeCaseNamingStrategy()
+        };
+      o.SerializerSettings.Converters.Add(new StringEnumConverter()
+      {
+          AllowIntegerValues = true
+      });
+    });
+    
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.WebHost.UseUrls($"http://localhost:8080;https://localhost:443");

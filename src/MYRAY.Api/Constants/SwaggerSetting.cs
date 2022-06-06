@@ -15,7 +15,7 @@ public static class SwaggerSetting
     /// </summary>
     /// <param name="services">Service container form Program</param>
     /// <returns>IServiceCollection</returns>
-    public static IServiceCollection RegisterSwaggerModule(this IServiceCollection services)
+    public static void RegisterSwaggerModule(this IServiceCollection services)
     {
         //--Add API Versioning to as service to your project.
         services.AddApiVersioning(config =>
@@ -30,10 +30,11 @@ public static class SwaggerSetting
             config.ReportApiVersions = true;
             
             //--Support different versioning ways
-            config.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader("api-version"),
-                new HeaderApiVersionReader("X-Version"),
-                new MediaTypeApiVersionReader("ver"));
+            // config.ApiVersionReader = ApiVersionReader.Combine(
+            //     new QueryStringApiVersionReader("api-version"),
+            //     new HeaderApiVersionReader("X-Version"),
+            //     new MediaTypeApiVersionReader("ver"));
+           
         });
         
         // Config versioning
@@ -49,7 +50,7 @@ public static class SwaggerSetting
         services.AddSwaggerGen(c =>
         {
             // Set Swagger Description
-            c.SwaggerDoc("v1", new OpenApiInfo()
+            c.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Connecting Landowner And Farmer System",
                 Version = "v1",
@@ -67,16 +68,14 @@ public static class SwaggerSetting
             //--Load comment from xml into Swagger UI
             c.IncludeXmlComments(xmlPath);
         });
-        
-        return services;
     }
-    
+
     /// <summary>
     /// Config request Swagger
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static IApplicationBuilder UseApplicationSwagger(this IApplicationBuilder app)
+    public static void UseApplicationSwagger(this IApplicationBuilder app)
     {
         app.UseSwagger(c =>
         {
@@ -90,7 +89,6 @@ public static class SwaggerSetting
             // c.SwaggerEndpoint("v2/api-docs", "CCFRMS WebAPI V2");
             c.RoutePrefix = String.Empty;
         });
-        return app;
     }
 
 }

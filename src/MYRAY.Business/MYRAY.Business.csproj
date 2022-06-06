@@ -12,8 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Constants" />
-      <Folder Include="Helpers" />
       <Folder Include="Repositories\Object" />
       <Folder Include="Resources" />
     </ItemGroup>

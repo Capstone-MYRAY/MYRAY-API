@@ -19,12 +19,7 @@ public class MException : Exception
                 Target = System.Text.Json.JsonNamingPolicy.CamelCase.ConvertName(target),
             };
         }
-
-        public MException()
-        {
-            
-        }
-
+        
         /// <summary>
         /// Gets or sets exception Message.
         /// </summary>

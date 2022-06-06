@@ -17,6 +17,7 @@ public static class AutoMapperConfig
         var mappingConfig = new MapperConfiguration(md =>
         {
             md.ConfigRoleModule();
+            md.ConfigAreaModule();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

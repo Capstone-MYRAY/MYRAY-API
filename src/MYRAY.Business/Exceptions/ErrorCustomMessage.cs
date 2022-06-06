@@ -7,10 +7,10 @@ public class ErrorCustomMessage
     /// <summary>
     /// Gets or sets custom error message.
     /// </summary>
-    public string Message { get; set; }
+    public string? Message { get; set; }
 
     /// <summary>
     /// Gets or sets things meet error.
     /// </summary>
-    public object Target { get; set; }
+    public object? Target { get; set; }
 }

@@ -8,7 +8,7 @@ namespace MYRAY.Api.Controllers;
 
 [ApiController]
 [ApiVersion("1")]
-[Route("[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Consumes(MediaType.ApplicationJson)]
 [Produces(MediaType.ApplicationJson)]
 public class RoleController : ControllerBase
