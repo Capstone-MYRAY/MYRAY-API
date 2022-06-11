@@ -48,7 +48,12 @@ builder.Services.RegisterBusinessModule();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
+app.UseCors(c
+    => c.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials());
+
 app.UseApplicationSwagger();
 
 app.UseHttpsRedirection();
