@@ -6,6 +6,9 @@ using MediaType = MYRAY.Api.Constants.MediaType;
 
 namespace MYRAY.Api.Controllers;
 
+/// <summary>
+/// Handle request related to Role
+/// </summary>
 [ApiController]
 [ApiVersion("1")]
 [Route("api/v{version:apiVersion}/[controller]")]

@@ -41,7 +41,7 @@ public class AccountController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAccountDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetAccounts(
+    public Task<IActionResult> GetAccounts(
         [FromQuery]SearchAccountDto searchAccountDto,
         [FromQuery]SortingDto<AccountEnum.AccountSortCriteria> sortingDto,
         [FromQuery]PagingDto pagingDto)
@@ -50,9 +50,9 @@ public class AccountController : ControllerBase
             _accountService.GetAccounts(pagingDto, sortingDto, searchAccountDto);
         if (result == null)
         {
-            return NoContent();
+            return Task.FromResult<IActionResult>(NoContent());
         }
-        return Ok(result);
+        return Task.FromResult<IActionResult>(Ok(result));
     }
     
     /// <summary>
@@ -141,7 +141,7 @@ public class AccountController : ControllerBase
         {
             return BadRequest(e);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return NotFound(new MException(StatusCodes.Status404NotFound, "ID area is not existed.", nameof(updateAccountDto.Id)));
         }

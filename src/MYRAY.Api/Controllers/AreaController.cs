@@ -41,7 +41,7 @@ public class AreaController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAreaDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetAreas(
+    public Task<IActionResult> GetAreas(
         [FromQuery]SearchAreaDto searchAreaDto, 
         [FromQuery]SortingDto<AreaEnum.AreaSortCriteria> sortingDto,
         [FromQuery]PagingDto pagingDto)
@@ -50,10 +50,10 @@ public class AreaController : ControllerBase
             _areaService.GetAreas(pagingDto, sortingDto, searchAreaDto);
         if (result == null)
         {
-            return NoContent();
+            return Task.FromResult<IActionResult>(NoContent());
         }
 
-        return Ok(result);
+        return Task.FromResult<IActionResult>(Ok(result));
     }
 
     /// <summary>
@@ -137,7 +137,7 @@ public class AreaController : ControllerBase
         {
             return BadRequest(e);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return NotFound(new MException(StatusCodes.Status404NotFound, "ID area is not existed.", nameof(updateAreaDto.Id)));
         }

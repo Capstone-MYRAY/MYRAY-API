@@ -3,9 +3,15 @@ using Google.Apis.Auth.OAuth2;
 
 namespace MYRAY.Api.Constants;
 
+/// <summary>
+/// More app config
+/// </summary>
 public static class AppSetting
 {
-    public static FirebaseApp AddFireBaseAsync()
+    /// <summary>
+    /// Load Firebase
+    /// </summary>
+    public static void AddFireBaseAsync()
     {
         // Get Current Path
         var currentDirectory = Directory.GetCurrentDirectory();
@@ -16,6 +22,5 @@ public static class AppSetting
         {
             Credential = GoogleCredential.FromFile(jsonFirebasePath)
         });
-        return defaultApp;
     }
 }
