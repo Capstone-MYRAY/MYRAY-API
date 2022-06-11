@@ -41,7 +41,9 @@ public class AreaController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAreaDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetAreas([FromQuery]SearchAreaDto searchAreaDto, [FromQuery]SortingDto<AreaEnum.AreaSortCriteria> sortingDto,
+    public async Task<IActionResult> GetAreas(
+        [FromQuery]SearchAreaDto searchAreaDto, 
+        [FromQuery]SortingDto<AreaEnum.AreaSortCriteria> sortingDto,
         [FromQuery]PagingDto pagingDto)
     {
         ResponseDto.CollectiveResponse<GetAreaDetail> result =
@@ -93,7 +95,7 @@ public class AreaController : ControllerBase
     /// <returns>An area created</returns>
     /// <exception cref="Exception">Error if input is empty</exception>
     /// <response code="201">Returns the area</response>
-    /// <response code="400">Returns if area is empty or create error</response>
+    /// <response code="400">Returns if area input is empty or create error</response>
     [HttpPost]
     [ProducesResponseType(typeof(GetAreaDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAreaAsync([FromBody]InsertAreaDto? areaDto)
@@ -122,7 +124,8 @@ public class AreaController : ControllerBase
     /// <response code="404">Returns if area update is not existed.</response>
     [HttpPut]
     [ProducesResponseType(typeof(UpdateAreaDto), StatusCodes.Status200OK)]
-    public async Task<IActionResult> UpdateAreaAsync([FromBody] UpdateAreaDto updateAreaDto)
+    public async Task<IActionResult> UpdateAreaAsync(
+        [FromBody] UpdateAreaDto updateAreaDto)
     {
         try
         {
@@ -145,7 +148,7 @@ public class AreaController : ControllerBase
     /// </summary>
     /// <param name="areaId">Id of area</param>
     /// <response code="204">Returns the area deleted</response>
-    /// <response code="400">Returns if area is not existed.</response>
+    /// <response code="404">Returns if area is not existed.</response>
     [HttpDelete("{areaId}")]
     public async Task<IActionResult> DeleteAreaAsync(int? areaId)
     {

@@ -40,7 +40,7 @@ namespace MYRAY.DataTier.Entities
         public double Balance { get; set; }
         public int Point { get; set; }
         public string? AboutMe { get; set; }
-        public bool? Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual Role Role { get; set; } = null!;
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }

@@ -7,7 +7,6 @@ namespace MYRAY.DataTier.Entities
 {
     public partial class MYRAYContext : DbContext
     {
-        
         public MYRAYContext()
         {
         }
@@ -40,6 +39,7 @@ namespace MYRAY.DataTier.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
+                
             }
         }
 
@@ -91,7 +91,7 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
-                    .HasDefaultValueSql("((0))");
+                    .HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Accounts)

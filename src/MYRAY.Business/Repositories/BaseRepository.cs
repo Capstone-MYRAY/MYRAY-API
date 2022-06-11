@@ -38,7 +38,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         {
             if(query.GetType() == typeof(DbSet<TEntity>))
             {
-            query = includeProperties.Aggregate(query, (current, property) => ((DbSet<TEntity>)current).Include(property));
+                query = includeProperties.Aggregate(query, (current, property) => ((DbSet<TEntity>)current).Include(property));
             }
             else
             {

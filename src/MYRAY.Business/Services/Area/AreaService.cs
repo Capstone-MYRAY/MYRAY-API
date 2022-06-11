@@ -9,7 +9,9 @@ using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Area;
 
 namespace MYRAY.Business.Services.Area;
-
+/// <summary>
+/// Area Service class
+/// </summary>
 public class AreaService : IAreaService
 {
     private readonly IMapper _mapper;

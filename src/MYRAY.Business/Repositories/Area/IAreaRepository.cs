@@ -15,7 +15,7 @@ public interface IAreaRepository
     /// <summary>
     /// Get all area.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>list of area.</returns>
     IQueryable<DataTier.Entities.Area> GetAreas();
 
     /// <summary>
@@ -33,7 +33,7 @@ public interface IAreaRepository
     Task<DataTier.Entities.Area> UpdateAreaAsync(DataTier.Entities.Area area);
 
     /// <summary>
-    /// Delete a area by change status to Inactive
+    /// Delete an area by change status to Inactive
     /// </summary>
     /// <param name="area">Area object to delete</param>
     /// <returns>object affected.</returns>

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.Area;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.Business.Repositories.Role;
@@ -17,6 +18,7 @@ public static class ModuleRegister
         // Register Data Repositories
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IAreaRepository, AreaRepository>();
+        services.AddTransient<IAccountRepository, AccountRepository>();
         
 
         return services;

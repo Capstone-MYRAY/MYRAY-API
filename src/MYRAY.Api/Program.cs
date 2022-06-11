@@ -1,7 +1,5 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Google.Apis.Json;
-using Microsoft.AspNetCore.JsonPatch.Converters;
 using MYRAY.Api.Constants;
 using MYRAY.Business;
 using MYRAY.DataTier;
@@ -37,6 +35,8 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.WebHost.UseUrls($"http://localhost:8080;https://localhost:443");
 
+
+AppSetting.AddFireBaseAsync();
 builder.Services.RegisterSwaggerModule();
 
 
