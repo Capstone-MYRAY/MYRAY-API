@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using MYRAY.Business.DTOs.Role;
@@ -28,12 +29,13 @@ public class RoleController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for get a list of all role.
+    /// [All] Endpoint for get a list of all role.
     /// </summary>
     /// <returns>List of role.</returns>
     /// <response code="204">Return if list of role is empty.</response>
     /// <response code="200">Return the list of role.</response>
     [HttpGet]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(IList<GetRoleDetail>),StatusCodes.Status200OK)]
     public IActionResult GetRoles()
     {
@@ -48,13 +50,14 @@ public class RoleController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for get detail information of a role.
+    /// [All] Endpoint for get detail information of a role.
     /// </summary>
     /// <param name="roleId">ID of Role.</param>
     /// <returns>Detail of a Role.</returns>
     /// <response code="204">Return if role is not exist.</response>
     /// <response code="200">Return role entity.</response>
     [HttpGet("{roleId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(GetRoleDetail),StatusCodes.Status200OK)]
     public async Task<IActionResult> GetRoleDetail([FromRoute] int? roleId)
     {

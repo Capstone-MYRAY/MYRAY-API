@@ -8,4 +8,5 @@ public class SearchAccountDto
     [DefaultValue("")] public string PhoneNumber { get; set; } = "";
     [DefaultValue("")] public string? Address { get; set; }="";
     [DefaultValue("")] public string? Email { get; set; }  ="";
+    [DefaultValue(null)] public int? RoleId { get; set; } = null;
 }

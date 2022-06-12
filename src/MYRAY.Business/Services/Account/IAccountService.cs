@@ -1,5 +1,6 @@
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
+using MYRAY.Business.DTOs.Authentication;
 using MYRAY.Business.Enums;
 
 namespace MYRAY.Business.Services.Account;
@@ -26,19 +27,26 @@ public interface IAccountService
     public Task<GetAccountDetail> GetAccountByIdAsync(int? id);
 
     /// <summary>
-    /// Get async an account by phone number
-    /// </summary>
-    /// <param name="phoneNumber">Phone number of account</param>
-    /// <param name="password">Password of account</param>
-    /// <returns>An Account</returns>
-    public Task<GetAccountDetail> LoginByPhoneAsync(string phoneNumber, string password);
-
-    /// <summary>
     /// Create an new account
     /// </summary>
     /// <param name="bodyDto">An object contains info to insert account</param>
     /// <returns>An Account</returns>
     public Task<GetAccountDetail> CreateAccountAsync(InsertAccountDto? bodyDto);
+    
+    /// <summary>
+    /// Create an new account
+    /// </summary>
+    /// <param name="bodyDto">An object contains info to insert account</param>
+    /// <returns>An Account</returns>
+    public Task<GetAccountDetail> SignupAsync(SignupRequest? bodyDto);
+
+    /// <summary>
+    /// Change password of account
+    /// </summary>
+    /// <param name="id">Id of account</param>
+    /// <param name="newPassword">New password to change</param>
+    /// <returns>a updated account</returns>
+    public Task<UpdateAccountDto> ChangPasswordAsync(int id, string newPassword);
     
     /// <summary>
     /// Update an existed account.

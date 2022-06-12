@@ -112,6 +112,12 @@ public interface IBaseRepository<TEntity> where TEntity : class
     void Update(IEnumerable<TEntity> entities);
 
     /// <summary>
+    /// Modify entity
+    /// </summary>
+    /// <param name="entity">entity.</param>
+    public void Modify(TEntity entity);
+    
+    /// <summary>
     /// Delete entity.
     /// </summary>
     /// <param name="entity">entity.</param>

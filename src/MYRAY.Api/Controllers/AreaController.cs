@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
+using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Area;
 using MYRAY.Business.Enums;
@@ -29,7 +31,7 @@ public class AreaController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for get all area with condition
+    /// [Authenticated user] Endpoint for get all area with condition
     /// </summary>
     /// <param name="searchAreaDto">An object contains filter criteria.</param>
     /// <param name="sortingDto">An object contains sorting criteria.</param>
@@ -39,6 +41,7 @@ public class AreaController : ControllerBase
     /// <response code="204">Return if list of area is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAreaDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAreas(
@@ -57,7 +60,7 @@ public class AreaController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for get area information by ID
+    /// [Authenticated user] Endpoint for get area information by ID
     /// </summary>
     /// <param name="areaId">An id of area</param>
     /// <returns>An Area.</returns>
@@ -66,6 +69,7 @@ public class AreaController : ControllerBase
     /// <response code="400">Return if area id is empty or not number.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("{areaId}")]
+    [Authorize]
     [ProducesResponseType(typeof(GetAreaDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorCustomMessage),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAreaByIdAsync(int? areaId)
@@ -89,7 +93,7 @@ public class AreaController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for create area.
+    /// [Admin] Endpoint for create area.
     /// </summary>
     /// <param name="areaDto">An object contain information area to Add.</param>
     /// <returns>An area created</returns>
@@ -97,6 +101,7 @@ public class AreaController : ControllerBase
     /// <response code="201">Returns the area</response>
     /// <response code="400">Returns if area input is empty or create error</response>
     [HttpPost]
+    [Authorize(Roles = UserRole.ADMIN)]
     [ProducesResponseType(typeof(GetAreaDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAreaAsync([FromBody]InsertAreaDto? areaDto)
     {
@@ -115,7 +120,7 @@ public class AreaController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for admin edit area.
+    /// [Admin] Endpoint for admin edit area.
     /// </summary>
     /// <param name="updateAreaDto">An object contains update information area.</param>
     /// <returns>An area updated.</returns>
@@ -123,6 +128,7 @@ public class AreaController : ControllerBase
     /// <response code="400">Returns if input area information empty</response>
     /// <response code="404">Returns if area update is not existed.</response>
     [HttpPut]
+    [Authorize(Roles = UserRole.ADMIN)]
     [ProducesResponseType(typeof(UpdateAreaDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateAreaAsync(
         [FromBody] UpdateAreaDto updateAreaDto)
@@ -144,12 +150,13 @@ public class AreaController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for delete area.
+    /// [Admin] Endpoint for delete area.
     /// </summary>
     /// <param name="areaId">Id of area</param>
     /// <response code="204">Returns the area deleted</response>
     /// <response code="404">Returns if area is not existed.</response>
     [HttpDelete("{areaId}")]
+    [Authorize(Roles = UserRole.ADMIN)]
     public async Task<IActionResult> DeleteAreaAsync(int? areaId)
     {
         try

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
+using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
 using MYRAY.Business.Enums;
@@ -29,7 +31,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for get all account with condition
+    /// [Authenticated user] Endpoint for get all account with condition
     /// </summary>
     /// <param name="searchAccountDto">An object contains filter criteria.</param>
     /// <param name="sortingDto">An object contains sorting criteria.</param>
@@ -39,6 +41,7 @@ public class AccountController : ControllerBase
     /// <response code="204">Returns if list of account is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAccountDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAccounts(
@@ -56,7 +59,7 @@ public class AccountController : ControllerBase
     }
     
     /// <summary>
-    /// Endpoint for get account information by Identifier.
+    /// [All] Endpoint for get account information by Identifier.
     /// </summary>
     /// <param name="accountId">An id of account</param>
     /// <returns>An account</returns>
@@ -65,6 +68,7 @@ public class AccountController : ControllerBase
     /// <response code="400">Returns the list of area.</response>
     /// <response code="403">Returns the list of area.</response>
     [HttpGet("{accountId}")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(GetAccountDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorCustomMessage),StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAccountByIdAsync(int? accountId)
@@ -88,7 +92,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// Endpoint for create account
+    /// [Moderator] Endpoint for create account
     /// </summary>
     /// <param name="accountDto">Object contains account dto</param>
     /// <returns>IActionResult</returns>
@@ -96,8 +100,8 @@ public class AccountController : ControllerBase
     /// <exception cref="Exception">Error if input is empty</exception>
     /// <response code="201">Returns the created account</response>
     /// <response code="400">Returns if account input is empty or create error</response>
-
     [HttpPost]
+    [Authorize(Roles = UserRole.MODERATOR)]
     [ProducesResponseType(typeof(GetAccountDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAccountAsync(
         [FromBody] InsertAccountDto accountDto)
@@ -114,13 +118,14 @@ public class AccountController : ControllerBase
         }
         catch (Exception e)
         {
+            Console.WriteLine(e);
             return BadRequest(new ErrorCustomMessage {Message = e.Message, Target = nameof(accountDto)});
         }
     }
 
     
     /// <summary>
-    /// Endpoint for update account
+    /// [Authenticated user] Endpoint for update account
     /// </summary>
     /// <param name="updateAccountDto">An object contains update information</param>
     /// <returns>An account updated</returns>
@@ -128,6 +133,7 @@ public class AccountController : ControllerBase
     /// <response code="400">Returns if input account information empty</response>
     /// <response code="404">Returns if area account is not existed.</response>
     [HttpPut]
+    [Authorize]
     [ProducesResponseType(typeof(UpdateAccountDto), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateAccountAsync(UpdateAccountDto updateAccountDto)
     {
@@ -141,19 +147,21 @@ public class AccountController : ControllerBase
         {
             return BadRequest(e);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return NotFound(new MException(StatusCodes.Status404NotFound, "ID area is not existed.", nameof(updateAccountDto.Id)));
+            Console.WriteLine(e);
+            return NotFound(new MException(StatusCodes.Status404NotFound, e.Message, nameof(updateAccountDto.Id)));
         }
     }
 
     /// <summary>
-    /// Endpoint for delete account.
+    /// [Moderator] Endpoint for delete account.
     /// </summary>
     /// <param name="accountId">Id of  account</param>
     /// <returns>Async function</returns>
     /// <response code="204">Returns the account deleted</response>
     /// <response code="404">Returns if account is not existed.</response>
+    [Authorize(Roles = UserRole.MODERATOR)]
     [HttpDelete("{accountId}")]
     public async Task<IActionResult> DeleteAccountAsync(int? accountId)
     {

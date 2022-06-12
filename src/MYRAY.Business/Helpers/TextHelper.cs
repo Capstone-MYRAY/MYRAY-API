@@ -27,6 +27,33 @@ public static class TextHelper
             return false;
         }
 
-        return phoneNumber.All(c => char.IsDigit(c));
+        return phoneNumber.All(char.IsDigit);
+    }
+    
+    public static string ConvertVNPhoneNumber(this string phoneNumber)
+    {
+        string phone = phoneNumber;
+        phone = phone.Trim();
+        if (phone[0] == '+')
+        {
+            phone = phone.Remove(0,1);
+        }
+
+        if (phone[0] == '0')
+        {
+            phone = phone.Remove(0, 1);
+        }
+
+        if (phone.IndexOf("84", StringComparison.Ordinal) == 0)
+        {
+            phone = "+" + phone;
+        }
+        else
+        {
+            phone = "+84" + phone;
+        }
+
+        return phone;
+
     }
 }

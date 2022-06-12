@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
@@ -34,7 +35,7 @@ public static class SwaggerSetting
             //     new QueryStringApiVersionReader("api-version"),
             //     new HeaderApiVersionReader("X-Version"),
             //     new MediaTypeApiVersionReader("ver"));
-           
+            
         });
         
         // Config versioning
@@ -67,7 +68,31 @@ public static class SwaggerSetting
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             //--Load comment from xml into Swagger UI
             c.IncludeXmlComments(xmlPath);
+            
+            var jwtSecuritySchema = new OpenApiSecurityScheme
+            {
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Name = "JWT Authentication",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Description = "Put **_Only_** your token on textbox below!",
+                Reference = new OpenApiReference
+                {
+                    Id = JwtBearerDefaults.AuthenticationScheme,
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+            
+            c.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, jwtSecuritySchema);
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {jwtSecuritySchema, Array.Empty<string>()}
+            });
+
         });
+
+        services.AddSwaggerGenNewtonsoftSupport();
     }
 
     /// <summary>

@@ -57,7 +57,9 @@ namespace MYRAY.DataTier.Entities
                     .HasMaxLength(100)
                     .HasColumnName("address");
 
-                entity.Property(e => e.Balance).HasColumnName("balance");
+                entity.Property(e => e.Balance)
+                    .HasColumnName("balance")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.DateOfBirth)
                     .HasColumnType("date")
@@ -85,7 +87,17 @@ namespace MYRAY.DataTier.Entities
                     .IsUnicode(false)
                     .HasColumnName("phone_number");
 
-                entity.Property(e => e.Point).HasColumnName("point");
+                entity.Property(e => e.Point)
+                    .HasColumnName("point")
+                    .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.RefreshToken)
+                    .HasMaxLength(500)
+                    .HasColumnName("refresh_token");
+
+                entity.Property(e => e.RefreshTokenExpiryTime)
+                    .HasColumnType("datetime")
+                    .HasColumnName("refresh_token_expiry_time");
 
                 entity.Property(e => e.RoleId).HasColumnName("role_id");
 

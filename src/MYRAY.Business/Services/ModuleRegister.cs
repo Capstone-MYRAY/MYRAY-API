@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using MYRAY.Business.Services.Account;
 using MYRAY.Business.Services.Area;
+using MYRAY.Business.Services.Authentication;
 using MYRAY.Business.Services.Role;
 
 namespace MYRAY.Business.Services;
@@ -14,6 +15,7 @@ public static class ModuleRegister
     /// <returns>IServiceCollection</returns>
     public static IServiceCollection RegisterServiceModule(this IServiceCollection services)
     {
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<IRoleService, RoleService>();
         services.AddScoped<IAreaService, AreaService>();
         services.AddScoped<IAccountService, AccountService>();

@@ -9,7 +9,28 @@ public static class SearchHelper
        
         foreach (var prop in searchModel.GetType().GetProperties())
         {
-            if((string)prop.GetValue(searchModel, null)! is {Length: > 0})
+            var value = prop.GetValue(searchModel, null);
+            if(value is string)
+            {
+                if((string)value! is {Length: > 0})
+                {
+                    // Build expression tree
+                    //--entity
+                    var param = Expression.Parameter(typeof(TEntity), "entity");
+                    //--entity.{PropertyName}
+                    var entityProp = Expression.Property(param, prop.Name);
+                    //--searchValue
+                    var searchValue = Expression.Constant(value);
+                    //--entity.{PropertyName}.Contains(searchValue)
+                    var body = Expression.Call(entityProp, "Contains",null, searchValue);
+                    //--entity => entity.{PropertyName}.Contains(searchValue)
+                    var exp = Expression.Lambda<Func<TEntity, bool>>(body, param);
+                    //entity.{PropertyName}.Contains(searchValue)
+                    query = query.Where(exp);
+                }
+            }
+
+            if (value != null && value is int)
             {
                 // Build expression tree
                 //--entity
@@ -17,13 +38,14 @@ public static class SearchHelper
                 //--entity.{PropertyName}
                 var entityProp = Expression.Property(param, prop.Name);
                 //--searchValue
-                var searchValue = Expression.Constant(prop.GetValue(searchModel, null));
+                var searchValue = Expression.Constant(value);
                 //--entity.{PropertyName}.Contains(searchValue)
-                var body = Expression.Call(entityProp, "Contains",null, searchValue);
+                var body = Expression.Equal(entityProp, searchValue);
                 //--entity => entity.{PropertyName}.Contains(searchValue)
                 var exp = Expression.Lambda<Func<TEntity, bool>>(body, param);
                 //entity.{PropertyName}.Contains(searchValue)
                 query = query.Where(exp);
+
             }
         }
         

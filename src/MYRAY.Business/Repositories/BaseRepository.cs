@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using MYRAY.Business.Repositories.Interface;
@@ -113,7 +114,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return await query.FirstOrDefaultAsync();
     }
 
-    /// <inheritdoc cref="IBaseRepository{Entity}.Insert"/>
+    /// <inheritdoc cref="IBaseRepository{TEntity}.Insert(TEntity)"/>
     public void Insert(TEntity entity)
     {
         if (entity == null)
@@ -166,6 +167,63 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
         _dbSet.Attach(entity);
         CurrentContext.Update(entity);
+    }
+
+    public void Modify(TEntity entity)
+    {
+        if (entity == null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
+        int id = (int)entity.GetType().GetProperty("Id")!.GetValue(entity, null)!;
+        TEntity? db = GetById(id);
+        PropertyInfo[] prop = (PropertyInfo[])db!.GetType().GetProperties().Clone();
+       
+            for (int i = 0; i < prop.Length;i++)
+            {
+                
+            
+            if(!prop[i].GetAccessors()[0].IsVirtual)
+            {
+                var pro = entity.GetType().GetProperty(prop[i].Name);
+                
+                var valCur = pro!.GetValue(entity, null);
+                var valOri = prop[i].GetValue(db, null);
+                if(ReferenceEquals(valCur,valOri)) continue;
+                if (valOri == null)
+                {
+                    db.GetType().GetProperty(prop[i].Name)!.SetValue(db, valCur);
+                    continue;
+                }
+
+                if (valCur != null)
+                {
+                    db.GetType().GetProperty(prop[i].Name)!.SetValue(db, valCur);
+                }
+                
+
+            }
+            }
+                
+        Update(db);
+
+        // foreach (var property in entry.Properties)
+        // {
+        //     var ori = property.OriginalValue;
+        //     var cur = property.CurrentValue;
+        //     if(ReferenceEquals(ori, cur)) continue;
+        //
+        //     if (ori == null)
+        //     {
+        //         property.IsModified = true;
+        //         continue;
+        //     }
+        //     if(cur != null)
+        //         property.IsModified = !ori.Equals(cur);
+        // }
+        //
+        // CurrentContext.Update(entity);
     }
 
     /// <inheritdoc cref="IBaseRepository{Entity}.Update(IEnumerable{Entity})"/>

@@ -26,8 +26,10 @@ public class AccountRepository : IAccountRepository
     
     public async Task<DataTier.Entities.Account> GetAccountByIdAsync(int id)
     {
+        Expression<Func<DataTier.Entities.Account, object>> expression = account => account.Role;
         DataTier.Entities.Account queryAccount = 
-            await _accountRepository.GetFirstOrDefaultAsync(a => a.Id == id && a.Status == (int?)AccountEnum.AccountStatus.Active);
+            await _accountRepository.GetFirstOrDefaultAsync(a => a.Id == id && a.Status == (int?)AccountEnum.AccountStatus.Active, 
+                new []{expression});
         if (queryAccount == null)
         {
             return null;
@@ -79,8 +81,8 @@ public class AccountRepository : IAccountRepository
 
     public async Task<DataTier.Entities.Account> UpdateAccountAsync(DataTier.Entities.Account account)
     {
-        _accountRepository?.Update(account);
-
+        _accountRepository?.Modify(account);
+        
         await _dbContextFactory.SaveAllAsync();
 
         return account;
@@ -94,7 +96,7 @@ public class AccountRepository : IAccountRepository
             throw new MException(StatusCodes.Status400BadRequest, "Account is not existed", nameof(id));
         }
 
-        account.Status = (int?)AccountEnum.AccountStatus.Inactive;
+        account.Status = (int)AccountEnum.AccountStatus.Inactive;
         _accountRepository?.Update(account);
 
         await _dbContextFactory.SaveAllAsync();
@@ -110,7 +112,7 @@ public class AccountRepository : IAccountRepository
             throw new MException(StatusCodes.Status400BadRequest, "Account is not existed", nameof(id));
         }
 
-        account.Status = (int?)AccountEnum.AccountStatus.Banned;
+        account.Status = (int)AccountEnum.AccountStatus.Banned;
         _accountRepository?.Update(account);
 
         await _dbContextFactory.SaveAllAsync();

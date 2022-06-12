@@ -37,10 +37,12 @@ namespace MYRAY.DataTier.Entities
         public string PhoneNumber { get; set; } = null!;
         public string? Email { get; set; }
         public string Password { get; set; } = null!;
-        public double Balance { get; set; }
-        public int Point { get; set; }
+        public double? Balance { get; set; }
+        public int? Point { get; set; }
         public string? AboutMe { get; set; }
         public int? Status { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
 
         public virtual Role Role { get; set; } = null!;
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }

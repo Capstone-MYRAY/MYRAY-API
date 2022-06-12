@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
+using MYRAY.Business.DTOs.Authentication;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
@@ -65,30 +66,6 @@ public class AccountService : IAccountService
         return accountDto;
     }
 
-    public async Task<GetAccountDetail> LoginByPhoneAsync(string phoneNumber, string password)
-    {
-        if (phoneNumber.IsValidPhoneNumber())
-        {
-            throw new MException(StatusCodes.Status401Unauthorized, "Invalid Phone Number", phoneNumber);
-        }
-
-        DataTier.Entities.Account queryAccount = await _accountRepository.GetAccountByPhoneAsync(phoneNumber);
-
-        if (queryAccount == null)
-        {
-            throw new MException(StatusCodes.Status401Unauthorized, "Invalid Login Information", nameof(phoneNumber));
-        }
-
-        if (!queryAccount.Password.Equals(password))
-        {
-            throw new MException(StatusCodes.Status401Unauthorized, "Invalid Password");
-        }
-
-        GetAccountDetail accountDto = _mapper.Map<GetAccountDetail>(queryAccount);
-
-        return accountDto;
-    }
-
     /// <inheritdoc cref="IAccountService.CreateAccountAsync"/>
     public async Task<GetAccountDetail> CreateAccountAsync(InsertAccountDto? bodyDto)
     {
@@ -98,11 +75,35 @@ public class AccountService : IAccountService
         }
 
         DataTier.Entities.Account newAccount = _mapper.Map<DataTier.Entities.Account>(bodyDto);
+        newAccount.PhoneNumber = newAccount.PhoneNumber.ConvertVNPhoneNumber();
+        Console.WriteLine(newAccount.PhoneNumber);
         newAccount = await _accountRepository.CreateAccountAsync(newAccount);
 
         GetAccountDetail newAccountDto = _mapper.Map<GetAccountDetail>(newAccount);
 
         return newAccountDto;
+    }
+
+    public async Task<GetAccountDetail> SignupAsync(SignupRequest? bodyDto)
+    {
+        InsertAccountDto insertAccountDto = _mapper.Map<InsertAccountDto>(bodyDto);
+        return await CreateAccountAsync(insertAccountDto);
+    }
+
+    public async Task<UpdateAccountDto> ChangPasswordAsync(int id, string newPassword)
+    {
+        try
+        {
+            DataTier.Entities.Account account = await _accountRepository.GetAccountByIdAsync(id);
+            account.Password = newPassword;
+            account = await _accountRepository.UpdateAccountAsync(account);
+            UpdateAccountDto updateAccountDto = _mapper.Map<UpdateAccountDto>(account);
+            return updateAccountDto;
+        }
+        catch (Exception e)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, e.Message, nameof(e.TargetSite.Name));
+        }
     }
 
     /// <inheritdoc cref="IAccountService.UpdateAccountAsync"/>
