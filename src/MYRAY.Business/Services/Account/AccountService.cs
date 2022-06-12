@@ -169,7 +169,7 @@ public class AccountService : IAccountService
     }
 
     /// <inheritdoc cref="IAccountService.TopUpAccountByIdAsync"/>
-    public async Task<bool> TopUpAccountByIdAsync(int? id, float topUp)
+    public async Task<GetAccountDetail> TopUpAccountByIdAsync(int? id, float topUp)
     {
         try
         {
@@ -179,8 +179,8 @@ public class AccountService : IAccountService
             }
 
             DataTier.Entities.Account topUpAccount = await _accountRepository.TopUpAccountByIdAsync((int)id, topUp);
-
-            return true;
+            GetAccountDetail result = _mapper.Map<GetAccountDetail>(topUpAccount);
+            return result;
         }
         catch (Exception e)
         {

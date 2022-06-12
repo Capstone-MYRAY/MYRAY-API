@@ -176,4 +176,58 @@ public class AccountController : ControllerBase
             return NotFound(e);
         }
     }
+
+    /// <summary>
+    /// [Moderator] Endpoint for top up account.
+    /// </summary>
+    /// <param name="accountId">Id of  account</param>
+    /// <param name="topUp">Money to top up</param>
+    /// <returns>Async function</returns>
+    /// <response code="200">Returns the account top up success</response>
+    /// <response code="400">Returns if account is not existed or invalid information.</response>
+    [HttpPost]
+    [Authorize(Roles = UserRole.MODERATOR)]
+    [Route("topup")]
+    public async Task<IActionResult> TopUpAccount(int? accountId, float topUp)
+    {
+        try
+        {
+            if (accountId == null)
+                return BadRequest("Invalid account ID");
+
+           GetAccountDetail result = await _accountService.TopUpAccountByIdAsync(accountId, topUp);
+           return Ok(result);
+           
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// [Moderator] Endpoint for ban account.
+    /// </summary>
+    /// <param name="accountId">Id of  account</param>
+    /// <returns>Async function</returns>
+    /// <response code="204">Returns the account top up success</response>
+    /// <response code="400">Returns if account is not existed or invalid id.</response>
+    [HttpDelete("ban/{accountId}")]
+    [Authorize(Roles = UserRole.MODERATOR)]
+    public async Task<IActionResult> BanAccount(int? accountId)
+    {
+        try
+        {
+            if (accountId == null) return BadRequest("Id is not empty");
+
+            await _accountService.BanAccountByIdAsync(accountId);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
 }

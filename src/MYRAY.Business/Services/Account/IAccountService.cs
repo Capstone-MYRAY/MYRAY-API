@@ -74,6 +74,6 @@ public interface IAccountService
     /// </summary>
     /// <param name="id">Id of account</param>
     /// <param name="topup">Money to top up account</param>
-    /// <returns>Success or fail</returns>
-    public Task<bool> TopUpAccountByIdAsync(int? id, float topUp);
+    /// <returns>An account</returns>
+    public Task<GetAccountDetail> TopUpAccountByIdAsync(int? id, float topUp);
 }
