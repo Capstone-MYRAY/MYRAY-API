@@ -19,6 +19,7 @@ public static class AutoMapperConfig
             md.ConfigRoleModule();
             md.ConfigAreaModule();
             md.ConfigAccountModule();
+            md.ConfigTreeTypeModule();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

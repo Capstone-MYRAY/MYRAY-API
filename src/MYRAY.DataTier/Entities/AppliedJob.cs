@@ -17,7 +17,7 @@ namespace MYRAY.DataTier.Entities
         public DateTime? ApprovedDate { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual Account AppliedByNavigation { get; set; } = null!;
         public virtual JobPost JobPost { get; set; } = null!;

@@ -13,7 +13,7 @@ namespace MYRAY.DataTier.Entities
         public int Id { get; set; }
         public string Type { get; set; } = null!;
         public string? Description { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual ICollection<JobPost> JobPosts { get; set; }
     }

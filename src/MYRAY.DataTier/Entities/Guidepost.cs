@@ -16,7 +16,7 @@ namespace MYRAY.DataTier.Entities
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
         public int CreateBy { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual Account CreateByNavigation { get; set; } = null!;
         public virtual ICollection<Comment> Comments { get; set; }

@@ -21,7 +21,7 @@ public static class PagingHelper
 
         if (query == null)
         {
-            return null;
+            return null!;
         }
 
         ResponseDto.CollectiveResponse<T> result = new ResponseDto.CollectiveResponse<T>();

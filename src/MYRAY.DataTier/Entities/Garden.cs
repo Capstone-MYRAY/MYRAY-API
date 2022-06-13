@@ -21,7 +21,7 @@ namespace MYRAY.DataTier.Entities
         public string? Description { get; set; }
         public DateTime? UpdateDate { get; set; }
         public DateTime CreateDate { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual Account Account { get; set; } = null!;
         public virtual Area Area { get; set; } = null!;

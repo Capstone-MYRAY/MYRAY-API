@@ -3,6 +3,7 @@ using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.Area;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.Business.Repositories.Role;
+using MYRAY.Business.Repositories.TreeType;
 
 
 namespace MYRAY.Business.Repositories;
@@ -19,7 +20,8 @@ public static class ModuleRegister
         services.AddTransient<IRoleRepository, RoleRepository>();
         services.AddTransient<IAreaRepository, AreaRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
-        
+        services.AddTransient<ITreeTypeRepository, TreeTypeRepository>();
+
 
         return services;
     }

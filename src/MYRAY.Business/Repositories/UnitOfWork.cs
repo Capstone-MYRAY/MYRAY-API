@@ -24,7 +24,7 @@ public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbCon
     /// <summary>
     /// Gets or sets collection of repository.
     /// </summary>
-    public Hashtable Repositories { get; set; }
+    public Hashtable? Repositories { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UnitOfWork{TContext}"/>

@@ -83,7 +83,7 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("password");
 
                 entity.Property(e => e.PhoneNumber)
-                    .HasMaxLength(11)
+                    .HasMaxLength(13)
                     .IsUnicode(false)
                     .HasColumnName("phone_number");
 
@@ -190,7 +190,9 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnType("datetime")
                     .HasColumnName("start_date");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((0))");
 
                 entity.HasOne(d => d.AppliedByNavigation)
                     .WithMany(p => p.AppliedJobs)
@@ -468,7 +470,9 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnType("date")
                     .HasColumnName("start_job_date");
 
-                entity.Property(e => e.Status).HasColumnName("status");
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Title)
                     .HasMaxLength(70)
