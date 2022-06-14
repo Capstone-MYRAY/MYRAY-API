@@ -39,7 +39,7 @@ public class JobPostController : ControllerBase
     /// <response code="204">Returns if list of job post is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<JobPostDetail>),StatusCodes.Status200OK)]
     public Task<IActionResult> GetJobPost(
         [FromQuery] SearchJobPost searchJobPost,
@@ -64,7 +64,7 @@ public class JobPostController : ControllerBase
     /// <response code="400">Returns if job post is not existed.</response>
     /// <response code="401">Returns if not authorize</response>
     [HttpGet("{jobPostId}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     public async Task<IActionResult> GetGuidepostById(int jobPostId)
     {
@@ -91,14 +91,14 @@ public class JobPostController : ControllerBase
     /// <response code="400">Returns if job post input is empty or create error</response>
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPost]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateJobPost(CreateJobPost createJobPost)
     {
         try
         {
-            //var accountId = int.Parse(User.FindFirst("id")?.Value!);
-            var accountId = 3;
+            var accountId = int.Parse(User.FindFirst("id")?.Value!);
+            //var accountId = 3;
             var result = await _jobPostService.CreateJobPost(createJobPost, accountId);
 
             return Ok(result);
@@ -119,13 +119,14 @@ public class JobPostController : ControllerBase
     /// <response code="400">Returns if input job post information empty</response>
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpPut]
-    //[Authorize(Roles = UserRole.LANDOWNER)]
+    [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status201Created)]
     public async Task<IActionResult> UpdateJobPost(UpdateJobPost updateJobPost)
     {
         try
         {
-            var accountId = 3;
+            var accountId = int.Parse(User.FindFirst("id")?.Value!);
+            //var accountId = 3;
             var result = await _jobPostService.UpdateJobPost(updateJobPost, accountId);
 
             return Ok(result);
@@ -146,7 +147,7 @@ public class JobPostController : ControllerBase
     /// <response code="404">Returns if job post is not existed.</response>
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpDelete("{jobPostId}")]
-    //[Authorize(Roles = UserRole.LANDOWNER)]
+    [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status201Created)]
     public async Task<IActionResult> DeleteJobPost(int jobPostId)
     {
@@ -203,8 +204,8 @@ public class JobPostController : ControllerBase
     [Authorize(Roles = UserRole.FARMER)]
     public async Task<IActionResult> CancelApply(int jobPostId)
     {
-        //var accountId = int.Parse(User.FindFirst("id")?.Value!);
-         var accountId = 3;
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        // var accountId = 3;
         try
         {
             var result = await _appliedJobService.CancelApply(jobPostId, accountId);

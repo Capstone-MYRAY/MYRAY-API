@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
 using MYRAY.Business.DTOs;
@@ -23,19 +24,20 @@ public class PaymentHistoryController : ControllerBase
     {
         _paymentHistoryService = paymentHistoryService;
     }
-    
+
     /// <summary>
     /// [Authenticated user] Endpoint for get all payment history with condition
     /// </summary>
     /// <param name="searchPaymentHistory">An object contains filter criteria.</param>
     /// <param name="sortingDto">An object contains sorting criteria.</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <param name="accountId">Id of account to view</param>
     /// <returns>List of payment history</returns>
     /// <response code="200">Returns the list of payment history.</response>
     /// <response code="204">Returns if list of payment history is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("{accountId}")]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<PaymentHistory>),StatusCodes.Status200OK)]
     public Task<IActionResult> GetGuidepost(
         [FromQuery] SearchPaymentHistory searchPaymentHistory,

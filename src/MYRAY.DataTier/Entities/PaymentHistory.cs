@@ -6,7 +6,7 @@ namespace MYRAY.DataTier.Entities
     public partial class PaymentHistory
     {
         public int Id { get; set; }
-        public int JobPostId { get; set; }
+        public int? JobPostId { get; set; }
         public int BelongedId { get; set; }
         public double? ActualPrice { get; set; }
         public double? BalanceFluctuation { get; set; }
@@ -22,6 +22,6 @@ namespace MYRAY.DataTier.Entities
 
         public virtual Account Belonged { get; set; } = null!;
         public virtual Account? CreatedByNavigation { get; set; }
-        public virtual JobPost JobPost { get; set; } = null!;
+        public virtual JobPost? JobPost { get; set; }
     }
 }

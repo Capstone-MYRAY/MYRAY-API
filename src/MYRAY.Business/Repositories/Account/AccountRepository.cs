@@ -11,6 +11,7 @@ namespace MYRAY.Business.Repositories.Account;
 public class AccountRepository : IAccountRepository
 {
     private readonly IBaseRepository<DataTier.Entities.Account>? _accountRepository;
+    private readonly IBaseRepository<DataTier.Entities.PaymentHistory>? _paymentHistoryRepository;
     private readonly IDbContextFactory _dbContextFactory;
     
     /// <summary>
@@ -21,6 +22,7 @@ public class AccountRepository : IAccountRepository
     {
         _dbContextFactory = dbContextFactory;
         _accountRepository = _dbContextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Account>();
+        _paymentHistoryRepository = _dbContextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.PaymentHistory>();
     }
 
     
@@ -120,13 +122,14 @@ public class AccountRepository : IAccountRepository
         return account;
     }
 
-    public async Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp)
+    public async Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy)
     {
         DataTier.Entities.Account account = await _accountRepository.GetByIdAsync(id);
         if (account == null)
         {
             throw new MException(StatusCodes.Status400BadRequest, "Account is not existed", nameof(id));
         }
+        
 
         if (topUp < 0)
         {
@@ -144,7 +147,26 @@ public class AccountRepository : IAccountRepository
         }
         
         _accountRepository?.Update(account);
+        //-- New payment
+        DataTier.Entities.PaymentHistory newPayment = new DataTier.Entities.PaymentHistory
+        {
+            CreatedBy = createBy,
+            Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid,
+            CreatedDate = DateTime.Now,
+            ActualPrice = topUp,
+            BalanceFluctuation =  topUp,
+            Balance = account.Balance,
+            EarnedPoint = 0,
+            UsedPoint = 0,
+            BelongedId = account.Id,
+            Message =  (topUp > 0 ? "Nạp " : "Rút " ) + "tiền vào tài khoản",
+            JobPostPrice = 0,
+            PointPrice = 0
+        };
+        //-- End Add Payment
 
+        await _paymentHistoryRepository.InsertAsync(newPayment);
+        
         await _dbContextFactory.SaveAllAsync();
 
         return account;

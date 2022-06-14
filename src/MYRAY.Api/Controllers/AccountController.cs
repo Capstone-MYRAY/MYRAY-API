@@ -229,8 +229,8 @@ public class AccountController : ControllerBase
         {
             if (accountId == null)
                 return BadRequest("Invalid account ID");
-
-           GetAccountDetail result = await _accountService.TopUpAccountByIdAsync(accountId, topUp);
+           var createBy  = int.Parse(User.FindFirst("id")?.Value!);
+           GetAccountDetail result = await _accountService.TopUpAccountByIdAsync(accountId, topUp, createBy);
            return Ok(result);
            
         }

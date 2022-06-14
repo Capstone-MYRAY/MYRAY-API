@@ -640,7 +640,7 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
-                    .HasDefaultValueSql("((0))");
+                    .HasDefaultValueSql("((1))");
 
                 entity.Property(e => e.UsedPoint).HasColumnName("used_point");
 
@@ -658,7 +658,6 @@ namespace MYRAY.DataTier.Entities
                 entity.HasOne(d => d.JobPost)
                     .WithMany(p => p.PaymentHistories)
                     .HasForeignKey(d => d.JobPostId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PaymentHistory_JobPost");
             });
 

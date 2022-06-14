@@ -183,7 +183,7 @@ public class AccountService : IAccountService
     }
 
     /// <inheritdoc cref="IAccountService.TopUpAccountByIdAsync"/>
-    public async Task<GetAccountDetail> TopUpAccountByIdAsync(int? id, float topUp)
+    public async Task<GetAccountDetail> TopUpAccountByIdAsync(int? id, float topUp, int createBy)
     {
         try
         {
@@ -192,12 +192,13 @@ public class AccountService : IAccountService
                 throw new MException(StatusCodes.Status400BadRequest, "Id is null");
             }
 
-            DataTier.Entities.Account topUpAccount = await _accountRepository.TopUpAccountByIdAsync((int)id, topUp);
+            DataTier.Entities.Account topUpAccount = await _accountRepository.TopUpAccountByIdAsync((int)id, topUp, createBy);
             GetAccountDetail result = _mapper.Map<GetAccountDetail>(topUpAccount);
             return result;
         }
         catch (Exception e)
         {
+            Console.WriteLine(e);
             throw new MException(StatusCodes.Status400BadRequest, e.Message);
         }
     }

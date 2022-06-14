@@ -58,12 +58,13 @@ public interface IAccountRepository
     /// <param name="id">Id of account</param>
     /// <returns>An account</returns>
     Task<DataTier.Entities.Account> BanAccountByIdAsync(int id);
-    
+
     /// <summary>
     /// Top up balance for account
     /// </summary>
     /// <param name="id">ID of account</param>
     /// <param name="topUp">number of topup</param>
+    /// <param name="createBy">Account Create</param>
     /// <returns>An account</returns>
-    Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp);
+    Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy);
 }
