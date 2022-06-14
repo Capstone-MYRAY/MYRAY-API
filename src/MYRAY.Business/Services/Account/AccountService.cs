@@ -66,6 +66,20 @@ public class AccountService : IAccountService
         return accountDto;
     }
 
+    public async Task<GetAccountDetail> GetAccountByPhoneNumberAsync(string? phoneNumber)
+    {
+        if (phoneNumber == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Phone number is not empty");
+        }
+        
+        DataTier.Entities.Account queryAccount = await _accountRepository.GetAccountByPhoneAsync((string)phoneNumber);
+
+        GetAccountDetail accountDto = _mapper.Map<GetAccountDetail>(queryAccount);
+
+        return accountDto;
+    }
+
     /// <inheritdoc cref="IAccountService.CreateAccountAsync"/>
     public async Task<GetAccountDetail> CreateAccountAsync(InsertAccountDto? bodyDto)
     {

@@ -23,9 +23,9 @@ namespace MYRAY.DataTier.Entities
         public DateTime? StartJobDate { get; set; }
         public DateTime? EndJobDate { get; set; }
         public int? NumPublishDay { get; set; }
-        public int PublishedBy { get; set; }
+        public int? PublishedBy { get; set; }
         public DateTime? PublishedDate { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
@@ -33,7 +33,7 @@ namespace MYRAY.DataTier.Entities
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual Garden Garden { get; set; } = null!;
-        public virtual Account PublishedByNavigation { get; set; } = null!;
+        public virtual Account? PublishedByNavigation { get; set; }
         public virtual TreeType TreeType { get; set; } = null!;
         public virtual PayPerHourJob PayPerHourJob { get; set; } = null!;
         public virtual PayPerTaskJob PayPerTaskJob { get; set; } = null!;

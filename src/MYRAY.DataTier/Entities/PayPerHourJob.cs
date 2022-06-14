@@ -10,8 +10,8 @@ namespace MYRAY.DataTier.Entities
         public int MinFarmer { get; set; }
         public int MaxFarmer { get; set; }
         public double Salary { get; set; }
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan FinishTime { get; set; }
+        public TimeSpan? StartTime { get; set; }
+        public TimeSpan? FinishTime { get; set; }
 
         public virtual JobPost IdNavigation { get; set; } = null!;
     }

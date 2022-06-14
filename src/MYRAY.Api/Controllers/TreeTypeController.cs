@@ -60,7 +60,7 @@ public class TreeTypeController : ControllerBase
     /// [Authenticated user] Endpoint for get tree type information by Identifier.
     /// </summary>
     /// <param name="treeTypeId">An id of tree type</param>
-    /// <returns>An account</returns>
+    /// <returns>An tree type</returns>
     /// <response code="200">Returns the tree type.</response>
     /// <response code="400">Returns if tree type is not existed.</response>
     /// <response code="401">Returns if not authorize</response>
@@ -112,7 +112,7 @@ public class TreeTypeController : ControllerBase
     /// [Admin] Endpoint for tree type
     /// </summary>
     /// <param name="updateTreeType">An object contains update information</param>
-    /// <returns>An account updated</returns>
+    /// <returns>An tree type updated</returns>
     /// <response code="200">Returns the tree type updated</response>
     /// <response code="400">Returns if input tree type information empty</response>
     /// <response code="401">Returns if invalid authorize.</response>

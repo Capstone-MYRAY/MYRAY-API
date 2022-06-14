@@ -71,7 +71,7 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("email");
 
                 entity.Property(e => e.Fullname)
-                    .HasMaxLength(100)
+                    .HasMaxLength(50)
                     .HasColumnName("fullname");
 
                 entity.Property(e => e.Gender).HasColumnName("gender");
@@ -431,7 +431,6 @@ namespace MYRAY.DataTier.Entities
                 entity.HasOne(d => d.CreateByNavigation)
                     .WithMany(p => p.Guideposts)
                     .HasForeignKey(d => d.CreateBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Guidepost_Account");
             });
 
@@ -502,7 +501,6 @@ namespace MYRAY.DataTier.Entities
                 entity.HasOne(d => d.PublishedByNavigation)
                     .WithMany(p => p.JobPostPublishedByNavigations)
                     .HasForeignKey(d => d.PublishedBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_JobPost_Account1");
 
                 entity.HasOne(d => d.TreeType)

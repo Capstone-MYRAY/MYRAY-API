@@ -16,10 +16,15 @@ public static class AutoMapperConfig
             
         var mappingConfig = new MapperConfiguration(md =>
         {
+            md.AllowNullDestinationValues = true;
+            md.AllowNullCollections = true;
             md.ConfigRoleModule();
             md.ConfigAreaModule();
             md.ConfigAccountModule();
             md.ConfigTreeTypeModule();
+            md.ConfigGuidepost();
+            md.ConfigJobPost();
+            md.ConfigPostType();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

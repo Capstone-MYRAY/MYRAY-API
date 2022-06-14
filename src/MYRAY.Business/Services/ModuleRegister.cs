@@ -1,7 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
 using MYRAY.Business.Services.Account;
+using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.Area;
 using MYRAY.Business.Services.Authentication;
+using MYRAY.Business.Services.Guidepost;
+using MYRAY.Business.Services.JobPost;
+using MYRAY.Business.Services.PostType;
 using MYRAY.Business.Services.Role;
 using MYRAY.Business.Services.TreeType;
 
@@ -21,5 +25,9 @@ public static class ModuleRegister
         services.AddScoped<IAreaService, AreaService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<ITreeTypeService, TreeTypeService>();
+        services.AddScoped<IGuidepostService, GuidepostService>();
+        services.AddScoped<IJobPostService, JobPostService>();
+        services.AddScoped<IAppliedJobService, AppliedJobService>();
+        services.AddScoped<IPostTypeService, PostTypeService>();
     }
 }

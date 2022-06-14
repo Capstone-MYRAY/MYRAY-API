@@ -6,6 +6,7 @@ using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
+using MYRAY.Business.Helpers;
 using MYRAY.Business.Services.Account;
 
 namespace MYRAY.Api.Controllers;
@@ -39,7 +40,7 @@ public class AccountController : ControllerBase
     /// <returns>List of account</returns>
     /// <response code="200">Returns the list of account.</response>
     /// <response code="204">Returns if list of account is empty.</response>
-    /// <response code="403">Returns if token is access denied.</response>
+    /// <response code="401">Returns if token is access denied.</response>
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAccountDetail>),StatusCodes.Status200OK)]
@@ -65,8 +66,7 @@ public class AccountController : ControllerBase
     /// <returns>An account</returns>
     /// <response code="200">Returns the account.</response>
     /// <response code="204">Returns if account is not existed.</response>
-    /// <response code="400">Returns the list of area.</response>
-    /// <response code="403">Returns the list of area.</response>
+    /// <response code="401">Returns if token is access denied</response>
     [HttpGet("{accountId}")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(GetAccountDetail),StatusCodes.Status200OK)]
@@ -90,6 +90,39 @@ public class AccountController : ControllerBase
         }
         return Ok(result);
     }
+    
+    /// <summary>
+    /// [All] Endpoint for get account information by phone number.
+    /// </summary>
+    /// <param name="phoneNumber">An phone number of account</param>
+    /// <returns>An account</returns>
+    /// <response code="200">Returns the account.</response>
+    /// <response code="204">Returns if account is not existed.</response>
+    /// <response code="401">Returns if token is access denied</response>
+    [HttpGet("phone/{phoneNumber}")]
+    
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(GetAccountDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorCustomMessage),StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAccountByPhoneNumberAsync(string? phoneNumber)
+    {
+        if (phoneNumber == null || !phoneNumber.IsValidPhoneNumber())
+        {
+            return BadRequest(new ErrorCustomMessage
+            {
+                Message = "Phone Number is null or invalid",
+                Target = nameof(phoneNumber)
+            });
+        }
+            
+        GetAccountDetail result = await _accountService.GetAccountByPhoneNumberAsync(phoneNumber.ConvertVNPhoneNumber());
+        
+        if (result == null)
+        {
+            return NoContent();
+        }
+        return Ok(result);
+    }
 
     /// <summary>
     /// [Moderator] Endpoint for create account
@@ -100,6 +133,7 @@ public class AccountController : ControllerBase
     /// <exception cref="Exception">Error if input is empty</exception>
     /// <response code="201">Returns the created account</response>
     /// <response code="400">Returns if account input is empty or create error</response>
+    /// <response code="401">Returns if token is access denied</response>
     [HttpPost]
     [Authorize(Roles = UserRole.MODERATOR)]
     [ProducesResponseType(typeof(GetAccountDetail), StatusCodes.Status201Created)]
@@ -132,6 +166,7 @@ public class AccountController : ControllerBase
     /// <response code="200">Returns the account updated</response>
     /// <response code="400">Returns if input account information empty</response>
     /// <response code="404">Returns if area account is not existed.</response>
+    /// <response code="401">Returns if token is access denied</response>
     [HttpPut]
     [Authorize]
     [ProducesResponseType(typeof(UpdateAccountDto), StatusCodes.Status200OK)]

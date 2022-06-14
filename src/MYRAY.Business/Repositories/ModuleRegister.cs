@@ -1,7 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using MYRAY.Business.Repositories.Account;
+using MYRAY.Business.Repositories.AppliedJob;
 using MYRAY.Business.Repositories.Area;
+using MYRAY.Business.Repositories.Guidepost;
 using MYRAY.Business.Repositories.Interface;
+using MYRAY.Business.Repositories.JobPost;
+using MYRAY.Business.Repositories.PaymentHistory;
+using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.Role;
 using MYRAY.Business.Repositories.TreeType;
 
@@ -21,7 +26,13 @@ public static class ModuleRegister
         services.AddTransient<IAreaRepository, AreaRepository>();
         services.AddTransient<IAccountRepository, AccountRepository>();
         services.AddTransient<ITreeTypeRepository, TreeTypeRepository>();
-
+        services.AddTransient<IGuidepostRepository, GuidepostRepository>();
+        services.AddTransient<IJobPostRepository, JobPostRepository>();
+        services.AddTransient<IPaymentHistoryRepository, PaymentHistoryRepository>();
+        services.AddTransient<IAppliedJobRepository, AppliedJobRepository>();
+        services.AddTransient<IPaymentHistoryRepository, PaymentHistoryRepository>();
+        services.AddTransient<IPostTypeRepository, PostTypeRepository>();
+        
 
         return services;
     }

@@ -202,28 +202,10 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
                     db.GetType().GetProperty(prop[i].Name)!.SetValue(db, valCur);
                 }
                 
-
             }
             }
                 
         Update(db);
-
-        // foreach (var property in entry.Properties)
-        // {
-        //     var ori = property.OriginalValue;
-        //     var cur = property.CurrentValue;
-        //     if(ReferenceEquals(ori, cur)) continue;
-        //
-        //     if (ori == null)
-        //     {
-        //         property.IsModified = true;
-        //         continue;
-        //     }
-        //     if(cur != null)
-        //         property.IsModified = !ori.Equals(cur);
-        // }
-        //
-        // CurrentContext.Update(entity);
     }
 
     /// <inheritdoc cref="IBaseRepository{Entity}.Update(IEnumerable{Entity})"/>

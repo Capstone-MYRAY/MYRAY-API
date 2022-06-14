@@ -27,6 +27,13 @@ public interface IAccountService
     public Task<GetAccountDetail> GetAccountByIdAsync(int? id);
 
     /// <summary>
+    /// Get async an account by phone number
+    /// </summary>
+    /// <param name="phoneNumber">PhoneNumber</param>
+    /// <returns>An account</returns>
+    public Task<GetAccountDetail> GetAccountByPhoneNumberAsync(string? phoneNumber);
+    
+    /// <summary>
     /// Create an new account
     /// </summary>
     /// <param name="bodyDto">An object contains info to insert account</param>

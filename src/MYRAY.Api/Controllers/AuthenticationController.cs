@@ -57,7 +57,7 @@ public class AuthenticationController : ControllerBase
         AuthenticatedResponse? response ;
         try
         {
-            response = await _authentication.LoginByPhoneAsync(bodyDto.PhoneNumber!, bodyDto.Password!);
+            response = await _authentication.LoginByPhoneAsync(bodyDto.PhoneNumber!.ConvertVNPhoneNumber(), bodyDto.Password!);
         }
         catch (Exception e)
         {
