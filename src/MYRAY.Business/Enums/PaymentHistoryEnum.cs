@@ -6,7 +6,14 @@ public class PaymentHistoryEnum
     {
         Pending = 1,
         Deleted = 0,
-        Paid = 2,
-        
+        Paid = 2
+    }
+
+    public enum PaymentHistorySortCriteria
+    {
+        ActualPrice,
+        UsedPoint,
+        EarnedPoint,
+        Status
     }
 }

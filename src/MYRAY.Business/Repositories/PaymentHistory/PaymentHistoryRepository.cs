@@ -19,9 +19,9 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.PaymentHistory>()!;
     }
 
-    public IQueryable<DataTier.Entities.PaymentHistory> GetPayments()
+    public IQueryable<DataTier.Entities.PaymentHistory> GetPayments(int accountId)
     {
-        IQueryable<DataTier.Entities.PaymentHistory> query = _paymentHistoryRepository.Get(ph => ph.Status != (int?)PaymentHistoryEnum.PaymentHistoryStatus.Deleted);
+        IQueryable<DataTier.Entities.PaymentHistory> query = _paymentHistoryRepository.Get(ph => ph.Status != (int?)PaymentHistoryEnum.PaymentHistoryStatus.Deleted && ph.BelongedId == accountId);
         return query;
     }
 
@@ -35,7 +35,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
     {
         await _paymentHistoryRepository.InsertAsync(paymentHistory);
 
-        // await _contextFactory.SaveAllAsync();
+        await _contextFactory.SaveAllAsync();
         return paymentHistory;
     }
 
@@ -43,7 +43,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
     {
          _paymentHistoryRepository.Modify(paymentHistory);
 
-        //await _contextFactory.SaveAllAsync();
+        await _contextFactory.SaveAllAsync();
         return paymentHistory;
     }
 

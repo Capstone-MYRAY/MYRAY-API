@@ -17,7 +17,7 @@ public interface IJobPostService
 
     Task<JobPostDetail> CreateJobPost(CreateJobPost jobPost, int publishedBy);
 
-    Task<JobPostDetail> UpdateJobPost(UpdateJobPost jobPost);
+    Task<JobPostDetail> UpdateJobPost(UpdateJobPost jobPost, int publishedBy);
 
     Task<JobPostDetail> DeleteJobPost(int jobPostId);
 }

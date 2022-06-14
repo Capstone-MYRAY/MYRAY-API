@@ -27,7 +27,7 @@ public class JobPostEnum
         /// <summary>
         /// Đã hủy
         /// </summary>
-        Cancle = 0,
+        Cancel = 0,
         
         /// <summary>
         /// Quá hạn

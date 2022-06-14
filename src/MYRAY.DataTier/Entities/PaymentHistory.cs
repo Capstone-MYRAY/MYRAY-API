@@ -17,6 +17,8 @@ namespace MYRAY.DataTier.Entities
         public int? CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public int? Status { get; set; }
+        public double? JobPostPrice { get; set; }
+        public int? PointPrice { get; set; }
 
         public virtual Account Belonged { get; set; } = null!;
         public virtual Account? CreatedByNavigation { get; set; }

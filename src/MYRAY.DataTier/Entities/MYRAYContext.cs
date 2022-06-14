@@ -630,9 +630,13 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.JobPostId).HasColumnName("job_post_id");
 
+                entity.Property(e => e.JobPostPrice).HasColumnName("job_post_price");
+
                 entity.Property(e => e.Message)
                     .HasMaxLength(100)
                     .HasColumnName("message");
+
+                entity.Property(e => e.PointPrice).HasColumnName("point_price");
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")

@@ -13,7 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Repositories\Object" />
       <Folder Include="Resources" />
     </ItemGroup>
 

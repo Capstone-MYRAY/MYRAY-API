@@ -15,6 +15,7 @@ public class JobPostRepository : IJobPostRepository
     private readonly IBaseRepository<PayPerHourJob> _payPerHourRepository;
     private readonly IBaseRepository<PayPerTaskJob> _payPerTaskRepository;
     private readonly IBaseRepository<PinDate> _pinDateRepository;
+    private readonly IBaseRepository<DataTier.Entities.PaymentHistory> _paymentHistoryRepository;
 
     public JobPostRepository(IDbContextFactory contextFactory)
     {
@@ -24,6 +25,7 @@ public class JobPostRepository : IJobPostRepository
         _payPerHourRepository = context.GetRepository<PayPerHourJob>()!;
         _payPerTaskRepository = context.GetRepository<PayPerTaskJob>()!;
         _pinDateRepository = context.GetRepository<PinDate>()!;
+        _paymentHistoryRepository = context.GetRepository<DataTier.Entities.PaymentHistory>()!;
     }
 
     public IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null)
@@ -31,7 +33,9 @@ public class JobPostRepository : IJobPostRepository
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob; 
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
         bool flag = publishBy != null;
-        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(flag? post => post.PublishedBy == publishBy : null , new []{expHours, expTask});
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(
+            (flag ? post => post.PublishedBy == publishBy : post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted) ,
+            new []{expHours, expTask});
         return query;
     }
 
@@ -60,12 +64,15 @@ public class JobPostRepository : IJobPostRepository
         DataTier.Entities.JobPost jobPost, 
         PayPerHourJob? payPerHourJob, 
         PayPerTaskJob? payPerTaskJob, 
-        ICollection<PinDate>? pinDates)
+        ICollection<PinDate>? pinDates,
+        DataTier.Entities.PaymentHistory newPayment)
     {
         if (pinDates != null)
         {
             jobPost.PinDates = pinDates;
         }
+
+        jobPost.PaymentHistories = new List<DataTier.Entities.PaymentHistory> { newPayment };
         await _jobPostRepository.InsertAsync(jobPost);
         if (jobPost.Type.Equals("PayPerHourJob"))
         {
@@ -87,6 +94,8 @@ public class JobPostRepository : IJobPostRepository
                 await _pinDateRepository.InsertAsync(VARIABLE);
             }
         }
+        
+        await _paymentHistoryRepository.InsertAsync(newPayment);
 
         
         await _contextFactory.SaveAllAsync();
@@ -97,12 +106,13 @@ public class JobPostRepository : IJobPostRepository
     public async Task<DataTier.Entities.JobPost> UpdateJobPost(DataTier.Entities.JobPost jobPost, 
         PayPerHourJob? payPerHourJob, 
         PayPerTaskJob? payPerTaskJob, 
-        ICollection<PinDate>? pinDates)
+        ICollection<PinDate>? pinDates,
+        DataTier.Entities.PaymentHistory newPayment)
     {
         jobPost.PinDates = pinDates;
-        
         _jobPostRepository.Modify(jobPost);
-
+        DeletePaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
+        jobPost.PaymentHistories = new List<DataTier.Entities.PaymentHistory> { newPayment };
         if (jobPost.Type.Equals("PayPerHourJob"))
         {
             if (payPerHourJob == null) throw new Exception("PayPerHourJob: Empty");
@@ -126,7 +136,8 @@ public class JobPostRepository : IJobPostRepository
                 await _pinDateRepository.InsertAsync(VARIABLE);
             }
         }
-
+        await _paymentHistoryRepository.InsertAsync(newPayment);
+        
         await _contextFactory.SaveAllAsync();
 
         return jobPost;
@@ -138,6 +149,14 @@ public class JobPostRepository : IJobPostRepository
         {
             _pinDateRepository.Delete(VARIABLE);
         }
+    }
+
+    public void DeletePaymentHistory(int jobPostId, int publishId)
+    {
+        DataTier.Entities.PaymentHistory paymentHistory =
+            _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId);
+        
+        _paymentHistoryRepository.Delete(paymentHistory);
     }
 
     public IQueryable GetPinDateByJobPost(int id)
@@ -155,13 +174,14 @@ public class JobPostRepository : IJobPostRepository
             throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
         }
 
-        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Cancle;
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Cancel;
         
         _jobPostRepository.Modify(jobPost);
 
         IQueryable<PinDate> queryPin = (IQueryable<PinDate>)GetPinDateByJobPost(jobPost.Id);
         ICollection<PinDate> list = queryPin.ToList();
         DeletePinDate(list);
+        DeletePaymentHistory(jobPost.Id, ((int)jobPost.PublishedBy)!);
         
         await _contextFactory.SaveAllAsync();
 

@@ -29,5 +29,6 @@ public static class ModuleRegister
         services.AddScoped<IJobPostService, JobPostService>();
         services.AddScoped<IAppliedJobService, AppliedJobService>();
         services.AddScoped<IPostTypeService, PostTypeService>();
+        services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
     }
 }

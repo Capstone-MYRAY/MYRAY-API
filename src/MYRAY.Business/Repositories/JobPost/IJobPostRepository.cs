@@ -12,15 +12,18 @@ public interface IJobPostRepository
         DataTier.Entities.JobPost jobPost, 
         PayPerHourJob? payPerHourJob,
         PayPerTaskJob? payPerTaskJob,
-        ICollection<PinDate>? pinDates);
+        ICollection<PinDate>? pinDates,
+        DataTier.Entities.PaymentHistory newPayment);
     Task<DataTier.Entities.JobPost> UpdateJobPost(DataTier.Entities.JobPost jobPost, 
         PayPerHourJob? payPerHourJob, 
         PayPerTaskJob? payPerTaskJob, 
-        ICollection<PinDate>? pinDates);
+        ICollection<PinDate>? pinDates,
+        DataTier.Entities.PaymentHistory newPayment);
     Task<DataTier.Entities.JobPost> DeleteJobPost(int id);
 
     void DeletePinDate(ICollection<PinDate> pinDates);
 
+    void DeletePaymentHistory(int jobPostId, int publishId);
     IQueryable GetPinDateByJobPost(int id);
 
 }
