@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.AppliedJob;
 using MYRAY.Business.Repositories.Area;
+using MYRAY.Business.Repositories.Comment;
 using MYRAY.Business.Repositories.Garden;
 using MYRAY.Business.Repositories.Guidepost;
 using MYRAY.Business.Repositories.Interface;
@@ -34,6 +35,7 @@ public static class ModuleRegister
         services.AddTransient<IPaymentHistoryRepository, PaymentHistoryRepository>();
         services.AddTransient<IPostTypeRepository, PostTypeRepository>();
         services.AddTransient<IGardenRepository, GardenRepository>();
+        services.AddTransient<ICommentRepository, CommentRepository>();
         
 
         return services;

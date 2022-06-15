@@ -27,6 +27,7 @@ public static class AutoMapperConfig
             md.ConfigPostType();
             md.ConfigPaymentHistory();
             md.ConfigGardenModule();
+            md.ConfigCommentModule();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

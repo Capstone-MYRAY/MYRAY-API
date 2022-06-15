@@ -41,7 +41,7 @@ public class AuthenticationController : ControllerBase
     /// <returns>Token and refresh token</returns>
     /// <response code="200">Returns access token and refresh token.</response>
     /// <response code="400">Returns if login information is empty.</response>
-    /// <response code="401">Returns if invalid login information.</response>
+    /// <response code="400">Returns if invalid login information.</response>
     [HttpPost]
     [Route("login")]
     [AllowAnonymous]
@@ -57,13 +57,14 @@ public class AuthenticationController : ControllerBase
         AuthenticatedResponse? response ;
         try
         {
-            response = await _authentication.LoginByPhoneAsync(bodyDto.PhoneNumber!.ConvertVNPhoneNumber(), bodyDto.Password!);
+            response = await _authentication.LoginByPhoneAsync(bodyDto.PhoneNumber!.ConvertVNPhoneNumber(),
+                bodyDto.Password!);
         }
-        catch (Exception e)
+        catch (MException e)
         {
-            return Unauthorized(e.Message);
-        }   
-        
+            return BadRequest(e.Message);
+        }
+
         return Ok(response);
     }
 
