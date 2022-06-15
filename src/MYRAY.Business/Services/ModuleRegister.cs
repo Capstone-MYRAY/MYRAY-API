@@ -3,6 +3,7 @@ using MYRAY.Business.Services.Account;
 using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.Area;
 using MYRAY.Business.Services.Authentication;
+using MYRAY.Business.Services.Garden;
 using MYRAY.Business.Services.Guidepost;
 using MYRAY.Business.Services.JobPost;
 using MYRAY.Business.Services.PostType;
@@ -30,5 +31,6 @@ public static class ModuleRegister
         services.AddScoped<IAppliedJobService, AppliedJobService>();
         services.AddScoped<IPostTypeService, PostTypeService>();
         services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
+        services.AddScoped<IGardenService, GardenService>();
     }
 }
