@@ -9,6 +9,7 @@ using MYRAY.Business.Repositories.Interface;
 using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.PaymentHistory;
 using MYRAY.Business.Repositories.PostType;
+using MYRAY.Business.Repositories.Report;
 using MYRAY.Business.Repositories.Role;
 using MYRAY.Business.Repositories.TreeType;
 
@@ -36,6 +37,7 @@ public static class ModuleRegister
         services.AddTransient<IPostTypeRepository, PostTypeRepository>();
         services.AddTransient<IGardenRepository, GardenRepository>();
         services.AddTransient<ICommentRepository, CommentRepository>();
+        services.AddTransient<IReportRepository, ReportRepository>();
         
 
         return services;

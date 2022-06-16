@@ -8,6 +8,7 @@ using MYRAY.Business.Services.Garden;
 using MYRAY.Business.Services.Guidepost;
 using MYRAY.Business.Services.JobPost;
 using MYRAY.Business.Services.PostType;
+using MYRAY.Business.Services.Report;
 using MYRAY.Business.Services.Role;
 using MYRAY.Business.Services.TreeType;
 
@@ -34,5 +35,6 @@ public static class ModuleRegister
         services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
         services.AddScoped<IGardenService, GardenService>();
         services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IReportService, ReportService>();
     }
 }

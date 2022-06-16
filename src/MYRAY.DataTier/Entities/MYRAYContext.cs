@@ -744,12 +744,11 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
-                    .HasDefaultValueSql("((0))");
+                    .HasDefaultValueSql("((1))");
 
                 entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.ReportCreatedByNavigations)
                     .HasForeignKey(d => d.CreatedBy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Report_Account");
 
                 entity.HasOne(d => d.JobPost)
