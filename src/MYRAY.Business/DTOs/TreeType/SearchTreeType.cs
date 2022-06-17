@@ -6,4 +6,5 @@ public class SearchTreeType
 {
     [DefaultValue("")]
     public string Type { get; set; } = "";
+    
 }

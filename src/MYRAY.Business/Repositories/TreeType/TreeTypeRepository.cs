@@ -25,7 +25,7 @@ public class TreeTypeRepository : ITreeTypeRepository
     public IQueryable<DataTier.Entities.TreeType> GetTreeTypes()
     {
         IQueryable<DataTier.Entities.TreeType> query =
-            _treeTypeRepository.Get(tp => tp.Status == (int)TreeTypeEnum.TreeTypeStatus.Active);
+            _treeTypeRepository.Get();
         return query;
     }
     
