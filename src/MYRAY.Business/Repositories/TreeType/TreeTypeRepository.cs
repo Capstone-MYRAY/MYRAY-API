@@ -34,7 +34,7 @@ public class TreeTypeRepository : ITreeTypeRepository
     {
         DataTier.Entities.TreeType treeType =
             (await _treeTypeRepository.GetFirstOrDefaultAsync(tp =>
-                tp.Id == id && tp.Status == (int)TreeTypeEnum.TreeTypeStatus.Active))!;
+                tp.Id == id))!;
         return treeType;
     }
 

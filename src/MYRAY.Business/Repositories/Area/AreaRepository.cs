@@ -24,7 +24,7 @@ public class AreaRepository : IAreaRepository
     /// <see cref="IAreaRepository.GetAreaByIdAsync"/>
     public async Task<DataTier.Entities.Area?> GetAreaByIdAsync(int id)
     {
-        DataTier.Entities.Area queryArea = await _areaRepository.GetFirstOrDefaultAsync(a => a.Id == id && a.Status == (int)AreaEnum.AreaStatus.Active);
+        DataTier.Entities.Area queryArea = await _areaRepository.GetFirstOrDefaultAsync(a => a.Id == id);
         if (queryArea == null)
         {
             return null;
@@ -36,7 +36,7 @@ public class AreaRepository : IAreaRepository
     /// <see cref="IAreaRepository.GetAreas"/>
     public IQueryable<DataTier.Entities.Area> GetAreas()
     {
-        IQueryable<DataTier.Entities.Area> queryArea = _areaRepository.Get(a => a.Status == (int)AreaEnum.AreaStatus.Active);
+        IQueryable<DataTier.Entities.Area> queryArea = _areaRepository.Get();
         return queryArea;
     }
 
