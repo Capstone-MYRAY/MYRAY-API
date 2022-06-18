@@ -10,15 +10,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-// Set Cors
-builder.Services.AddCors(option =>
-{
-    option.AddPolicy("CorsPolicy", builder => 
-        builder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-    );
-});
+
 
 builder.Services.Configure<FormOptions>(o =>
 {
@@ -78,12 +70,6 @@ app.UseApplicationSwagger();
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
-app.UseStaticFiles(new StaticFileOptions()
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
-    RequestPath = new PathString("/Resources")
-});
 
 app.UseApplicationSecurity();
 
