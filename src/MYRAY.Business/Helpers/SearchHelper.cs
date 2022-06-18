@@ -30,7 +30,7 @@ public static class SearchHelper
                 }
             }
 
-            if (value != null && value is int)
+            if (value != null && value is int?)
             {
                 // Build expression tree
                 //--entity
@@ -38,14 +38,14 @@ public static class SearchHelper
                 //--entity.{PropertyName}
                 var entityProp = Expression.Property(param, prop.Name);
                 //--searchValue
-                var searchValue = Expression.Constant(value);
+                var searchValue = Expression.Constant((int?)value);
+                var searchValueE = Expression.Convert(searchValue, typeof(int?));
                 //--entity.{PropertyName}.Contains(searchValue)
-                var body = Expression.Equal(entityProp, searchValue);
+                var body = Expression.Equal(entityProp, searchValueE);
                 //--entity => entity.{PropertyName}.Contains(searchValue)
                 var exp = Expression.Lambda<Func<TEntity, bool>>(body, param);
                 //entity.{PropertyName}.Contains(searchValue)
                 query = query.Where(exp);
-
             }
         }
         

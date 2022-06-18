@@ -41,7 +41,7 @@ public class AreaController : ControllerBase
     /// <response code="204">Return if list of area is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAreaDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAreas(

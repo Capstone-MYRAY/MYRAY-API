@@ -8,5 +8,7 @@ public static class MediaType
     /// Json config
     /// </summary>
     public const string ApplicationJson = "application/json";
+    public const string MultiPartFormData = "multipart/form-data";
     // public const string ApplicationProblemJson = "application/problem+json";
+    
 }
