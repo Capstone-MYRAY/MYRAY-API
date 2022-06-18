@@ -11,11 +11,17 @@ using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.Configure<IISServerOptions>(p =>
+{
+    p.MaxRequestBodySize = int.MaxValue;
+});
 builder.Services.Configure<FormOptions>(o =>
 {
+    o.ValueLengthLimit = int.MaxValue;
     o.ValueCountLimit = int.MaxValue;
-    o.MultipartBodyLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = long.MaxValue;
+    o.MultipartBoundaryLengthLimit = int.MaxValue;
+    o.MultipartHeadersLengthLimit = int.MaxValue;
     o.MemoryBufferThreshold = int.MaxValue;
 });
 
@@ -59,6 +65,14 @@ builder.Services.RegisterBusinessModule();
 //
 
 var app = builder.Build();
+
+Directory.CreateDirectory("upload");
+app.UseFileServer(new FileServerOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "upload")),
+    RequestPath = "/upload",
+    EnableDirectoryBrowsing = true,
+});
 
 // Configure the HTTP request pipeline.
 app.UseCors(c

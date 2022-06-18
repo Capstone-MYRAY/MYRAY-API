@@ -1,40 +1,64 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using MYRAY.Business.DTOs.Files;
 
 namespace MYRAY.Business.Services.File;
 
 public class FileService :  IFileService
 {
     private readonly IHostEnvironment _hostEnvironment;
+    private readonly IConfiguration _configuration;
+    private const string DIRECTORY = "upload";
 
-    public FileService(IHostEnvironment hostEnvironment)
+    public FileService(IHostEnvironment hostEnvironment, IConfiguration configuration)
     {
         _hostEnvironment = hostEnvironment;
+        _configuration = configuration;
     }
 
-    public void UploadFile(List<IFormFile> files, string directory)
+    public async Task<FilesUpload> UploadFile(List<IFormFile> files)
     {
-        directory = directory ?? string.Empty;  
-        var target = Path.Combine(_hostEnvironment.ContentRootPath, directory);
-        Console.WriteLine(target);
-        Directory.CreateDirectory(target);  
-  
+        string domain = _configuration.GetSection("Domain").Value;
+        var target = Path.Combine(_hostEnvironment.ContentRootPath, DIRECTORY);
+        Directory.CreateDirectory(target);
+        List<LinkFile> listLink = new List<LinkFile>();
         files.ForEach(async file =>  
         {  
-            if (file.Length <= 0) return;  
-            var filePath = Path.Combine(target, file.FileName);  
-            using (var stream = new FileStream(filePath, FileMode.Create))  
-            {  
-                await file.CopyToAsync(stream);  
-            }  
-        });  
-        
+            if (file.Length <= 0) return;
+            int indexOf = file.FileName.LastIndexOf(".", StringComparison.Ordinal);
+            var extension = file.FileName.Substring(indexOf);
+            var filename = Guid.NewGuid() + extension;
+            var filePath = Path.Combine(target, filename);
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+            listLink.Add(new LinkFile
+            {
+                Link = $"{domain}/{filename}",
+                Filename = filename,
+                Size = SizeConverter(file.Length),
+                Type = file.ContentType
+            });
+        });
+        FilesUpload result = new FilesUpload
+        {
+            Count = files.Count,
+            ListFile = listLink,
+        };
+
+        return result;
     }
 
-    public (string fileType, byte[] archiveData, string archiveName) DownloadFiles(string directory)
+    public void DeleteFile(List<string> listFilename)
     {
-        throw new NotImplementedException();
+        var target = Path.Combine(_hostEnvironment.ContentRootPath, DIRECTORY);
+        foreach (var filename in listFilename)
+        {
+            var path = target + "/" + filename;
+            System.IO.File.Delete(path);
+        }
     }
+
 
     public string SizeConverter(long bytes)
     {

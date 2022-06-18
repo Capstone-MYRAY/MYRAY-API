@@ -1,6 +1,6 @@
 namespace MYRAY.Business.Enums;
 
-public class FileFolder
+public class FileFolderEnum
 {
     public enum Folder
     {
@@ -8,6 +8,9 @@ public class FileFolder
         
         Garden = 2,
         
+        Guidepost = 3,
+        
+        Message = 4
         
     }
 }

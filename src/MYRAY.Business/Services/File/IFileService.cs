@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Http;
+using MYRAY.Business.DTOs.Files;
 
 namespace MYRAY.Business.Services.File;
 
 public interface IFileService
 {
-    void UploadFile(List<IFormFile> files, string directory);
+    Task<FilesUpload> UploadFile(List<IFormFile> files);
 
-    (string fileType, byte[] archiveData, string archiveName) DownloadFiles(string directory);
-
+    void DeleteFile(List<string> listFilename);
     string SizeConverter(long bytes);
 
 }
