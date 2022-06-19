@@ -23,23 +23,25 @@ public class FileService :  IFileService
         var target = Path.Combine(_hostEnvironment.ContentRootPath, DIRECTORY);
         Directory.CreateDirectory(target);
         List<LinkFile> listLink = new List<LinkFile>();
-        files.ForEach(async file =>  
-        {  
-            if (file.Length <= 0) return;
-            int indexOf = file.FileName.LastIndexOf(".", StringComparison.Ordinal);
-            var extension = file.FileName.Substring(indexOf);
+        foreach (var formFile in files)
+        {
+            int indexOf = formFile.FileName.LastIndexOf(".", StringComparison.Ordinal);
+            var extension = formFile.FileName.Substring(indexOf);
             var filename = Guid.NewGuid() + extension;
             var filePath = Path.Combine(target, filename);
-            await using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
-            listLink.Add(new LinkFile
+
+            using (var stream = System.IO.File.Create(filePath))
             {
-                Link = $"{domain}/{filename}",
-                Filename = filename,
-                Size = SizeConverter(file.Length),
-                Type = file.ContentType
-            });
-        });
+                listLink.Add(new LinkFile
+                {
+                    Link = $"{domain}/{filename}",
+                    Filename = filename,
+                    Size = SizeConverter(formFile.Length),
+                    Type = formFile.ContentType
+                });
+                await formFile.CopyToAsync(stream);
+            }
+        }
         FilesUpload result = new FilesUpload
         {
             Count = files.Count,
