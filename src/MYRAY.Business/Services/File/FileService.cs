@@ -34,8 +34,9 @@ public class FileService :  IFileService
             {
                 listLink.Add(new LinkFile
                 {
-                    Link = $"{domain}/{filename}",
+                    Link = $"{domain}/{DIRECTORY}/{filename}",
                     Filename = filename,
+                    Oldname = formFile.FileName,
                     Size = SizeConverter(formFile.Length),
                     Type = formFile.ContentType
                 });
