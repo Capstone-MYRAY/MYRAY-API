@@ -12,4 +12,6 @@ public class InsertAreaDto
     
     [Required]
     public string? Commune { get; set; }
+
+    public int? ModeratorId { get; set; }
 }

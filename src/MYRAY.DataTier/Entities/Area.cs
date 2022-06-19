@@ -7,8 +7,8 @@ namespace MYRAY.DataTier.Entities
     {
         public Area()
         {
+            AreaAccounts = new HashSet<AreaAccount>();
             Gardens = new HashSet<Garden>();
-            Accounts = new HashSet<Account>();
         }
 
         public int Id { get; set; }
@@ -17,8 +17,7 @@ namespace MYRAY.DataTier.Entities
         public string? Commune { get; set; }
         public int? Status { get; set; }
 
+        public virtual ICollection<AreaAccount> AreaAccounts { get; set; }
         public virtual ICollection<Garden> Gardens { get; set; }
-
-        public virtual ICollection<Account> Accounts { get; set; }
     }
 }

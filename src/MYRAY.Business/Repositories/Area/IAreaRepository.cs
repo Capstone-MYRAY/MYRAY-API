@@ -23,14 +23,14 @@ public interface IAreaRepository
     /// </summary>
     /// <param name="area">Area Object to insert</param>
     /// <returns>A new area.</returns>
-    Task<DataTier.Entities.Area> CreateAreaAsync(DataTier.Entities.Area area);
+    Task<DataTier.Entities.Area> CreateAreaAsync(DataTier.Entities.Area area, int? moderatorId);
 
     /// <summary>
     /// Update an exist area.
     /// </summary>
     /// <param name="area">Area Object to update</param>
     /// <returns>A new updated area.</returns>
-    Task<DataTier.Entities.Area> UpdateAreaAsync(DataTier.Entities.Area area);
+    Task<DataTier.Entities.Area> UpdateAreaAsync(DataTier.Entities.Area area, int? moderatorId);
 
     /// <summary>
     /// Delete an area by change status to Inactive

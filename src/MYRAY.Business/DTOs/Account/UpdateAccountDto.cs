@@ -14,4 +14,6 @@ public class UpdateAccountDto
     // public double Balance { get; set; }
     // public int Point { get; set; }
     public string? AboutMe { get; set; }
+    
+    public int? AreaId { get; set; }
 }
