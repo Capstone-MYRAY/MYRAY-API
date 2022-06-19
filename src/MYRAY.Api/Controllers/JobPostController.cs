@@ -296,5 +296,60 @@ public class JobPostController : ControllerBase
         }
         return Task.FromResult<IActionResult>(Ok(result));
     }
+    
+    /// <summary>
+    /// [Moderator] Endpoint for Approve job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Returns if approve success</response>
+    /// <response code="400">Returns if job post not existed or posted</response>
+    /// <response code="401">Returns if invalid authorize</response>
+    [HttpPatch("approveJob/{jobPostId}")]
+    [Authorize(Roles = UserRole.MODERATOR)]
+    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ApproveJobPost(int jobPostId)
+    {
+        try
+        {
+            var result = await _jobPostService.ApproveJobPost(jobPostId);
 
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    
+    /// <summary>
+    /// [Moderator] Endpoint for Reject job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Returns if reject success</response>
+    /// <response code="400">Returns if job post not existed or posted</response>
+    /// <response code="401">Returns if invalid authorize</response>
+    [HttpPatch("rejectJob/{jobPostId}")]
+    // [Authorize(Roles = UserRole.MODERATOR)]
+    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> RejectJobPost(int jobPostId)
+    {
+        try
+        {
+            var result = await _jobPostService.RejectJobPost(jobPostId);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+    
 }

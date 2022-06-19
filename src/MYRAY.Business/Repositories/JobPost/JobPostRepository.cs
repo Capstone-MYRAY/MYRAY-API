@@ -16,6 +16,7 @@ public class JobPostRepository : IJobPostRepository
     private readonly IBaseRepository<PayPerTaskJob> _payPerTaskRepository;
     private readonly IBaseRepository<PinDate> _pinDateRepository;
     private readonly IBaseRepository<DataTier.Entities.PaymentHistory> _paymentHistoryRepository;
+    private readonly IBaseRepository<DataTier.Entities.Account> _accountRepository;
 
     public JobPostRepository(IDbContextFactory contextFactory)
     {
@@ -26,6 +27,7 @@ public class JobPostRepository : IJobPostRepository
         _payPerTaskRepository = context.GetRepository<PayPerTaskJob>()!;
         _pinDateRepository = context.GetRepository<PinDate>()!;
         _paymentHistoryRepository = context.GetRepository<DataTier.Entities.PaymentHistory>()!;
+        _accountRepository = context.GetRepository<DataTier.Entities.Account>()!;
     }
 
     public IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null)
@@ -164,7 +166,29 @@ public class JobPostRepository : IJobPostRepository
         var result = _pinDateRepository.Get(p => p.JobPostId == id);
         return result;
     }
-    
+
+    public void ApprovePaymentHistory(int jobPostId, int publishId)
+    {
+        DataTier.Entities.PaymentHistory paymentHistory =
+            _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)!;
+        DataTier.Entities.Account account = _accountRepository.GetById(publishId)!;
+
+        if (paymentHistory.UsedPoint - paymentHistory.EarnedPoint > account.Point)
+        {
+            throw new Exception("Point in account not enough");
+        }
+
+        if (paymentHistory.ActualPrice > account.Balance)
+        {
+            throw new Exception("Balance is not enough");
+        }
+
+        account.Balance -= paymentHistory.ActualPrice;
+        account.Point -= paymentHistory.UsedPoint;
+        account.Point += paymentHistory.EarnedPoint;
+        paymentHistory.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid;
+    }
+
     public async Task<DataTier.Entities.JobPost> DeleteJobPost(int id)
     {
         DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(id);
@@ -187,4 +211,53 @@ public class JobPostRepository : IJobPostRepository
 
         return jobPost;
     }
+    
+    public async Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId)
+    {
+        DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetByIdAsync(jobPostId))!;
+        
+        if (jobPost == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
+        }
+        
+        IQueryable<PinDate> queryPin = (IQueryable<PinDate>)GetPinDateByJobPost(jobPost.Id);
+        if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.Posted)
+        {
+            throw new Exception("JobPost has been approved");
+        }
+        ICollection<PinDate> list = queryPin.ToList();
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
+        foreach (var pinData in list)
+        {
+            pinData.Status = 1;
+        }
+        ApprovePaymentHistory(jobPostId, (int)jobPost.PublishedBy);
+        _jobPostRepository.Modify(jobPost);
+        await _contextFactory.SaveAllAsync();
+
+        return jobPost;
+    }
+
+    public async Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId)
+    {
+        DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(jobPostId);
+        
+        if (jobPost == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
+        }
+        
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Reject;
+        _jobPostRepository.Modify(jobPost);
+        IQueryable<PinDate> queryPin = (IQueryable<PinDate>)GetPinDateByJobPost(jobPost.Id);
+        ICollection<PinDate> list = queryPin.ToList();
+        DeletePinDate(list);
+        DeletePaymentHistory(jobPost.Id, ((int)jobPost.PublishedBy)!);
+        
+        await _contextFactory.SaveAllAsync();
+
+        return jobPost;
+    }
+
 }

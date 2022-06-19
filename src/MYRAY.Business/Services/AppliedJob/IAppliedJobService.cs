@@ -15,9 +15,4 @@ public interface IAppliedJobService
     public Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId);
     public Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId);
     
-    
-    
-    
-
-
 }
