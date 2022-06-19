@@ -10,6 +10,7 @@ using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
 
 namespace MYRAY.Business.Services.Account;
+
 /// <summary>
 /// Account Service class.
 /// </summary>
@@ -28,11 +29,13 @@ public class AccountService : IAccountService
         _mapper = mapper;
         _accountRepository = accountRepository;
     }
+
     /// <inheritdoc cref="IAccountService.GetAccounts"/>
-    public ResponseDto.CollectiveResponse<GetAccountDetail> GetAccounts(PagingDto pagingDto, SortingDto<AccountEnum.AccountSortCriteria> sortingDto, SearchAccountDto searchAccountDto)
+    public ResponseDto.CollectiveResponse<GetAccountDetail> GetAccounts(PagingDto pagingDto,
+        SortingDto<AccountEnum.AccountSortCriteria> sortingDto, SearchAccountDto searchAccountDto)
     {
         IQueryable<DataTier.Entities.Account> queryAccount = _accountRepository.GetAccounts();
-        
+
         //--Apply Search
         queryAccount = queryAccount.GetWithSearch(searchAccountDto);
 
@@ -45,7 +48,7 @@ public class AccountService : IAccountService
 
         return result;
     }
-    
+
     /// <inheritdoc cref="IAccountService.GetAccountByIdAsync"/>
     public async Task<GetAccountDetail> GetAccountByIdAsync(int? id)
     {
@@ -53,7 +56,7 @@ public class AccountService : IAccountService
         {
             throw new MException(StatusCodes.Status400BadRequest, "ID is not empty");
         }
-   
+
         if (!int.TryParse(id.ToString(), out _))
         {
             throw new MException(StatusCodes.Status400BadRequest, "ID must be Number");
@@ -72,7 +75,7 @@ public class AccountService : IAccountService
         {
             throw new MException(StatusCodes.Status400BadRequest, "Phone number is not empty");
         }
-        
+
         DataTier.Entities.Account queryAccount = await _accountRepository.GetAccountByPhoneAsync((string)phoneNumber);
 
         GetAccountDetail accountDto = _mapper.Map<GetAccountDetail>(queryAccount);
@@ -85,13 +88,14 @@ public class AccountService : IAccountService
     {
         if (bodyDto is null)
         {
-            throw new MException(StatusCodes.Status400BadRequest, $"{nameof(InsertAccountDto)} is Null", nameof(bodyDto));
+            throw new MException(StatusCodes.Status400BadRequest, $"{nameof(InsertAccountDto)} is Null",
+                nameof(bodyDto));
         }
 
         DataTier.Entities.Account newAccount = _mapper.Map<DataTier.Entities.Account>(bodyDto);
         newAccount.PhoneNumber = newAccount.PhoneNumber.ConvertVNPhoneNumber();
         Console.WriteLine(newAccount.PhoneNumber);
-        newAccount = await _accountRepository.CreateAccountAsync(newAccount);
+        newAccount = await _accountRepository.CreateAccountAsync(newAccount, bodyDto.AreaId);
 
         GetAccountDetail newAccountDto = _mapper.Map<GetAccountDetail>(newAccount);
 
@@ -110,7 +114,7 @@ public class AccountService : IAccountService
         {
             DataTier.Entities.Account account = await _accountRepository.GetAccountByIdAsync(id);
             account.Password = newPassword;
-            account = await _accountRepository.UpdateAccountAsync(account);
+            account = await _accountRepository.UpdateAccountAsync(account, null);
             UpdateAccountDto updateAccountDto = _mapper.Map<UpdateAccountDto>(account);
             return updateAccountDto;
         }
@@ -130,13 +134,15 @@ public class AccountService : IAccountService
             {
                 throw new MException(StatusCodes.Status400BadRequest, $"{nameof(UpdateAccountDto)} is Null");
             }
+
             DataTier.Entities.Account updateAccount = _mapper.Map<DataTier.Entities.Account>(bodyDto);
-            updateAccount = await _accountRepository.UpdateAccountAsync(updateAccount);
+            updateAccount = await _accountRepository.UpdateAccountAsync(updateAccount, bodyDto.AreaId);
 
             updateAccountDto = _mapper.Map<UpdateAccountDto>(updateAccount);
         }
         catch (MException e)
         {
+            if (e.Message.Contains("Uni__Phone'")) throw new Exception("Phone Number has been used.");
             throw new MException(StatusCodes.Status400BadRequest, e.Message, nameof(e.TargetSite.Name));
         }
 
@@ -152,8 +158,9 @@ public class AccountService : IAccountService
             {
                 throw new MException(StatusCodes.Status400BadRequest, "Id is null");
             }
+
             DataTier.Entities.Account deleteAccount = await _accountRepository.DeleteAccountAsync((int)id);
-             
+
             return true;
         }
         catch (Exception e)
@@ -192,7 +199,8 @@ public class AccountService : IAccountService
                 throw new MException(StatusCodes.Status400BadRequest, "Id is null");
             }
 
-            DataTier.Entities.Account topUpAccount = await _accountRepository.TopUpAccountByIdAsync((int)id, topUp, createBy);
+            DataTier.Entities.Account topUpAccount =
+                await _accountRepository.TopUpAccountByIdAsync((int)id, topUp, createBy);
             GetAccountDetail result = _mapper.Map<GetAccountDetail>(topUpAccount);
             return result;
         }

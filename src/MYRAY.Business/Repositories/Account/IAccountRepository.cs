@@ -36,14 +36,14 @@ public interface IAccountRepository
     /// </summary>
     /// <param name="account">Account object to create.</param>
     /// <returns>A new account</returns>
-    Task<DataTier.Entities.Account> CreateAccountAsync(DataTier.Entities.Account account);
+    Task<DataTier.Entities.Account> CreateAccountAsync(DataTier.Entities.Account account, int? areaId);
     
     /// <summary>
     /// Update an exist account
     /// </summary>
     /// <param name="account">Account object to update</param>
     /// <returns>A new updated account</returns>
-    Task<DataTier.Entities.Account> UpdateAccountAsync(DataTier.Entities.Account account);
+    Task<DataTier.Entities.Account> UpdateAccountAsync(DataTier.Entities.Account account, int? areaId);
     
     /// <summary>
     /// Delete an existed account

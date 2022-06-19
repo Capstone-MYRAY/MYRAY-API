@@ -7,6 +7,7 @@ using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Area;
+using MYRAY.Business.Repositories.AreaAccount;
 
 namespace MYRAY.Business.Services.Area;
 /// <summary>
@@ -75,10 +76,10 @@ public class AreaService : IAreaService
         }
 
         DataTier.Entities.Area newArea = _mapper.Map<DataTier.Entities.Area>(bodyDto);
-        newArea = await _areaRepository.CreateAreaAsync(newArea);
-
+        newArea = await _areaRepository.CreateAreaAsync(newArea, bodyDto.ModeratorId);
+       
         GetAreaDetail newAreaDto = _mapper.Map<GetAreaDetail>(newArea);
-
+        
         return newAreaDto;
     }
 
@@ -93,7 +94,7 @@ public class AreaService : IAreaService
                 throw new MException(StatusCodes.Status400BadRequest, $"{nameof(UpdateAreaDto)} is Null");
             }
             DataTier.Entities.Area updateArea = _mapper.Map<DataTier.Entities.Area>(bodyDto);
-            updateArea = await _areaRepository.UpdateAreaAsync(updateArea);
+            updateArea = await _areaRepository.UpdateAreaAsync(updateArea, bodyDto.ModeratorId);
 
              updateAreaDto = _mapper.Map<UpdateAreaDto>(updateArea);
         }

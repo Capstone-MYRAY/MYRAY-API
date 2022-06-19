@@ -79,7 +79,7 @@ public class AuthenticationService : IAuthenticationService
             .GetSection("RefreshTokenValidityInDays").Value;
         queryAccount.RefreshTokenExpiryTime = DateTime.Now.AddDays(int.Parse(refreshToValidity));
 
-        await _accountRepository.UpdateAccountAsync(queryAccount);
+        await _accountRepository.UpdateAccountAsync(queryAccount, null);
 
         return new AuthenticatedResponse
         {
@@ -105,7 +105,7 @@ public class AuthenticationService : IAuthenticationService
         string newRefreshToken = GenerateRefreshToken();
 
         account.RefreshToken = newRefreshToken;
-        await _accountRepository.UpdateAccountAsync(account);
+        await _accountRepository.UpdateAccountAsync(account, null);
 
         return new AuthenticatedResponse
         {
@@ -121,7 +121,7 @@ public class AuthenticationService : IAuthenticationService
 
         account.RefreshToken = null;
 
-        await _accountRepository.UpdateAccountAsync(account);
+        await _accountRepository.UpdateAccountAsync(account, null);
     }
 
     private string GenerateAccessToken(IEnumerable<Claim> claims)
@@ -191,7 +191,7 @@ public class AuthenticationService : IAuthenticationService
                 phoneNumber);
             account.Password = CreatePassword(6);
             
-            account = await _accountRepository.UpdateAccountAsync(account);
+            account = await _accountRepository.UpdateAccountAsync(account, null);
             string msg = $"[MYRAY] Mật khẩu mới của bạn là: {account.Password}";
             var result = await SendSMSHelper.SendSMSTelnyx(account.PhoneNumber, msg, _configuration);
             Console.WriteLine("Send SMS to: " + account.PhoneNumber);

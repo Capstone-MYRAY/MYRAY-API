@@ -152,8 +152,7 @@ public class AccountController : ControllerBase
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            return BadRequest(new ErrorCustomMessage {Message = e.Message, Target = nameof(accountDto)});
+            return BadRequest(new ErrorCustomMessage {Message = e.Message, Target = nameof(e.Source)});
         }
     }
 

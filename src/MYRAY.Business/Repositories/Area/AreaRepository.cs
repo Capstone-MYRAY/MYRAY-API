@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
+using MYRAY.Business.Repositories.AreaAccount;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
 
@@ -9,15 +10,17 @@ namespace MYRAY.Business.Repositories.Area;
 public class AreaRepository : IAreaRepository
 {
     private readonly IBaseRepository<DataTier.Entities.Area>? _areaRepository;
+    private readonly IAreaAccountRepository _areaAccountRepository;
     private readonly IDbContextFactory _dbContextFactory;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="AreaRepository"/> class.
     /// </summary>
     /// <param name="dbContextFactory">Injection of <see cref="DbContextFactory"/></param>
-    public AreaRepository(IDbContextFactory dbContextFactory)
+    public AreaRepository(IDbContextFactory dbContextFactory, IAreaAccountRepository areaAccountRepository)
     {
         _dbContextFactory = dbContextFactory;
+        _areaAccountRepository = areaAccountRepository;
         _areaRepository = _dbContextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Area>();
     }
 
@@ -41,9 +44,18 @@ public class AreaRepository : IAreaRepository
     }
 
     /// <see cref="IAreaRepository.CreateAreaAsync"/>
-    public async Task<DataTier.Entities.Area> CreateAreaAsync(DataTier.Entities.Area area)
+    public async Task<DataTier.Entities.Area> CreateAreaAsync(DataTier.Entities.Area area, int? moderatorId)
     {
         await _areaRepository.InsertAsync(area);
+        
+        if (moderatorId != null)
+        {
+            await _areaAccountRepository.DeleteAreaAccountByArea(area.Id);
+            await _areaAccountRepository.DeleteAreaAccountByAccount((int)moderatorId);
+
+            area.AreaAccounts = new List<DataTier.Entities.AreaAccount>() { new DataTier.Entities.AreaAccount(){ AreaId = area.Id, AccountId = (int)moderatorId} };
+            // await _areaAccountRepository.CreateAreaAccount(area.Id, (int)moderatorId);
+        }
 
         await _dbContextFactory.SaveAllAsync();
 
@@ -51,9 +63,18 @@ public class AreaRepository : IAreaRepository
     }
 
     /// <see cref="IAreaRepository.UpdateAreaAsync"/>
-    public async Task<DataTier.Entities.Area> UpdateAreaAsync(DataTier.Entities.Area area)
+    public async Task<DataTier.Entities.Area> UpdateAreaAsync(DataTier.Entities.Area area, int? moderatorId)
     {
         _areaRepository?.Update(area);
+        
+        if (moderatorId != null)
+        {
+            await _areaAccountRepository.DeleteAreaAccountByArea(area.Id);
+            await _areaAccountRepository.DeleteAreaAccountByAccount((int)moderatorId);
+
+            // area.AreaAccounts = new List<DataTier.Entities.AreaAccount>() { new DataTier.Entities.AreaAccount(){ AreaId = area.Id, AccountId = (int)moderatorId} };
+            await _areaAccountRepository.CreateAreaAccount(area.Id, (int)moderatorId);
+        }
 
         await _dbContextFactory.SaveAllAsync();
 

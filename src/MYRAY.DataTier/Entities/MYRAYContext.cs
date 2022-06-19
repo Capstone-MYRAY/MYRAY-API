@@ -19,6 +19,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<Account> Accounts { get; set; } = null!;
         public virtual DbSet<AppliedJob> AppliedJobs { get; set; } = null!;
         public virtual DbSet<Area> Areas { get; set; } = null!;
+        public virtual DbSet<AreaAccount> AreaAccounts { get; set; } = null!;
         public virtual DbSet<Attendance> Attendances { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
@@ -48,6 +49,9 @@ namespace MYRAY.DataTier.Entities
             modelBuilder.Entity<Account>(entity =>
             {
                 entity.ToTable("Account");
+
+                entity.HasIndex(e => e.PhoneNumber, "Uni__Phone")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -126,23 +130,6 @@ namespace MYRAY.DataTier.Entities
                             j.IndexerProperty<int>("AccountId").HasColumnName("account_id");
 
                             j.IndexerProperty<int>("BookmarkId").HasColumnName("bookmark_id");
-                        });
-
-                entity.HasMany(d => d.Areas)
-                    .WithMany(p => p.Accounts)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "AreaAccount",
-                        l => l.HasOne<Area>().WithMany().HasForeignKey("AreaId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_AreaAccount_Area"),
-                        r => r.HasOne<Account>().WithMany().HasForeignKey("AccountId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_AreaAccount_Account"),
-                        j =>
-                        {
-                            j.HasKey("AccountId", "AreaId");
-
-                            j.ToTable("AreaAccount");
-
-                            j.IndexerProperty<int>("AccountId").HasColumnName("account_id");
-
-                            j.IndexerProperty<int>("AreaId").HasColumnName("area_id");
                         });
 
                 entity.HasMany(d => d.Bookmarks)
@@ -228,6 +215,33 @@ namespace MYRAY.DataTier.Entities
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
+            });
+
+            modelBuilder.Entity<AreaAccount>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.AreaId });
+
+                entity.ToTable("AreaAccount");
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+
+                entity.Property(e => e.AreaId).HasColumnName("area_id");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_date");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.AreaAccounts)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AreaAccount_Account");
+
+                entity.HasOne(d => d.Area)
+                    .WithMany(p => p.AreaAccounts)
+                    .HasForeignKey(d => d.AreaId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_AreaAccount_Area");
             });
 
             modelBuilder.Entity<Attendance>(entity =>
