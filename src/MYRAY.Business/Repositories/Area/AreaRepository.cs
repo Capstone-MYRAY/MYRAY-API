@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.AreaAccount;
@@ -27,7 +29,9 @@ public class AreaRepository : IAreaRepository
     /// <see cref="IAreaRepository.GetAreaByIdAsync"/>
     public async Task<DataTier.Entities.Area?> GetAreaByIdAsync(int id)
     {
-        DataTier.Entities.Area queryArea = await _areaRepository.GetFirstOrDefaultAsync(a => a.Id == id);
+        DataTier.Entities.Area queryArea = await _areaRepository.Get(a => a.Id == id)
+            .Include(a =>a.AreaAccounts)
+            .ThenInclude(acc => acc.Account).FirstOrDefaultAsync();
         if (queryArea == null)
         {
             return null;
@@ -39,7 +43,9 @@ public class AreaRepository : IAreaRepository
     /// <see cref="IAreaRepository.GetAreas"/>
     public IQueryable<DataTier.Entities.Area> GetAreas()
     {
-        IQueryable<DataTier.Entities.Area> queryArea = _areaRepository.Get();
+        IQueryable<DataTier.Entities.Area> queryArea = _areaRepository.Get()
+            .Include(a => a.AreaAccounts)
+            .ThenInclude(b => b.Account);
         return queryArea;
     }
 
