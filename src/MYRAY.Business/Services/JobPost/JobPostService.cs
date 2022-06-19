@@ -108,7 +108,7 @@ public class JobPostService : IJobPostService
         DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
         //--Calculate Price
-        float aPriceJobPost = (float)(pricePoint * newJobPost.NumPublishDay);
+        float aPriceJobPost = (float)(priceJobPost * newJobPost.NumPublishDay);
         float aPricePinPost = (float)(postType.Price * jobPost.NumberPinDay);
         float aPriceUsePoint = 0;
         //-- Check use point
@@ -187,7 +187,7 @@ public class JobPostService : IJobPostService
         DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
         //--Calculate Price
-        float aPriceJobPost = (float)(pricePoint * updateJobPost.NumPublishDay);
+        float aPriceJobPost = (float)(priceJobPost * updateJobPost.NumPublishDay);
         float aPricePinPost = (float)(postType.Price * jobPost.NumberPinDay);
         float aPriceUsePoint = 0;
         //-- Check use point
@@ -224,6 +224,20 @@ public class JobPostService : IJobPostService
     {
         DataTier.Entities.JobPost deleteGuidepost = await _jobPostRepository.DeleteJobPost(jobPostId);
         var result = _mapper.Map<JobPostDetail>(deleteGuidepost);
+        return result;
+    }
+
+    public async Task<JobPostDetail> ApproveJobPost(int jobPostId)
+    {
+        var jobPost = await _jobPostRepository.ApproveJobPost(jobPostId);
+        var result = _mapper.Map<JobPostDetail>(jobPost);
+        return result;
+    }
+
+    public async Task<JobPostDetail> RejectJobPost(int jobPostId)
+    {
+        var jobPost = await _jobPostRepository.RejectJobPost(jobPostId);
+        var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
     }
 }
