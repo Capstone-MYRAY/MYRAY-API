@@ -29,6 +29,7 @@ public static class AutoMapperConfig
             md.ConfigGardenModule();
             md.ConfigCommentModule();
             md.ConfigReportModule();
+            md.ConfigFeedbackModule();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

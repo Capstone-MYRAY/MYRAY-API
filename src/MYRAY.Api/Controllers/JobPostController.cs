@@ -313,7 +313,8 @@ public class JobPostController : ControllerBase
     {
         try
         {
-            var result = await _jobPostService.ApproveJobPost(jobPostId);
+            var accountId = int.Parse(User.FindFirst("id")?.Value!);
+            var result = await _jobPostService.ApproveJobPost(jobPostId, accountId);
 
             return Ok(result);
         }
@@ -334,14 +335,15 @@ public class JobPostController : ControllerBase
     /// <response code="400">Returns if job post not existed or posted</response>
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("rejectJob/{jobPostId}")]
-    // [Authorize(Roles = UserRole.MODERATOR)]
+    [Authorize(Roles = UserRole.MODERATOR)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RejectJobPost(int jobPostId)
     {
         try
         {
-            var result = await _jobPostService.RejectJobPost(jobPostId);
+            var accountId = int.Parse(User.FindFirst("id")?.Value!);
+            var result = await _jobPostService.RejectJobPost(jobPostId, accountId);
 
             return Ok(result);
         }

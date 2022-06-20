@@ -4,6 +4,7 @@ using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.Area;
 using MYRAY.Business.Services.Authentication;
 using MYRAY.Business.Services.Comment;
+using MYRAY.Business.Services.Feedback;
 using MYRAY.Business.Services.File;
 using MYRAY.Business.Services.Garden;
 using MYRAY.Business.Services.Guidepost;
@@ -38,5 +39,6 @@ public static class ModuleRegister
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IFileService, FileService>();
+        services.AddScoped<IFeedbackService, FeedbackService>();
     }
 }
