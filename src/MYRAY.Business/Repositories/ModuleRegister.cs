@@ -4,6 +4,7 @@ using MYRAY.Business.Repositories.AppliedJob;
 using MYRAY.Business.Repositories.Area;
 using MYRAY.Business.Repositories.AreaAccount;
 using MYRAY.Business.Repositories.Comment;
+using MYRAY.Business.Repositories.Feedback;
 using MYRAY.Business.Repositories.Garden;
 using MYRAY.Business.Repositories.Guidepost;
 using MYRAY.Business.Repositories.Interface;
@@ -40,6 +41,7 @@ public static class ModuleRegister
         services.AddTransient<ICommentRepository, CommentRepository>();
         services.AddTransient<IReportRepository, ReportRepository>();
         services.AddTransient<IAreaAccountRepository, AreaAccountRepository>();
+        services.AddTransient<IFeedbackRepository, FeedbackRepository>();
         
 
         return services;

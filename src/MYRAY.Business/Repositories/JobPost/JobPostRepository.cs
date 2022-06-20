@@ -182,7 +182,7 @@ public class JobPostRepository : IJobPostRepository
         {
             throw new Exception("Balance is not enough");
         }
-
+        
         account.Balance -= paymentHistory.ActualPrice;
         account.Point -= paymentHistory.UsedPoint;
         account.Point += paymentHistory.EarnedPoint;
@@ -212,7 +212,7 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
     
-    public async Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId)
+    public async Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId, int approvedBy)
     {
         DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetByIdAsync(jobPostId))!;
         
@@ -228,6 +228,8 @@ public class JobPostRepository : IJobPostRepository
         }
         ICollection<PinDate> list = queryPin.ToList();
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
+        jobPost.ApprovedDate = DateTime.Now;
+        jobPost.ApprovedBy = approvedBy;
         foreach (var pinData in list)
         {
             pinData.Status = 1;
@@ -239,7 +241,7 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
-    public async Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId)
+    public async Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId, int approvedBy)
     {
         DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(jobPostId);
         

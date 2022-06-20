@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using AutoMapper;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.DataTier.Entities;
@@ -8,7 +9,10 @@ public static class JobPostProfiles
 {
     public static void ConfigJobPost(this IMapperConfigurationExpression configuration)
     {
-        configuration.CreateMap<DataTier.Entities.JobPost, JobPostDetail>().ReverseMap();
+        configuration.CreateMap<DataTier.Entities.JobPost, JobPostDetail>()
+            .ForMember(des => des.PublishedName,
+                expression =>  expression.MapFrom(src => src.PublishedByNavigation!.Fullname));
+        configuration.CreateMap<JobPostDetail, DataTier.Entities.JobPost>();
         configuration.CreateMap<DataTier.Entities.JobPost, CreateJobPost>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.JobPost, UpdateJobPost>().ReverseMap();
 

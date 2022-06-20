@@ -13,6 +13,7 @@ public class JobPostDetail
     public DateTime? EndJobDate { get; set; }
     public int? NumPublishDay { get; set; }
     public int PublishedBy { get; set; }
+    public string PublishedName { get; set; }
     public DateTime? PublishedDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }

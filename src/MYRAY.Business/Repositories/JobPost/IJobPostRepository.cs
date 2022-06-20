@@ -26,9 +26,9 @@ public interface IJobPostRepository
     void DeletePaymentHistory(int jobPostId, int publishId);
     IQueryable GetPinDateByJobPost(int id);
     
-    Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId);
+    Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId, int approvedBy);
     
-    Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId);
+    Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId, int approvedBy);
 
 
 }
