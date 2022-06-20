@@ -1,3 +1,4 @@
+using MYRAY.Business.Enums;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.JobPost;

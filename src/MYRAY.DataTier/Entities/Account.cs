@@ -10,6 +10,8 @@ namespace MYRAY.DataTier.Entities
             AppliedJobs = new HashSet<AppliedJob>();
             AreaAccounts = new HashSet<AreaAccount>();
             Attendances = new HashSet<Attendance>();
+            BookmarkAccounts = new HashSet<Bookmark>();
+            BookmarkBookmarkNavigations = new HashSet<Bookmark>();
             Comments = new HashSet<Comment>();
             FeedbackBelongeds = new HashSet<Feedback>();
             FeedbackCreatedByNavigations = new HashSet<Feedback>();
@@ -23,8 +25,6 @@ namespace MYRAY.DataTier.Entities
             PaymentHistoryCreatedByNavigations = new HashSet<PaymentHistory>();
             ReportCreatedByNavigations = new HashSet<Report>();
             ReportResolvedByNavigations = new HashSet<Report>();
-            Accounts = new HashSet<Account>();
-            Bookmarks = new HashSet<Account>();
         }
 
         public int Id { get; set; }
@@ -48,6 +48,8 @@ namespace MYRAY.DataTier.Entities
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }
         public virtual ICollection<AreaAccount> AreaAccounts { get; set; }
         public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<Bookmark> BookmarkAccounts { get; set; }
+        public virtual ICollection<Bookmark> BookmarkBookmarkNavigations { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Feedback> FeedbackBelongeds { get; set; }
         public virtual ICollection<Feedback> FeedbackCreatedByNavigations { get; set; }
@@ -61,8 +63,5 @@ namespace MYRAY.DataTier.Entities
         public virtual ICollection<PaymentHistory> PaymentHistoryCreatedByNavigations { get; set; }
         public virtual ICollection<Report> ReportCreatedByNavigations { get; set; }
         public virtual ICollection<Report> ReportResolvedByNavigations { get; set; }
-
-        public virtual ICollection<Account> Accounts { get; set; }
-        public virtual ICollection<Account> Bookmarks { get; set; }
     }
 }

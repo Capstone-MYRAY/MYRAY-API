@@ -36,7 +36,7 @@ public class JobPostRepository : IJobPostRepository
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
         bool flag = publishBy != null;
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(
-            (flag ? post => post.PublishedBy == publishBy : post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted) ,
+            (flag ? post => post.PublishedBy == publishBy : null) ,
             new []{expHours, expTask});
         return query;
     }
