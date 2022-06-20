@@ -363,6 +363,8 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.AccountId).HasColumnName("account_id");
 
+                entity.Property(e => e.Address).HasColumnName("address");
+
                 entity.Property(e => e.AreaId).HasColumnName("area_id");
 
                 entity.Property(e => e.CreateDate)
