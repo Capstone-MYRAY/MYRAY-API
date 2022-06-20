@@ -22,15 +22,22 @@ public class BookmarkRepository : IBookmarkRepository
 
     public async Task<DataTier.Entities.Bookmark> CreateBookmark(int accountId, int bookmarkId)
     {
-        DataTier.Entities.Bookmark bookmark = new DataTier.Entities.Bookmark()
+        try
         {
-            AccountId = accountId,
-            BookmarkId = bookmarkId
-        };
-        await _bookmarkRepository.InsertAsync(bookmark);
+            DataTier.Entities.Bookmark bookmark = new DataTier.Entities.Bookmark()
+            {
+                AccountId = accountId,
+                BookmarkId = bookmarkId
+            };
+            await _bookmarkRepository.InsertAsync(bookmark);
 
-        await _contextFactory.SaveAllAsync();
-        return bookmark;
+            await _contextFactory.SaveAllAsync();
+            return bookmark;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Id has been marked");
+        }
     }
 
     public async Task<DataTier.Entities.Bookmark> DeleteBookmark(int accountId, int bookmarkId)
