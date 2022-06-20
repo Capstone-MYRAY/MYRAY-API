@@ -136,7 +136,7 @@ public class AuthenticationService : IAuthenticationService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddHours(int.Parse(timeToValidity)),
+            Expires = DateTime.Now.AddDays(int.Parse(timeToValidity)),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(secret), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
