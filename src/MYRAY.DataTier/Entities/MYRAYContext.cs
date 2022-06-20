@@ -21,6 +21,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<Area> Areas { get; set; } = null!;
         public virtual DbSet<AreaAccount> AreaAccounts { get; set; } = null!;
         public virtual DbSet<Attendance> Attendances { get; set; } = null!;
+        public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Garden> Gardens { get; set; } = null!;
@@ -114,40 +115,6 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.RoleId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Account_Role");
-
-                entity.HasMany(d => d.Accounts)
-                    .WithMany(p => p.Bookmarks)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "Bookmark",
-                        l => l.HasOne<Account>().WithMany().HasForeignKey("AccountId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Bookmark_Account"),
-                        r => r.HasOne<Account>().WithMany().HasForeignKey("BookmarkId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Bookmark_Account1"),
-                        j =>
-                        {
-                            j.HasKey("AccountId", "BookmarkId");
-
-                            j.ToTable("Bookmark");
-
-                            j.IndexerProperty<int>("AccountId").HasColumnName("account_id");
-
-                            j.IndexerProperty<int>("BookmarkId").HasColumnName("bookmark_id");
-                        });
-
-                entity.HasMany(d => d.Bookmarks)
-                    .WithMany(p => p.Accounts)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "Bookmark",
-                        l => l.HasOne<Account>().WithMany().HasForeignKey("BookmarkId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Bookmark_Account1"),
-                        r => r.HasOne<Account>().WithMany().HasForeignKey("AccountId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Bookmark_Account"),
-                        j =>
-                        {
-                            j.HasKey("AccountId", "BookmarkId");
-
-                            j.ToTable("Bookmark");
-
-                            j.IndexerProperty<int>("AccountId").HasColumnName("account_id");
-
-                            j.IndexerProperty<int>("BookmarkId").HasColumnName("bookmark_id");
-                        });
             });
 
             modelBuilder.Entity<AppliedJob>(entity =>
@@ -281,6 +248,33 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.AppliedJobId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Attendance_AppliedJob");
+            });
+
+            modelBuilder.Entity<Bookmark>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.BookmarkId });
+
+                entity.ToTable("Bookmark");
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+
+                entity.Property(e => e.BookmarkId).HasColumnName("bookmark_id");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("create_date");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.BookmarkAccounts)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bookmark_Account");
+
+                entity.HasOne(d => d.BookmarkNavigation)
+                    .WithMany(p => p.BookmarkBookmarkNavigations)
+                    .HasForeignKey(d => d.BookmarkId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bookmark_Account1");
             });
 
             modelBuilder.Entity<Comment>(entity =>

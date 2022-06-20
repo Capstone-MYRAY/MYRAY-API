@@ -36,14 +36,15 @@ public static class SearchHelper
                 //--entity
                 var param = Expression.Parameter(typeof(TEntity), "entity");
                 //--entity.{PropertyName}
-                var entityProp = Expression.Property(param, prop.Name);
-                //--searchValue
-                var searchValue = Expression.Constant((int?)value);
                 
-                var searchValueE = Expression.Convert(searchValue, typeof(int?));
+                var entityProp = Expression.Property(param, prop.Name);
+                var convert = Expression.Convert(entityProp, typeof(int));
+                //--searchValue
+                var searchValue = Expression.Constant(value);
+                var searchValueNonNull = Expression.Convert(searchValue, typeof(int));
                 
                 //--entity.{PropertyName}.Contains(searchValue)
-                var body = Expression.Equal(entityProp, value.GetType().IsNullableType() ? searchValueE : searchValue);
+                var body = Expression.Equal(convert,  searchValueNonNull );
                 //--entity => entity.{PropertyName}.Contains(searchValue)
                 var exp = Expression.Lambda<Func<TEntity, bool>>(body, param);
                 //entity.{PropertyName}.Contains(searchValue)
