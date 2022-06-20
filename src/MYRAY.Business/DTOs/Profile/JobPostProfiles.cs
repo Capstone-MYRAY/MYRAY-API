@@ -11,7 +11,9 @@ public static class JobPostProfiles
     {
         configuration.CreateMap<DataTier.Entities.JobPost, JobPostDetail>()
             .ForMember(des => des.PublishedName,
-                expression =>  expression.MapFrom(src => src.PublishedByNavigation!.Fullname));
+                expression =>  expression.MapFrom(src => src.PublishedByNavigation!.Fullname))
+            .ForMember(des => des.GardenName, 
+                otp => otp.MapFrom(src => src.Garden.Name));
         configuration.CreateMap<JobPostDetail, DataTier.Entities.JobPost>();
         configuration.CreateMap<DataTier.Entities.JobPost, CreateJobPost>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.JobPost, UpdateJobPost>().ReverseMap();
