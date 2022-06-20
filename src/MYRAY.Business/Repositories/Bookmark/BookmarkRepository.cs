@@ -1,4 +1,5 @@
 using MYRAY.Business.Repositories.Interface;
+using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.Bookmark;
 
@@ -10,20 +11,41 @@ public class BookmarkRepository : IBookmarkRepository
     public BookmarkRepository(IDbContextFactory contextFactory)
     {
         _contextFactory = contextFactory;
+        _bookmarkRepository = _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Bookmark>()!;
     }
 
     public IQueryable<DataTier.Entities.Bookmark> GetBookmarks(int accountId)
     {
-        return null;
+        IQueryable<DataTier.Entities.Bookmark> query = _bookmarkRepository.Get(b => b.AccountId == accountId);
+        return query;
     }
 
-    public Task<DataTier.Entities.Bookmark> CreateBookmark(int bookmarkId)
+    public async Task<DataTier.Entities.Bookmark> CreateBookmark(int accountId, int bookmarkId)
     {
-        return null;
+        DataTier.Entities.Bookmark bookmark = new DataTier.Entities.Bookmark()
+        {
+            AccountId = accountId,
+            BookmarkId = bookmarkId
+        };
+        await _bookmarkRepository.InsertAsync(bookmark);
+
+        await _contextFactory.SaveAllAsync();
+        return bookmark;
     }
 
-    public Task<DataTier.Entities.Bookmark> DeleteBookmark(int id)
+    public async Task<DataTier.Entities.Bookmark> DeleteBookmark(int accountId, int bookmarkId)
     {
-        return null;
+        DataTier.Entities.Bookmark bookmark = (await _bookmarkRepository.GetFirstOrDefaultAsync(bookmark =>
+            bookmark.AccountId == accountId && bookmark.BookmarkId == bookmarkId))!;
+
+        if (bookmark == null)
+        {
+            throw new Exception("NO Bookmark");
+        }
+        
+        _bookmarkRepository.Delete(bookmark);
+
+        await _contextFactory.SaveAllAsync();
+        return bookmark;
     }
 }

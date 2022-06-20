@@ -69,7 +69,7 @@ public class GardenController : ControllerBase
         {
             var result = await _gardenService.GetGardenById(gardenId);
             
-            return Ok(result);
+            return Created(string.Empty, result);
         }
         catch (Exception e)
         {

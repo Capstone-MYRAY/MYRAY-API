@@ -3,6 +3,7 @@ using MYRAY.Business.Services.Account;
 using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.Area;
 using MYRAY.Business.Services.Authentication;
+using MYRAY.Business.Services.Bookmark;
 using MYRAY.Business.Services.Comment;
 using MYRAY.Business.Services.Feedback;
 using MYRAY.Business.Services.File;
@@ -40,5 +41,6 @@ public static class ModuleRegister
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
+        services.AddScoped<IBookmarkService, BookmarkService>();
     }
 }

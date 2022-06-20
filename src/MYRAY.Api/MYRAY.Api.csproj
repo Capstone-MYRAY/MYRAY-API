@@ -30,4 +30,8 @@
       <ProjectReference Include="..\MYRAY.Business\MYRAY.Business.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="upload" />
+    </ItemGroup>
+
 </Project>

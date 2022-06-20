@@ -45,7 +45,6 @@ public static class ModuleRegister
         services.AddTransient<IFeedbackRepository, FeedbackRepository>();
         services.AddTransient<IBookmarkRepository, BookmarkRepository>();
         
-
         return services;
     }
 }
