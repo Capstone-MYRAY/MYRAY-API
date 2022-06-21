@@ -15,7 +15,7 @@ public class CreateJobPost
     public DateTime? StartJobDate { get; set; }
     public DateTime? EndJobDate { get; set; }
     public int? NumPublishDay { get; set; }
-    //public int PublishedBy { get; set; }
+    public string? Description { get; set; }
     public DateTime? PublishedDate { get; set; }
 
     public PayPerHour? PayPerHourJob { get; set; } = null!;

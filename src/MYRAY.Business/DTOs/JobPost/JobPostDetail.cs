@@ -21,6 +21,7 @@ public class JobPostDetail
     public DateTime? UpdatedDate { get; set; }
     public int? ApprovedBy { get; set; }
     public DateTime? ApprovedDate { get; set; }
+    public string? Description { get; set; }
     public int? Status { get; set; }
     
     public PayPerHour PayPerHourJob { get; set; } = null!;

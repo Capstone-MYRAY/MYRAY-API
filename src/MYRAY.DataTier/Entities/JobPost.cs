@@ -30,6 +30,7 @@ namespace MYRAY.DataTier.Entities
         public int? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
         public int? Status { get; set; }
+        public string? Description { get; set; }
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual Garden Garden { get; set; } = null!;

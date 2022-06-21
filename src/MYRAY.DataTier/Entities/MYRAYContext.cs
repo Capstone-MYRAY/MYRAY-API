@@ -461,6 +461,8 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("created_date")
                     .HasDefaultValueSql("(getdate())");
 
+                entity.Property(e => e.Description).HasColumnName("description");
+
                 entity.Property(e => e.EndJobDate)
                     .HasColumnType("datetime")
                     .HasColumnName("end_job_date");
