@@ -10,6 +10,12 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors(o =>
+{
+o.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
+});
 
 builder.Services.Configure<IISServerOptions>(p =>
 {
