@@ -66,7 +66,8 @@ public class AuthenticationService : IAuthenticationService
         {
             new Claim(ClaimTypes.Role, role),
             new Claim(ClaimTypes.Name, queryAccount.PhoneNumber),
-            new Claim("id", queryAccount.Id.ToString())
+            new Claim("id", queryAccount.Id.ToString()),
+            new Claim("FullName", queryAccount.Fullname)
         };
 
         string accessToken = GenerateAccessToken(claims);
