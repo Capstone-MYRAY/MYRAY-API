@@ -240,4 +240,11 @@ public class JobPostService : IJobPostService
         var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
     }
+
+    public async Task<JobPostDetail> StartJobPost(int jobPostId)
+    {
+        var jobPost = await _jobPostRepository.StartJob(jobPostId);
+        var result = _mapper.Map<JobPostDetail>(jobPost);
+        return result;
+    }
 }

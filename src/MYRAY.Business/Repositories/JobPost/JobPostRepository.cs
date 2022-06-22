@@ -262,4 +262,26 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
+    public async Task<DataTier.Entities.JobPost> StartJob(int jobPostId)
+    {
+        DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetByIdAsync(jobPostId))!;
+
+        if (jobPost == null)
+        {
+            throw new Exception("Job Post is not existed");
+        }
+
+        if (jobPost.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Start)
+        {
+            throw new Exception("Job post has been started");
+        }
+        /// 
+        
+        jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Start;
+        _jobPostRepository.Modify(jobPost);
+
+        await _contextFactory.SaveAllAsync();
+
+        return jobPost;
+    }
 }

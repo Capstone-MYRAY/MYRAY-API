@@ -31,5 +31,7 @@ public interface IJobPostRepository
     
     Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId, int approvedBy);
 
+    Task<DataTier.Entities.JobPost> StartJob(int jobPostId);
+
 
 }

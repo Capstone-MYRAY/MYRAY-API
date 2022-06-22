@@ -24,4 +24,6 @@ public interface IJobPostService
     Task<JobPostDetail> ApproveJobPost(int jobPostId, int approvedBy);
     Task<JobPostDetail> RejectJobPost(int jobPostId, int approvedBy);
 
+    Task<JobPostDetail> StartJobPost(int jobPostId);
+
 }

@@ -34,7 +34,12 @@ public class JobPostEnum
         /// </summary>
         OutOfDate = 5,
         
-        Start = 6
+    }
+    
+    public enum JobPostWorkStatus
+    {
+        Pending = 0,
+        Start = 1
     }
     
     public enum JobPostSortCriteria

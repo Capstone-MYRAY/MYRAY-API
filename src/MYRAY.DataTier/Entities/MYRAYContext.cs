@@ -485,6 +485,8 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("status")
                     .HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.StatusWork).HasColumnName("status_work");
+
                 entity.Property(e => e.Title)
                     .HasMaxLength(70)
                     .HasColumnName("title");

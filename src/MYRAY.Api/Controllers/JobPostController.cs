@@ -353,5 +353,23 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
+    [HttpPatch("startJob/{jobPostId}")]
+    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> StartJobPost(int jobPostId)
+    {
+        try
+        {
+            var result = await _jobPostService.StartJobPost(jobPostId);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+
 }
