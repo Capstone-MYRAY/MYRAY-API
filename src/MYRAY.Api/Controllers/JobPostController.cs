@@ -354,7 +354,16 @@ public class JobPostController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// [Landowner] Endpoint for Start job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Returns if start success</response>
+    /// <response code="400">Returns if job post not existed or started</response>
+    /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("startJob/{jobPostId}")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> StartJobPost(int jobPostId)
