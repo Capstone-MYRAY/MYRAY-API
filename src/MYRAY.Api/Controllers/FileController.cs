@@ -53,7 +53,7 @@ public class FileController : ControllerBase
     /// </summary>
     /// <param name="listFilename">List of filename</param>
     /// <returns></returns>
-    [HttpPost]
+    [HttpPost("delete")]
     [Authorize]
     [Consumes(MediaType.ApplicationJson)]
     public async Task<IActionResult> RemoveFile([Required] List<string> listFilename)  
