@@ -32,6 +32,7 @@ namespace MYRAY.DataTier.Entities
         public int? Status { get; set; }
         public string? Description { get; set; }
         public int? StatusWork { get; set; }
+        public string? ReasonReject { get; set; }
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual Garden Garden { get; set; } = null!;

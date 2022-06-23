@@ -324,12 +324,12 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
-    
+
+
     /// <summary>
     /// [Moderator] Endpoint for Reject job post
     /// </summary>
-    /// <param name="jobPostId">Id of job post</param>
+    /// <param name="rejectJobPost">Contain id and reason to reject job post</param>
     /// <returns>IActionResult</returns>
     /// <response code="200">Returns if reject success</response>
     /// <response code="400">Returns if job post not existed or posted</response>
@@ -338,12 +338,12 @@ public class JobPostController : ControllerBase
     [Authorize(Roles = UserRole.MODERATOR)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> RejectJobPost(int jobPostId)
+    public async Task<IActionResult> RejectJobPost(RejectJobPost rejectJobPost)
     {
         try
         {
             var accountId = int.Parse(User.FindFirst("id")?.Value!);
-            var result = await _jobPostService.RejectJobPost(jobPostId, accountId);
+            var result = await _jobPostService.RejectJobPost(rejectJobPost, accountId);
 
             return Ok(result);
         }

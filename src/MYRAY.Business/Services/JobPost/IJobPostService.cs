@@ -22,7 +22,7 @@ public interface IJobPostService
     Task<JobPostDetail> DeleteJobPost(int jobPostId);
 
     Task<JobPostDetail> ApproveJobPost(int jobPostId, int approvedBy);
-    Task<JobPostDetail> RejectJobPost(int jobPostId, int approvedBy);
+    Task<JobPostDetail> RejectJobPost(RejectJobPost rejectJobPost, int approvedBy);
 
     Task<JobPostDetail> StartJobPost(int jobPostId);
 

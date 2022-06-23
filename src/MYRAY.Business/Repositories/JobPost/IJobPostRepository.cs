@@ -1,3 +1,4 @@
+using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.DataTier.Entities;
 
@@ -31,7 +32,7 @@ public interface IJobPostRepository
     
     Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId, int approvedBy);
     
-    Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId, int approvedBy);
+    Task<DataTier.Entities.JobPost> RejectJobPost(RejectJobPost rejectJobPost, int approvedBy);
 
     Task<DataTier.Entities.JobPost> StartJob(int jobPostId);
 

@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.Interface;
@@ -163,9 +164,9 @@ public class JobPostRepository : IJobPostRepository
     public void ChangePaymentHistory(int jobPostId, int publishId)
     {
         DataTier.Entities.PaymentHistory paymentHistory =
-            _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId);
+            _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)!;
 
-        paymentHistory.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Deleted;
+        paymentHistory.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Reject;
     }
 
     public IQueryable GetPinDateByJobPost(int id)
@@ -248,15 +249,15 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
-    public async Task<DataTier.Entities.JobPost> RejectJobPost(int jobPostId, int approvedBy)
+    public async Task<DataTier.Entities.JobPost> RejectJobPost(RejectJobPost rejectJobPost, int approvedBy)
     {
-        DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(jobPostId);
+        DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(rejectJobPost.Id);
         
         if (jobPost == null)
         {
             throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
         }
-        
+        jobPost.ReasonReject = rejectJobPost.ReasonReject;
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Reject;
         _jobPostRepository.Modify(jobPost);
         IQueryable<PinDate> queryPin = (IQueryable<PinDate>)GetPinDateByJobPost(jobPost.Id);

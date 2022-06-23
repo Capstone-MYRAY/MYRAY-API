@@ -234,9 +234,9 @@ public class JobPostService : IJobPostService
         return result;
     }
 
-    public async Task<JobPostDetail> RejectJobPost(int jobPostId, int approvedBy)
+    public async Task<JobPostDetail> RejectJobPost(RejectJobPost rejectJobPost, int approvedBy)
     {
-        var jobPost = await _jobPostRepository.RejectJobPost(jobPostId, approvedBy);
+        var jobPost = await _jobPostRepository.RejectJobPost(rejectJobPost, approvedBy);
         var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
     }

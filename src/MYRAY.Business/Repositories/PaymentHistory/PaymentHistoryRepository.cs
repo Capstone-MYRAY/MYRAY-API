@@ -21,7 +21,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
 
     public IQueryable<DataTier.Entities.PaymentHistory> GetPayments(int accountId)
     {
-        IQueryable<DataTier.Entities.PaymentHistory> query = _paymentHistoryRepository.Get(ph => ph.Status != (int?)PaymentHistoryEnum.PaymentHistoryStatus.Deleted && ph.BelongedId == accountId);
+        IQueryable<DataTier.Entities.PaymentHistory> query = _paymentHistoryRepository.Get(ph => ph.BelongedId == accountId);
         return query;
     }
 
@@ -56,7 +56,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
             throw new MException(StatusCodes.Status400BadRequest, "Payment is not existed.");
         }
 
-        payment.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Deleted;
+        payment.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Reject;
         
         _paymentHistoryRepository.Modify(payment);
 
