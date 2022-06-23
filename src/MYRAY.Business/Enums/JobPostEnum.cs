@@ -39,7 +39,8 @@ public class JobPostEnum
     public enum JobPostWorkStatus
     {
         Pending = 0,
-        Start = 1
+        Start = 1,
+        Done = 2
     }
     
     public enum JobPostSortCriteria

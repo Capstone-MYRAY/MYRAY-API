@@ -7,6 +7,8 @@ public interface IJobPostRepository
 {
     IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null);
     IQueryable<DataTier.Entities.JobPost> GetPinPost();
+
+    IQueryable<MYRAY.DataTier.Entities.JobPost> GetInProgressJobPost();
     Task<DataTier.Entities.JobPost> GetJobPostById(int id);
 
     Task<DataTier.Entities.JobPost> CreateJobPost(

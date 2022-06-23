@@ -52,8 +52,15 @@ public class JobPostRepository : IJobPostRepository
         jobPosts = jobPosts.Where(p => postId.Contains(p.Id));
         return jobPosts;
     }
-    
-    
+
+    public IQueryable<DataTier.Entities.JobPost> GetInProgressJobPost()
+    {
+        Expression<Func<DataTier.Entities.JobPost, object>> expAppliedJob = post => post.AppliedJobs;
+        IQueryable<DataTier.Entities.JobPost> inProgress = _jobPostRepository.Get(post => post.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Start, new []{expAppliedJob});
+        return inProgress;
+    }
+
+
     public async Task<DataTier.Entities.JobPost> GetJobPostById(int id)
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob; 

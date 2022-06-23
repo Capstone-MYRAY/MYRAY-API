@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MYRAY.Business.Services.Account;
 using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.Area;
+using MYRAY.Business.Services.Attendance;
 using MYRAY.Business.Services.Authentication;
 using MYRAY.Business.Services.Bookmark;
 using MYRAY.Business.Services.Comment;
@@ -42,5 +43,6 @@ public static class ModuleRegister
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IBookmarkService, BookmarkService>();
+        services.AddScoped<IAttendanceService, AttendanceService>();
     }
 }

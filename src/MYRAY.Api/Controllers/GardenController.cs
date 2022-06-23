@@ -117,7 +117,7 @@ public class GardenController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpPut]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(GardenDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(GardenDetail),StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateGarden(UpdateGarden updateGarden)
     {
         try

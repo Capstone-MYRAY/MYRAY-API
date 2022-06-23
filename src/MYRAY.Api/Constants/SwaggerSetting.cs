@@ -69,6 +69,8 @@ public static class SwaggerSetting
             //--Load comment from xml into Swagger UI
             c.IncludeXmlComments(xmlPath);
             
+            c.DescribeAllParametersInCamelCase();
+            
             var jwtSecuritySchema = new OpenApiSecurityScheme
             {
                 Scheme = "bearer",

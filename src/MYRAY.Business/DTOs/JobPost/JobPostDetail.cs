@@ -1,3 +1,4 @@
+using MYRAY.Business.DTOs.Garden;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.DTOs.JobPost;
@@ -7,6 +8,7 @@ public class JobPostDetail
     public int Id { get; set; }
     public int GardenId { get; set; }
     public string GardenName { get; set; }
+    public GardenDetail Garden { get; set; } = null!;
     public int TreeTypeId { get; set; }
     public string TreeName { get; set; }
     public string Title { get; set; } = null!;
