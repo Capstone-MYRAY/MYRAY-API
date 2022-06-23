@@ -334,7 +334,7 @@ public class JobPostController : ControllerBase
     /// <response code="200">Returns if reject success</response>
     /// <response code="400">Returns if job post not existed or posted</response>
     /// <response code="401">Returns if invalid authorize</response>
-    [HttpPatch("rejectJob/{jobPostId}")]
+    [HttpPatch("rejectJob")]
     [Authorize(Roles = UserRole.MODERATOR)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
