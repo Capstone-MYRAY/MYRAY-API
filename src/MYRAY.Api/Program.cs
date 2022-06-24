@@ -3,6 +3,7 @@ using Google.Apis.Json;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 using MYRAY.Api.Constants;
+using MYRAY.Api.Hubs;
 using MYRAY.Business;
 using MYRAY.DataTier;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ builder.Services.AddCors(o =>
         .AllowAnyHeader());
 });
 
+builder.Services.AddSignalR();
 builder.Services.Configure<IISServerOptions>(p => { p.MaxRequestBodySize = int.MaxValue; });
 builder.Services.Configure<FormOptions>(o =>
 {
@@ -93,6 +95,8 @@ app.UseApplicationSwagger();
 app.UseHttpsRedirection();
 
 app.UseApplicationSecurity();
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllers();
 

@@ -41,7 +41,7 @@ namespace MYRAY.DataTier.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-                
+            
             }
         }
 
@@ -774,6 +774,11 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.JobPostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Report_JobPost");
+
+                entity.HasOne(d => d.Reported)
+                    .WithMany(p => p.ReportReporteds)
+                    .HasForeignKey(d => d.ReportedId)
+                    .HasConstraintName("FK_Report_Account2");
 
                 entity.HasOne(d => d.ResolvedByNavigation)
                     .WithMany(p => p.ReportResolvedByNavigations)

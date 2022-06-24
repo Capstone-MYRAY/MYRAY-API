@@ -11,6 +11,7 @@ using MYRAY.Business.Repositories.Garden;
 using MYRAY.Business.Repositories.Guidepost;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.Business.Repositories.JobPost;
+using MYRAY.Business.Repositories.Message;
 using MYRAY.Business.Repositories.PaymentHistory;
 using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.Report;
@@ -46,6 +47,8 @@ public static class ModuleRegister
         services.AddTransient<IFeedbackRepository, FeedbackRepository>();
         services.AddTransient<IBookmarkRepository, BookmarkRepository>();
         services.AddTransient<IAttendanceRepository, AttendanceRepository>();
+        services.AddTransient<IMessageRepository, MessageRepository>();
+        
         
         return services;
     }

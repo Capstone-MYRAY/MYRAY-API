@@ -18,6 +18,7 @@ namespace MYRAY.DataTier.Entities
 
         public virtual Account? CreatedByNavigation { get; set; }
         public virtual JobPost JobPost { get; set; } = null!;
+        public virtual Account? Reported { get; set; }
         public virtual Account? ResolvedByNavigation { get; set; }
     }
 }

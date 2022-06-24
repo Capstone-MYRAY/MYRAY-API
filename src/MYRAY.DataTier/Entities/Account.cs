@@ -24,6 +24,7 @@ namespace MYRAY.DataTier.Entities
             PaymentHistoryBelongeds = new HashSet<PaymentHistory>();
             PaymentHistoryCreatedByNavigations = new HashSet<PaymentHistory>();
             ReportCreatedByNavigations = new HashSet<Report>();
+            ReportReporteds = new HashSet<Report>();
             ReportResolvedByNavigations = new HashSet<Report>();
         }
 
@@ -62,6 +63,7 @@ namespace MYRAY.DataTier.Entities
         public virtual ICollection<PaymentHistory> PaymentHistoryBelongeds { get; set; }
         public virtual ICollection<PaymentHistory> PaymentHistoryCreatedByNavigations { get; set; }
         public virtual ICollection<Report> ReportCreatedByNavigations { get; set; }
+        public virtual ICollection<Report> ReportReporteds { get; set; }
         public virtual ICollection<Report> ReportResolvedByNavigations { get; set; }
     }
 }
