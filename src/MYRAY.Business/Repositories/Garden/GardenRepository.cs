@@ -57,7 +57,7 @@ public class GardenRepository : IGardenRepository
         }
 
         garden.Status = (int?)GardenEnum.GardenStatus.Inactive;
-        garden.CreateDate = null;
+        garden.CreatedDate = null;
         _gardenRepository.Modify(garden);
 
         await _contextFactory.SaveAllAsync();

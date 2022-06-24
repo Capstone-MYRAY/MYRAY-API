@@ -120,7 +120,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpPut]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateJobPost(UpdateJobPost updateJobPost)
     {
         try
@@ -148,7 +148,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpDelete("{jobPostId}")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteJobPost(int jobPostId)
     {
         try
@@ -163,7 +163,33 @@ public class JobPostController : ControllerBase
         }
     }
 
-    
+    /// <summary>
+    /// [Landowner] Endpoint for cancel job post.
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>Async function</returns>
+    /// <response code="204">Returns the job post cancel</response>
+    /// <response code="404">Returns if job post is not existed.</response>
+    /// <response code="401">Returns if invalid authorize.</response>
+    [HttpDelete("cancel/{jobPostId}")]
+    // [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
+    public async Task<IActionResult> CancelJobPost(int jobPostId)
+    {
+        try
+        {
+            var result = await _jobPostService.CancelJobPost(jobPostId);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+
+
     /// <summary>
     /// [Farmer] Endpoint for Apply job post
     /// </summary>
@@ -182,7 +208,7 @@ public class JobPostController : ControllerBase
         {
             var result = await _appliedJobService.ApplyJob(jobPostId, accountId);
 
-            return Ok();
+            return Ok(result);
         }
         catch (Exception e)
         {

@@ -53,8 +53,8 @@ public class GuidepostService : IGuidepostService
     public async Task<GuidepostDetail> CreateGuidepost(CreateGuidepost guidepost, int createBy)
     {
         DataTier.Entities.Guidepost newGuidepost = _mapper.Map<DataTier.Entities.Guidepost>(guidepost);
-        newGuidepost.CreateBy = createBy;
-        newGuidepost.CreateDate = DateTime.Now;
+        newGuidepost.CreatedBy = createBy;
+        newGuidepost.CreatedDate = DateTime.Now;
         newGuidepost = await _guidepostRepository.CreateGuidepost(newGuidepost);
         
         var result = _mapper.Map<GuidepostDetail>(newGuidepost);
@@ -65,7 +65,7 @@ public class GuidepostService : IGuidepostService
     public async Task<GuidepostDetail> UpdateGuidepost(UpdateGuidepost guidepost)
     {
         DataTier.Entities.Guidepost updateGuidepost = _mapper.Map<DataTier.Entities.Guidepost>(guidepost);
-        updateGuidepost.UpdateDate = DateTime.Now;
+        updateGuidepost.UpdatedDate = DateTime.Now;
         updateGuidepost = await _guidepostRepository.UpdateGuidepost(updateGuidepost);
         var result = _mapper.Map<GuidepostDetail>(updateGuidepost);
         return result;

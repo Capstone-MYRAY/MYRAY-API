@@ -19,8 +19,8 @@ namespace MYRAY.DataTier.Entities
         public double? LandArea { get; set; }
         public string? ImageUrl { get; set; }
         public string? Description { get; set; }
-        public DateTime? UpdateDate { get; set; }
-        public DateTime? CreateDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public int? Status { get; set; }
         public string? Address { get; set; }
 

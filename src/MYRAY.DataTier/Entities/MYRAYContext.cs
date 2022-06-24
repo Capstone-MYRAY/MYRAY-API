@@ -41,8 +41,7 @@ namespace MYRAY.DataTier.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=20.212.196.50,1433;Initial Catalog=MYRAY;User ID=sa;Password=29327Cab@456789");
+                
             }
         }
 
@@ -195,9 +194,9 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.AreaId).HasColumnName("area_id");
 
-                entity.Property(e => e.CreateDate)
+                entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_date");
+                    .HasColumnName("created_date");
 
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.AreaAccounts)
@@ -261,9 +260,9 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.BookmarkId).HasColumnName("bookmark_id");
 
-                entity.Property(e => e.CreateDate)
+                entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_date");
+                    .HasColumnName("created_date");
 
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.BookmarkAccounts)
@@ -288,9 +287,9 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Content).HasColumnName("content");
 
-                entity.Property(e => e.CreateDate)
+                entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_date")
+                    .HasColumnName("created_date")
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.GuidepostId).HasColumnName("guidepost_id");
@@ -299,9 +298,9 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
 
-                entity.Property(e => e.UpdateDate)
+                entity.Property(e => e.UpdatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("update_date");
+                    .HasColumnName("updated_date");
 
                 entity.HasOne(d => d.CommentByNavigation)
                     .WithMany(p => p.Comments)
@@ -368,9 +367,9 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.AreaId).HasColumnName("area_id");
 
-                entity.Property(e => e.CreateDate)
+                entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_date")
+                    .HasColumnName("created_date")
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Description).HasColumnName("description");
@@ -395,9 +394,9 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
 
-                entity.Property(e => e.UpdateDate)
+                entity.Property(e => e.UpdatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("update_date");
+                    .HasColumnName("updated_date");
 
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.Gardens)
@@ -420,11 +419,11 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Content).HasColumnName("content");
 
-                entity.Property(e => e.CreateBy).HasColumnName("create_by");
+                entity.Property(e => e.CreatedBy).HasColumnName("created_by");
 
-                entity.Property(e => e.CreateDate)
+                entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("create_date")
+                    .HasColumnName("created_date")
                     .HasDefaultValueSql("(getdate())");
 
                 entity.Property(e => e.Status)
@@ -435,13 +434,13 @@ namespace MYRAY.DataTier.Entities
                     .HasMaxLength(100)
                     .HasColumnName("title");
 
-                entity.Property(e => e.UpdateDate)
+                entity.Property(e => e.UpdatedDate)
                     .HasColumnType("datetime")
-                    .HasColumnName("update_date");
+                    .HasColumnName("updated_date");
 
-                entity.HasOne(d => d.CreateByNavigation)
+                entity.HasOne(d => d.CreatedByNavigation)
                     .WithMany(p => p.Guideposts)
-                    .HasForeignKey(d => d.CreateBy)
+                    .HasForeignKey(d => d.CreatedBy)
                     .HasConstraintName("FK_Guidepost_Account");
             });
 

@@ -7,5 +7,5 @@ public class GetAreaDetail : InsertAreaDto
     public int Id { get; set; }
     public int? Status { get; set; }
     
-    public virtual ICollection<AreaAccount> AreaAccounts { get; set; }
+    public virtual ICollection<AreaAccount> AreaAccounts { get; set; } = null!;
 }

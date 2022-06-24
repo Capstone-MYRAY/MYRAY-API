@@ -43,7 +43,7 @@ public class GardenService : IGardenService
     public async Task<GardenDetail> CreateGarden(CreateGarden garden)
     {
         DataTier.Entities.Garden gardenDto = _mapper.Map<DataTier.Entities.Garden>(garden);
-        gardenDto.CreateDate = DateTime.Now;
+        gardenDto.CreatedDate = DateTime.Now;
         gardenDto.Status = (int?)GardenEnum.GardenStatus.Active;
         gardenDto = await _gardenRepository.CreateGarden(gardenDto);
         GardenDetail result = _mapper.Map<GardenDetail>(gardenDto);
@@ -53,7 +53,7 @@ public class GardenService : IGardenService
     public async Task<GardenDetail> UpdateGarden(UpdateGarden garden)
     {
         DataTier.Entities.Garden gardenDto = _mapper.Map<DataTier.Entities.Garden>(garden);
-        gardenDto.UpdateDate = DateTime.Now;
+        gardenDto.UpdatedDate = DateTime.Now;
         gardenDto = await _gardenRepository.UpdateGarden(gardenDto);
         GardenDetail result = _mapper.Map<GardenDetail>(gardenDto);
 

@@ -7,7 +7,7 @@ namespace MYRAY.DataTier.Entities
     {
         public int AccountId { get; set; }
         public int AreaId { get; set; }
-        public DateTime? CreateDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         public virtual Account Account { get; set; } = null!;
         public virtual Area Area { get; set; } = null!;

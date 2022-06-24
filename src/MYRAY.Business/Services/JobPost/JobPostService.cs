@@ -227,6 +227,13 @@ public class JobPostService : IJobPostService
         return result;
     }
 
+    public async Task<JobPostDetail> CancelJobPost(int jobPostId)
+    {
+        DataTier.Entities.JobPost cancelJobPost = await _jobPostRepository.CancelJobPost(jobPostId);
+        var result = _mapper.Map<JobPostDetail>(cancelJobPost);
+        return result;
+    }
+
     public async Task<JobPostDetail> ApproveJobPost(int jobPostId, int approvedBy)
     {
         var jobPost = await _jobPostRepository.ApproveJobPost(jobPostId, approvedBy);

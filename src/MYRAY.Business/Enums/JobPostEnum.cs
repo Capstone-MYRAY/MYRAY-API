@@ -25,14 +25,19 @@ public class JobPostEnum
         Expired = 4,
         
         /// <summary>
-        /// Đã hủy
+        /// Đã xóa
         /// </summary>
-        Cancel = 0,
+        Deleted = 0,
         
         /// <summary>
         /// Quá hạn
         /// </summary>
         OutOfDate = 5,
+        
+        /// <summary>
+        /// Đã hủy
+        /// </summary>
+        Cancel = 6
         
     }
     

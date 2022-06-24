@@ -37,7 +37,7 @@ public class CommentRepository : ICommentRepository
     {
         DataTier.Entities.Comment cmDb = _commentRepository.GetById(comment.Id);
         comment.GuidepostId = cmDb.GuidepostId;
-        comment.CreateDate = cmDb.CreateDate;
+        comment.CreatedDate = cmDb.CreatedDate;
         _commentRepository.Modify(comment);
         await _contextFactory.SaveAllAsync();
 

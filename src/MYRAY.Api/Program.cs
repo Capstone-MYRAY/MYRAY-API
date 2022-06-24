@@ -60,7 +60,7 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.WebHost.UseUrls($"http://localhost:8080;https://localhost:443");
+builder.WebHost.UseUrls("http://localhost:8080;https://localhost:443");
 
 AppSetting.AddFireBaseAsync();
 //builder.Services.AddCors();

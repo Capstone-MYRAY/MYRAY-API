@@ -9,8 +9,8 @@ namespace MYRAY.DataTier.Entities
         public int GuidepostId { get; set; }
         public int CommentBy { get; set; }
         public string? Content { get; set; }
-        public DateTime? CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public int? Status { get; set; }
 
         public virtual Account CommentByNavigation { get; set; } = null!;

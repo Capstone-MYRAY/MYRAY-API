@@ -37,7 +37,7 @@ public class CommentService : ICommentService
     public async Task<CommentDetail> CreateComment(CreateComment comment, int commentBy)
     {
         DataTier.Entities.Comment dto = _mapper.Map<DataTier.Entities.Comment>(comment);
-        dto.CreateDate = DateTime.Now;
+        dto.CreatedDate = DateTime.Now;
         dto.CommentBy = commentBy;
 
         dto = await _commentRepository.CreateComment(dto);
@@ -50,7 +50,7 @@ public class CommentService : ICommentService
     {
         
         DataTier.Entities.Comment dto = _mapper.Map<DataTier.Entities.Comment>(comment);
-        dto.UpdateDate = DateTime.Now;
+        dto.UpdatedDate = DateTime.Now;
         dto.CommentBy = commentBy;
         dto = await _commentRepository.UpdateComment(dto);
 

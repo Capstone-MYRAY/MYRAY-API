@@ -153,6 +153,29 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
+    public async Task<DataTier.Entities.JobPost> CancelJobPost(int id)
+    {
+        DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetByIdAsync(id))!;
+        
+        if (jobPost == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
+        }
+
+        if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.Posted)
+        {
+            throw new Exception("Job Post is not posted");
+        }
+        
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Cancel;
+        
+        _jobPostRepository.Modify(jobPost);
+
+        await _contextFactory.SaveAllAsync();
+
+        return jobPost;
+    }
+
     public void DeletePinDate(ICollection<PinDate> pinDates)
     {
         foreach (var VARIABLE in pinDates)
@@ -206,7 +229,7 @@ public class JobPostRepository : IJobPostRepository
             throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
         }
 
-        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Cancel;
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Deleted;
         
         _jobPostRepository.Modify(jobPost);
 
