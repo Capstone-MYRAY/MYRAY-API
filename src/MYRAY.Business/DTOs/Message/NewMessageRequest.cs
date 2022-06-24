@@ -7,4 +7,6 @@ public class NewMessageRequest
     public int ToId { get; set; }
     public int? JobPostId { get; set; }
     public string? ImageUrl { get; set; }
+    
+    
 }
