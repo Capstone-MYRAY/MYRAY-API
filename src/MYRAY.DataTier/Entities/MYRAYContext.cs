@@ -716,10 +716,14 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.Background).HasColumnName("background");
+                entity.Property(e => e.Background)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
+                    .HasColumnName("background");
 
                 entity.Property(e => e.Color)
-                    .HasMaxLength(50)
+                    .HasMaxLength(10)
+                    .IsUnicode(false)
                     .HasColumnName("color");
 
                 entity.Property(e => e.Description).HasColumnName("description");
