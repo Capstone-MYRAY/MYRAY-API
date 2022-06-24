@@ -16,6 +16,7 @@ namespace MYRAY.DataTier.Entities
         public double Price { get; set; }
         public string? Color { get; set; }
         public int? Status { get; set; }
+        public int? Background { get; set; }
 
         public virtual ICollection<PinDate> PinDates { get; set; }
     }

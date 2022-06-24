@@ -13,9 +13,11 @@ using Newtonsoft.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(o =>
 {
-    o.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin()
+    o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder
+        .SetIsOriginAllowed(_ => true)
         .AllowAnyMethod()
-        .AllowAnyHeader());
+        .AllowAnyHeader()
+        .AllowCredentials());
 });
 
 builder.Services.AddSignalR();
@@ -85,10 +87,7 @@ app.UseFileServer(new FileServerOptions
 });
 
 // Configure the HTTP request pipeline.
-app.UseCors(c
-    => c.AllowAnyOrigin()
-        .AllowAnyHeader()
-        .AllowAnyMethod());
+app.UseCors("CorsPolicy");
 
 app.UseApplicationSwagger();
 

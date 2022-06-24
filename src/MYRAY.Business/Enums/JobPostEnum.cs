@@ -37,8 +37,10 @@ public class JobPostEnum
         /// <summary>
         /// Đã hủy
         /// </summary>
-        Cancel = 6
+        Cancel = 6,
         
+        Approved = 7
+
     }
     
     public enum JobPostWorkStatus

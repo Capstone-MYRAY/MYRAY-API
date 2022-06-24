@@ -8,5 +8,4 @@ public class SearchPostType
     [DefaultValue("")] public string? Description { get; set; } = "";
 
     //[DefaultValue("")] public double? Price { get; set; } = null!;
-    [DefaultValue("")] public string? Color { get; set; } = "";
 }

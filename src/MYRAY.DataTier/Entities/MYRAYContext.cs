@@ -41,7 +41,7 @@ namespace MYRAY.DataTier.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-            
+                
             }
         }
 
@@ -715,6 +715,8 @@ namespace MYRAY.DataTier.Entities
                 entity.ToTable("PostType");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Background).HasColumnName("background");
 
                 entity.Property(e => e.Color)
                     .HasMaxLength(50)

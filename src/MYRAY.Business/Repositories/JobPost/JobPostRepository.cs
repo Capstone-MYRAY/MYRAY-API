@@ -253,7 +253,7 @@ public class JobPostRepository : IJobPostRepository
         }
         
         IQueryable<PinDate> queryPin = (IQueryable<PinDate>)GetPinDateByJobPost(jobPost.Id);
-        if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.Posted)
+        if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.Approved)
         {
             throw new Exception("JobPost has been approved");
         }
