@@ -34,6 +34,7 @@ public class JobPostController : ControllerBase
     /// <param name="searchJobPost">An object contains filter criteria.</param>
     /// <param name="sortingDto">An object contains sorting criteria.</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <param name="publishBy">Id of account landowner</param>
     /// <returns>List of job post</returns>
     /// <response code="200">Returns the list of job post.</response>
     /// <response code="204">Returns if list of job post is empty.</response>
@@ -46,7 +47,8 @@ public class JobPostController : ControllerBase
         [FromQuery] SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto,
         [FromQuery] PagingDto pagingDto, int? publishBy = null)
     {
-        var result =  _jobPostService.GetJobPosts(searchJobPost, pagingDto, sortingDto, publishBy);
+        var isFarmer = User.IsInRole(UserRole.FARMER);
+        var result =  _jobPostService.GetJobPosts(searchJobPost, pagingDto, sortingDto, publishBy, isFarmer);
         if (result == null)
         {
             return Task.FromResult<IActionResult>(NoContent());
@@ -66,10 +68,11 @@ public class JobPostController : ControllerBase
     [HttpGet("{jobPostId}")]
     [Authorize]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetGuidepostById(int jobPostId)
+    public async Task<IActionResult> GetJobPostById(int jobPostId)
     {
         try
         {
+            
             var result = await _jobPostService.GetJobPostById(jobPostId);
             
             return Ok(result);

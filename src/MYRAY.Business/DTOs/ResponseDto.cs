@@ -12,6 +12,7 @@ public static class ResponseDto
         where T : class
     {
         public IEnumerable<T> ListObject { get; set; }
+        public IEnumerable<T> SecondObject { get; set; }
         public PagingDto? PagingMetadata { get; set; }
     }
 

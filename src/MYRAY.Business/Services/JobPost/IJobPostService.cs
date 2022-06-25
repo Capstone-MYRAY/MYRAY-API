@@ -11,7 +11,8 @@ public interface IJobPostService
         SearchJobPost searchJobPost,
         PagingDto pagingDto,
         SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto,
-        int? publishId = null);
+        int? publishId = null,
+        bool isFarmer = false);
 
     Task<JobPostDetail> GetJobPostById(int id);
 

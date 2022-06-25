@@ -1,4 +1,5 @@
 using MYRAY.Business.DTOs.Garden;
+using MYRAY.Business.Enums;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.DTOs.JobPost;
@@ -24,14 +25,13 @@ public class JobPostDetail
     public int? ApprovedBy { get; set; }
     public DateTime? ApprovedDate { get; set; }
     public string? Description { get; set; }
-    public int? Status { get; set; }
+    public string? Status { get; set; }
     public int? StatusWork { get; set; }
     public string? ReasonReject { get; set; }
+    public int? PostTypeId { get; set; }
     
     public PayPerHour PayPerHourJob { get; set; } = null!;
     public PayPerTask PayPerTaskJob { get; set; } = null!;
     
-    public virtual ICollection<DataTier.Entities.PaymentHistory> PaymentHistories { get; set; }
-    public virtual ICollection<PinDate> PinDates { get; set; }
-    
+   
 }

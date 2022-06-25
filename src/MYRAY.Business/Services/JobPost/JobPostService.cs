@@ -34,14 +34,24 @@ public class JobPostService : IJobPostService
         _postTypeRepository = postTypeRepository;
     }
 
-    public ResponseDto.CollectiveResponse<JobPostDetail> GetJobPosts(SearchJobPost searchJobPost, PagingDto pagingDto, SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto, int? publishId = null)
+    public ResponseDto.CollectiveResponse<JobPostDetail> GetJobPosts(
+        SearchJobPost searchJobPost, 
+        PagingDto pagingDto, 
+        SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto, 
+        int? publishId = null,
+        bool isFarmer = false)
     {
         List<DataTier.Entities.JobPost> listPin = null;
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.GetJobPosts(publishId);
-
+        if (isFarmer)
+        {
+            query = query.Where(post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted
+                                        || post.Status == (int?)JobPostEnum.JobPostStatus.Expired);
+        }
+        
         query = query.GetWithSearch(searchJobPost);
         
-        if (publishId == null)
+        if (isFarmer)
         {
             listPin =  _jobPostRepository.GetPinPost().ToList();
             var pinId = listPin.Select(x => x.Id);
@@ -51,13 +61,10 @@ public class JobPostService : IJobPostService
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
         
         var result = query.GetWithPaging<JobPostDetail, DataTier.Entities.JobPost>(pagingDto, _mapper);
-        if (publishId == null)
+        if (isFarmer)
         {
             var listP = _mapper.ProjectTo<JobPostDetail>(_jobPostRepository.GetPinPost());
-            var listAfterAdd = result.ListObject.ToList();
-            listAfterAdd.InsertRange(0, listP);
-            result.ListObject = listAfterAdd;
-            result.PagingMetadata!.PageSize += (result.PagingMetadata.PageSize < listAfterAdd.Count) ? 0 : listPin.Count;
+            result.SecondObject = listP.ToList();
         }
         return result;
     }
