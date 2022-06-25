@@ -35,6 +35,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<PostType> PostTypes { get; set; } = null!;
         public virtual DbSet<Report> Reports { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
+        public virtual DbSet<TreeJob> TreeJobs { get; set; } = null!;
         public virtual DbSet<TreeType> TreeTypes { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -471,6 +472,8 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.NumPublishDay).HasColumnName("num_publish_day");
 
+                entity.Property(e => e.PostTypeId).HasColumnName("post_type_id");
+
                 entity.Property(e => e.PublishedBy).HasColumnName("published_by");
 
                 entity.Property(e => e.PublishedDate)
@@ -516,16 +519,15 @@ namespace MYRAY.DataTier.Entities
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_JobPost_Garden");
 
+                entity.HasOne(d => d.PostType)
+                    .WithMany(p => p.JobPosts)
+                    .HasForeignKey(d => d.PostTypeId)
+                    .HasConstraintName("FK_JobPost_PostType");
+
                 entity.HasOne(d => d.PublishedByNavigation)
                     .WithMany(p => p.JobPostPublishedByNavigations)
                     .HasForeignKey(d => d.PublishedBy)
                     .HasConstraintName("FK_JobPost_Account1");
-
-                entity.HasOne(d => d.TreeType)
-                    .WithMany(p => p.JobPosts)
-                    .HasForeignKey(d => d.TreeTypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_JobPost_TreeType");
             });
 
             modelBuilder.Entity<Message>(entity =>
@@ -691,8 +693,6 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnType("datetime")
                     .HasColumnName("pin_date");
 
-                entity.Property(e => e.PostTypeId).HasColumnName("post_type_id");
-
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
@@ -702,12 +702,6 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.JobPostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PinDate_JobPost");
-
-                entity.HasOne(d => d.PostType)
-                    .WithMany(p => p.PinDates)
-                    .HasForeignKey(d => d.PostTypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_PinDate_PostType");
             });
 
             modelBuilder.Entity<PostType>(entity =>
@@ -809,6 +803,33 @@ namespace MYRAY.DataTier.Entities
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
+            });
+
+            modelBuilder.Entity<TreeJob>(entity =>
+            {
+                entity.HasKey(e => new { e.TreeTypeId, e.JobPostId });
+
+                entity.ToTable("TreeJob");
+
+                entity.Property(e => e.TreeTypeId).HasColumnName("tree_type_id");
+
+                entity.Property(e => e.JobPostId).HasColumnName("job_post_id");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_date");
+
+                entity.HasOne(d => d.JobPost)
+                    .WithMany(p => p.TreeJobs)
+                    .HasForeignKey(d => d.JobPostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TreeJob_JobPost");
+
+                entity.HasOne(d => d.TreeType)
+                    .WithMany(p => p.TreeJobs)
+                    .HasForeignKey(d => d.TreeTypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_TreeJob_TreeType");
             });
 
             modelBuilder.Entity<TreeType>(entity =>

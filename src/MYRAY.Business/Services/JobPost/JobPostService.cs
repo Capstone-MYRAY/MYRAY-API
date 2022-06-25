@@ -81,7 +81,7 @@ public class JobPostService : IJobPostService
             {
                 listPin.Add(new PinDate
                 {
-                    PostTypeId = (int)jobPost.PostTypeId,
+                    // PostTypeId = (int)jobPost.PostTypeId,
                     PinDate1 = (DateTime)startPin,
                     Status = 0
                 });
@@ -159,7 +159,7 @@ public class JobPostService : IJobPostService
             {
                 listPin.Add(new PinDate()
                 {
-                    PostTypeId = (int)jobPost.PostTypeId,
+                    // PostTypeId = (int)jobPost.PostTypeId,
                     PinDate1 = (DateTime)startPin,
                     Status = 0
                 });

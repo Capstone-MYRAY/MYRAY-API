@@ -7,7 +7,7 @@ namespace MYRAY.DataTier.Entities
     {
         public TreeType()
         {
-            JobPosts = new HashSet<JobPost>();
+            TreeJobs = new HashSet<TreeJob>();
         }
 
         public int Id { get; set; }
@@ -15,6 +15,6 @@ namespace MYRAY.DataTier.Entities
         public string? Description { get; set; }
         public int? Status { get; set; }
 
-        public virtual ICollection<JobPost> JobPosts { get; set; }
+        public virtual ICollection<TreeJob> TreeJobs { get; set; }
     }
 }

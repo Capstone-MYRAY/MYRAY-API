@@ -13,6 +13,7 @@ namespace MYRAY.DataTier.Entities
             PaymentHistories = new HashSet<PaymentHistory>();
             PinDates = new HashSet<PinDate>();
             Reports = new HashSet<Report>();
+            TreeJobs = new HashSet<TreeJob>();
         }
 
         public int Id { get; set; }
@@ -33,11 +34,12 @@ namespace MYRAY.DataTier.Entities
         public string? Description { get; set; }
         public int? StatusWork { get; set; }
         public string? ReasonReject { get; set; }
+        public int? PostTypeId { get; set; }
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual Garden Garden { get; set; } = null!;
+        public virtual PostType? PostType { get; set; }
         public virtual Account? PublishedByNavigation { get; set; }
-        public virtual TreeType TreeType { get; set; } = null!;
         public virtual PayPerHourJob PayPerHourJob { get; set; } = null!;
         public virtual PayPerTaskJob PayPerTaskJob { get; set; } = null!;
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }
@@ -46,5 +48,6 @@ namespace MYRAY.DataTier.Entities
         public virtual ICollection<PaymentHistory> PaymentHistories { get; set; }
         public virtual ICollection<PinDate> PinDates { get; set; }
         public virtual ICollection<Report> Reports { get; set; }
+        public virtual ICollection<TreeJob> TreeJobs { get; set; }
     }
 }

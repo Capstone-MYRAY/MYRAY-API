@@ -12,6 +12,5 @@ public static class AreaProfiles
         configuration.CreateMap<DataTier.Entities.Area, InsertAreaDto>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.Area, UpdateAreaDto>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.Area, DeleteAreaDto>().ReverseMap();
-
     }
 }

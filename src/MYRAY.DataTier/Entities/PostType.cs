@@ -7,7 +7,7 @@ namespace MYRAY.DataTier.Entities
     {
         public PostType()
         {
-            PinDates = new HashSet<PinDate>();
+            JobPosts = new HashSet<JobPost>();
         }
 
         public int Id { get; set; }
@@ -18,6 +18,6 @@ namespace MYRAY.DataTier.Entities
         public int? Status { get; set; }
         public string? Background { get; set; }
 
-        public virtual ICollection<PinDate> PinDates { get; set; }
+        public virtual ICollection<JobPost> JobPosts { get; set; }
     }
 }
