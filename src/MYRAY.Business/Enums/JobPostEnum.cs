@@ -46,7 +46,7 @@ public class JobPostEnum
     public enum JobPostWorkStatus
     {
         Pending = 0,
-        Start = 1,
+        Started = 1,
         Done = 2
     }
     

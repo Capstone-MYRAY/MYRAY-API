@@ -36,8 +36,8 @@ public class JobPostRepository : IJobPostRepository
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob; 
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
         bool flag = publishBy != null;
-        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(
-            (flag ? post => post.PublishedBy == publishBy : null) ,
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(post => post.Status != (int?)JobPostEnum.JobPostStatus.Deleted &&
+                (!flag || post.PublishedBy == publishBy) ,
             new []{expHours, expTask});
         return query;
     }
@@ -57,7 +57,7 @@ public class JobPostRepository : IJobPostRepository
     public IQueryable<DataTier.Entities.JobPost> GetInProgressJobPost()
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expAppliedJob = post => post.AppliedJobs;
-        IQueryable<DataTier.Entities.JobPost> inProgress = _jobPostRepository.Get(post => post.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Start, new []{expAppliedJob});
+        IQueryable<DataTier.Entities.JobPost> inProgress = _jobPostRepository.Get(post => post.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Started, new []{expAppliedJob});
         return inProgress;
     }
 
@@ -66,7 +66,8 @@ public class JobPostRepository : IJobPostRepository
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob; 
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
-        DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetFirstOrDefaultAsync(j => j.Id == id, new []{expHours, expTask}))!;
+        DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetFirstOrDefaultAsync(j => j.Id == id && j.Status != (int?)JobPostEnum.JobPostStatus.Deleted, 
+            new []{expHours, expTask}))!;
         return jobPost;
     }
 
@@ -302,13 +303,13 @@ public class JobPostRepository : IJobPostRepository
             throw new Exception("Job Post is not existed");
         }
 
-        if (jobPost.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Start)
+        if (jobPost.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Started)
         {
             throw new Exception("Job post has been started");
         }
         /// 
         
-        jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Start;
+        jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Started;
         _jobPostRepository.Modify(jobPost);
 
         await _contextFactory.SaveAllAsync();
