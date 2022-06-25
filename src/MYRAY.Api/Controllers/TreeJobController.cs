@@ -35,7 +35,7 @@ public class TreeJobController: ControllerBase
     /// <response code="204">Returns if list of tree job is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
-    // [Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(List<TreeJobDetail>),StatusCodes.Status200OK)]
     public Task<IActionResult> GetTreeJob([FromQuery]int jobPostId)
     {
@@ -59,7 +59,7 @@ public class TreeJobController: ControllerBase
     /// <response code="400">Returns if tree job input is empty or create error</response>
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPost]
-    // [Authorize(Roles = UserRole.LANDOWNER)]
+    [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(TreeJobDetail),StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateGuidepost(CreateTreeJob createTreeJob)
     {
