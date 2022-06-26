@@ -1,14 +1,15 @@
-using System.Text.Json.Serialization;
 using Google.Apis.Json;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.FileProviders;
 using MYRAY.Api.Constants;
+using MYRAY.Api.Cron;
 using MYRAY.Api.Hubs;
 using MYRAY.Business;
 using MYRAY.DataTier;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(o =>
@@ -70,12 +71,11 @@ AppSetting.AddFireBaseAsync();
 //builder.Services.AddCors();
 builder.Services.RegisterSecurityModule(builder.Configuration);
 builder.Services.RegisterSwaggerModule();
-
 //
 builder.Services.RegisterDataTierModule();
 builder.Services.RegisterBusinessModule();
 //
-
+builder.Services.RegisterQuartz();
 var app = builder.Build();
 
 Directory.CreateDirectory("upload");
@@ -99,4 +99,5 @@ app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllers();
 
+// SchedulerTask.StartAsync().GetAwaiter().GetResult();
 app.Run();

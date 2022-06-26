@@ -276,4 +276,16 @@ public class JobPostService : IJobPostService
         var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
     }
+
+    public async Task PostingJob()
+    { 
+       await _jobPostRepository.PostingJob();
+    }
+
+    public async Task ExpiringJob()
+    { 
+       await _jobPostRepository.ExpiredJob();
+    }
+
+   
 }

@@ -30,6 +30,6 @@ public class GuidepostEnum
         /// <summary>
         /// Create Date attr.
         /// </summary>
-        CreateDate
+        CreatedDate
     }
 }

@@ -38,5 +38,9 @@ public interface IJobPostRepository
 
     Task<DataTier.Entities.JobPost> StartJob(int jobPostId);
 
+    Task PostingJob();
 
+    Task ExpiredJob();
+
+    Task SaveChange();
 }

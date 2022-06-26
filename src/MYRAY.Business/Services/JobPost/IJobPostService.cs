@@ -28,4 +28,7 @@ public interface IJobPostService
 
     Task<JobPostDetail> StartJobPost(int jobPostId);
 
+    Task PostingJob();
+    Task ExpiringJob();
+
 }

@@ -13,6 +13,6 @@ public class GardenEnum
         AreaId,
         Name,
         LandArea,
-       CreateDate
+        CreatedDate
     }
 }
