@@ -5,8 +5,8 @@ public class PaymentHistoryEnum
     public enum PaymentHistoryStatus
     {
         Pending = 1,
-        Reject = 0,
-        Paid = 2,
+        Rejected = 0,
+        Paid = 2
         
     }
 

@@ -88,7 +88,6 @@ public class JobPostService : IJobPostService
             {
                 listPin.Add(new PinDate
                 {
-                    // PostTypeId = (int)jobPost.PostTypeId,
                     PinDate1 = (DateTime)startPin,
                     Status = 0
                 });
@@ -99,6 +98,7 @@ public class JobPostService : IJobPostService
         DataTier.Entities.JobPost newJobPost = _mapper.Map<DataTier.Entities.JobPost>(jobPost);
         newJobPost.CreatedDate = DateTime.Now;
         newJobPost.PublishedBy = publishedBy;
+        newJobPost.PostTypeId = jobPost.PostTypeId;
         if (newJobPost.PayPerHourJob != null) 
             newJobPost.Type = "PayPerHourJob";
         else 
@@ -140,11 +140,18 @@ public class JobPostService : IJobPostService
             JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint
         };
+        if (newPayment.Balance < 0)
+        {
+            throw new Exception("You not enough money to post job");
+        }
+
+        if (accountPost.Point < newPayment.UsedPoint)
+        {
+            throw new Exception("You not enough point to post job");
+        }
 
         newJobPost = await _jobPostRepository.CreateJobPost(newJobPost, newJobPost.PayPerHourJob, newJobPost.PayPerTaskJob, listPin, newPayment);
         //-- Done Insert Job Post
-
-        
         
         var result = _mapper.Map<JobPostDetail>(newJobPost);
         return result;
@@ -166,7 +173,6 @@ public class JobPostService : IJobPostService
             {
                 listPin.Add(new PinDate()
                 {
-                    // PostTypeId = (int)jobPost.PostTypeId,
                     PinDate1 = (DateTime)startPin,
                     Status = 0
                 });
@@ -220,6 +226,15 @@ public class JobPostService : IJobPostService
             PointPrice = (int?)pricePoint
         };
         //-- End Add Payment
+        if (newPayment.Balance < 0)
+        {
+            throw new Exception("You not enough money to post job");
+        }
+
+        if (accountPost.Point < newPayment.UsedPoint)
+        {
+            throw new Exception("You not enough point to post job");
+        }
         
         updateJobPost = await _jobPostRepository.UpdateJobPost(updateJobPost, updateJobPost.PayPerHourJob, updateJobPost.PayPerTaskJob, listPin, newPayment);
         

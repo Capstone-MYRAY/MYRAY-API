@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
@@ -99,10 +98,10 @@ public class JobPostRepository : IJobPostRepository
 
         if (pinDates != null)
         {
-            foreach (var VARIABLE in pinDates)
+            foreach (var variable in pinDates)
             {
-                VARIABLE.JobPostId = jobPost.Id;
-                await _pinDateRepository.InsertAsync(VARIABLE);
+                variable.JobPostId = jobPost.Id;
+                await _pinDateRepository.InsertAsync(variable);
             }
         }
         
@@ -120,7 +119,7 @@ public class JobPostRepository : IJobPostRepository
         ICollection<PinDate>? pinDates,
         DataTier.Entities.PaymentHistory newPayment)
     {
-        jobPost.PinDates = pinDates;
+        jobPost.PinDates = pinDates!;
         _jobPostRepository.Modify(jobPost);
         ChangePaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
         jobPost.PaymentHistories = new List<DataTier.Entities.PaymentHistory> { newPayment };
@@ -141,10 +140,10 @@ public class JobPostRepository : IJobPostRepository
 
         if (pinDates != null)
         {
-            foreach (var VARIABLE in pinDates)
+            foreach (var variable in pinDates)
             {
-                VARIABLE.JobPostId = jobPost.Id;
-                await _pinDateRepository.InsertAsync(VARIABLE);
+                variable.JobPostId = jobPost.Id;
+                await _pinDateRepository.InsertAsync(variable);
             }
         }
         await _paymentHistoryRepository.InsertAsync(newPayment);
@@ -179,9 +178,9 @@ public class JobPostRepository : IJobPostRepository
 
     public void DeletePinDate(ICollection<PinDate> pinDates)
     {
-        foreach (var VARIABLE in pinDates)
+        foreach (var variable in pinDates)
         {
-            _pinDateRepository.Delete(VARIABLE);
+            _pinDateRepository.Delete(variable);
         }
     }
 
@@ -190,7 +189,7 @@ public class JobPostRepository : IJobPostRepository
         DataTier.Entities.PaymentHistory paymentHistory =
             _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)!;
 
-        paymentHistory.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Reject;
+        paymentHistory.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Rejected;
     }
 
     public IQueryable GetPinDateByJobPost(int id)
@@ -199,7 +198,7 @@ public class JobPostRepository : IJobPostRepository
         return result;
     }
 
-    public void ApprovePaymentHistory(int jobPostId, int publishId)
+    private void ApprovePaymentHistory(int jobPostId, int publishId)
     {
         DataTier.Entities.PaymentHistory paymentHistory =
             _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)!;

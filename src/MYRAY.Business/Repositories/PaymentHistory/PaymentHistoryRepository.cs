@@ -56,7 +56,7 @@ public class PaymentHistoryRepository : IPaymentHistoryRepository
             throw new MException(StatusCodes.Status400BadRequest, "Payment is not existed.");
         }
 
-        payment.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Reject;
+        payment.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Rejected;
         
         _paymentHistoryRepository.Modify(payment);
 
