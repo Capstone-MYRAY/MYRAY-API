@@ -1,3 +1,4 @@
+using MYRAY.Business.DTOs.TreeJob;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
 
@@ -21,27 +22,26 @@ public class TreeJobRepository : ITreeJobRepository
         return query;
     }
 
-    public async Task<DataTier.Entities.TreeJob> CreateTreeJob(DataTier.Entities.TreeJob treeJob)
+    public void InsertTreeJob(ICollection<CreateTreeJob> treeJobs, int jobPostId)
     {
-        await _treeJobRepository.InsertAsync(treeJob);
-
-        await _contextFactory.SaveAllAsync();
-        return treeJob;
+        foreach (var tf in treeJobs)
+        {
+             _treeJobRepository.Insert(new DataTier.Entities.TreeJob
+             {
+                TreeTypeId = tf.TreeTypeId,
+                JobPostId = jobPostId,
+                CreatedDate = DateTime.Now
+            });
+        }
     }
 
-    public async Task<DataTier.Entities.TreeJob> DeleteTreeJob(DataTier.Entities.TreeJob treeJob)
+    public void DeleteTreeJob(int jobPostId)
     {
-        DataTier.Entities.TreeJob treeJobDb = await _treeJobRepository.GetFirstOrDefaultAsync(tj =>
-            tj.JobPostId == treeJob.JobPostId && tj.TreeTypeId == treeJob.TreeTypeId) ?? throw new Exception("TreJob is not existed");
-
-        if (treeJobDb == null)
+        IQueryable<DataTier.Entities.TreeJob> queryable = _treeJobRepository.Get(tj => tj.JobPostId == jobPostId);
+        List<DataTier.Entities.TreeJob> listDelete = queryable.ToList();
+        foreach (var tf in listDelete)
         {
-            throw new Exception("TreeJob is not existed");
+            _treeJobRepository.Delete(tf);
         }
-
-        _treeJobRepository.Delete(treeJobDb);
-
-        await _contextFactory.SaveAllAsync();
-        return treeJob;
     }
 }

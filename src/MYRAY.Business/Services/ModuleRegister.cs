@@ -15,7 +15,6 @@ using MYRAY.Business.Services.Message;
 using MYRAY.Business.Services.PostType;
 using MYRAY.Business.Services.Report;
 using MYRAY.Business.Services.Role;
-using MYRAY.Business.Services.TreeJob;
 using MYRAY.Business.Services.TreeType;
 
 namespace MYRAY.Business.Services;
@@ -47,6 +46,5 @@ public static class ModuleRegister
         services.AddScoped<IBookmarkService, BookmarkService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<IMessageService, MessageService>();
-        services.AddScoped<ITreeJobService, TreeJobService>();
     }
 }

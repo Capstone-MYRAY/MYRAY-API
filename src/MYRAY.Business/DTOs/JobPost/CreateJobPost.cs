@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using MYRAY.Business.DTOs.TreeJob;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.DTOs.JobPost;
@@ -8,8 +9,7 @@ public class CreateJobPost
 {
     [Required]
     public int GardenId { get; set; }
-    [Required]
-    public int TreeTypeId { get; set; }
+    public virtual ICollection<CreateTreeJob> TreeJobs { get; set; }
     [Required]
     public string Title { get; set; }
     public DateTime? StartJobDate { get; set; }

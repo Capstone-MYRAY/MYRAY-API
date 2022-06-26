@@ -18,6 +18,7 @@ public class JobPostRepository : IJobPostRepository
     private readonly IBaseRepository<PinDate> _pinDateRepository;
     private readonly IBaseRepository<DataTier.Entities.PaymentHistory> _paymentHistoryRepository;
     private readonly IBaseRepository<DataTier.Entities.Account> _accountRepository;
+    private readonly IBaseRepository<DataTier.Entities.TreeJob> _treeJobRepository;
 
     public JobPostRepository(IDbContextFactory contextFactory)
     {
@@ -29,6 +30,7 @@ public class JobPostRepository : IJobPostRepository
         _pinDateRepository = context.GetRepository<PinDate>()!;
         _paymentHistoryRepository = context.GetRepository<DataTier.Entities.PaymentHistory>()!;
         _accountRepository = context.GetRepository<DataTier.Entities.Account>()!;
+        _treeJobRepository = context.GetRepository<DataTier.Entities.TreeJob>()!;
     }
 
     public IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null)
@@ -128,19 +130,27 @@ public class JobPostRepository : IJobPostRepository
         _jobPostRepository.Modify(jobPost);
         ChangePaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
         jobPost.PaymentHistories = new List<DataTier.Entities.PaymentHistory> { newPayment };
+        DeletePayPerTask(jobPost.Id);
+        DeletePayPerHour(jobPost.Id);
         if (jobPost.Type.Equals("PayPerHourJob"))
         {
-            if (payPerHourJob == null) throw new Exception("PayPerHourJob: Empty");
-            jobPost.PayPerHourJob = payPerHourJob;
+            if (payPerHourJob == null) 
+                throw new Exception("PayPerHourJob: Empty");
+           
             payPerHourJob.Id = jobPost.Id;
-            _payPerHourRepository.Modify(payPerHourJob);
+            jobPost.PayPerHourJob = payPerHourJob;
+            // _payPerHourRepository.Modify(payPerHourJob);
+            await _payPerHourRepository.InsertAsync(payPerHourJob);
         }
         else
         {
-            if (payPerTaskJob == null) throw new Exception("PayPerTaskJob: Empty");
-            jobPost.PayPerTaskJob = payPerTaskJob;
+            if (payPerTaskJob == null) 
+                throw new Exception("PayPerTaskJob: Empty");
+            
             payPerTaskJob.Id = jobPost.Id;
-            _payPerTaskRepository.Modify(payPerTaskJob);
+            jobPost.PayPerTaskJob = payPerTaskJob;
+            // _payPerTaskRepository.Modify(payPerTaskJob);
+            await _payPerTaskRepository.InsertAsync(payPerTaskJob);
         }
 
         if (pinDates != null)
@@ -360,5 +370,23 @@ public class JobPostRepository : IJobPostRepository
     public async Task SaveChange()
     {
         await _contextFactory.SaveAllAsync();
+    }
+
+    private void DeletePayPerHour(int jobPostId)
+    {
+        PayPerHourJob payPerHourJob = _payPerHourRepository.GetFirstOrDefault(pph => pph.Id == jobPostId);
+        if (payPerHourJob != null)
+        {
+            _payPerHourRepository.Delete(payPerHourJob);
+        }
+    }
+    
+    private void DeletePayPerTask(int jobPostId)
+    {
+        PayPerTaskJob payPerTaskJob = _payPerTaskRepository.GetFirstOrDefault(ppt => ppt.Id == jobPostId);
+        if (payPerTaskJob != null)
+        {
+            _payPerTaskRepository.Delete(payPerTaskJob);
+        }
     }
 }

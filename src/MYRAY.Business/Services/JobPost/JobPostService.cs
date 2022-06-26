@@ -9,6 +9,7 @@ using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.PaymentHistory;
 using MYRAY.Business.Repositories.PostType;
+using MYRAY.Business.Repositories.TreeJob;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Services.JobPost;
@@ -19,12 +20,14 @@ public class JobPostService : IJobPostService
     private readonly IJobPostRepository _jobPostRepository;
     private readonly IAccountRepository _accountRepository;
     private readonly IPostTypeRepository _postTypeRepository;
+    private readonly ITreeJobRepository _treeJobRepository;
     private readonly IConfiguration _configuration;
 
-    public JobPostService(IMapper mapper, 
+    public JobPostService(IMapper mapper,
         IJobPostRepository jobPostRepository,
         IAccountRepository accountRepository,
         IPostTypeRepository postTypeRepository,
+        ITreeJobRepository treeJobRepository,
         IConfiguration configuration)
     {
         _mapper = mapper;
@@ -32,12 +35,13 @@ public class JobPostService : IJobPostService
         _configuration = configuration;
         _accountRepository = accountRepository;
         _postTypeRepository = postTypeRepository;
+        _treeJobRepository = treeJobRepository;
     }
 
     public ResponseDto.CollectiveResponse<JobPostDetail> GetJobPosts(
-        SearchJobPost searchJobPost, 
-        PagingDto pagingDto, 
-        SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto, 
+        SearchJobPost searchJobPost,
+        PagingDto pagingDto,
+        SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto,
         int? publishId = null,
         bool isFarmer = false)
     {
@@ -48,24 +52,25 @@ public class JobPostService : IJobPostService
             query = query.Where(post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted
                                         || post.Status == (int?)JobPostEnum.JobPostStatus.Expired);
         }
-        
+
         query = query.GetWithSearch(searchJobPost);
-        
+
         if (isFarmer)
         {
-            listPin =  _jobPostRepository.GetPinPost().ToList();
+            listPin = _jobPostRepository.GetPinPost().ToList();
             var pinId = listPin.Select(x => x.Id);
             query = query.Where(p => !pinId.Contains(p.Id));
         }
-        
+
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
-        
+
         var result = query.GetWithPaging<JobPostDetail, DataTier.Entities.JobPost>(pagingDto, _mapper);
         if (isFarmer)
         {
             var listP = _mapper.ProjectTo<JobPostDetail>(_jobPostRepository.GetPinPost());
             result.SecondObject = listP.ToList();
         }
+
         return result;
     }
 
@@ -78,7 +83,6 @@ public class JobPostService : IJobPostService
 
     public async Task<JobPostDetail> CreateJobPost(CreateJobPost jobPost, int publishedBy)
     {
-        
         ICollection<PinDate> listPin = null!;
         if (jobPost.PinDate != null && jobPost.NumberPinDay != null)
         {
@@ -94,35 +98,48 @@ public class JobPostService : IJobPostService
                 startPin = startPin.Value.AddDays(1);
             }
         }
-        
+
         DataTier.Entities.JobPost newJobPost = _mapper.Map<DataTier.Entities.JobPost>(jobPost);
         newJobPost.CreatedDate = DateTime.Now;
         newJobPost.PublishedBy = publishedBy;
         newJobPost.PostTypeId = jobPost.PostTypeId;
-        if (newJobPost.PayPerHourJob != null) 
+        if (newJobPost.PayPerHourJob != null)
             newJobPost.Type = "PayPerHourJob";
-        else 
+        else
             newJobPost.Type = "PayPerTaskJob";
         newJobPost.Status = (int?)JobPostEnum.JobPostStatus.Pending;
-        
-        
+
+
         //--Get Setting From Json File
         float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
         float pricePoint = float.Parse(_configuration.GetSection("Money").GetSection("Point").Value);
         float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
 
         //--Get more information to calculate
-        DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
+        float aPricePinPost = 0;
+
+        if (jobPost.PostTypeId != null)
+        {
+            DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
+
+            if (postType == null)
+            {
+                throw new Exception("Post Type is not existed");
+            }
+
+            aPricePinPost = (float)(postType.Price * jobPost.NumberPinDay);
+        }
+
         //--Calculate Price
         float aPriceJobPost = (float)(priceJobPost * newJobPost.NumPublishDay);
-        float aPricePinPost = (float)(postType.Price * jobPost.NumberPinDay);
         float aPriceUsePoint = 0;
         //-- Check use point
         if (jobPost.UsePoint != null || jobPost.UsePoint != 0)
         {
             aPriceUsePoint = (float)(jobPost.UsePoint * pricePoint);
         }
+
         //-- New payment
         PaymentHistory newPayment = new PaymentHistory
         {
@@ -131,7 +148,7 @@ public class JobPostService : IJobPostService
             Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Pending,
             CreatedDate = DateTime.Now,
             ActualPrice = aPriceJobPost + aPricePinPost,
-            BalanceFluctuation =  - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
+            BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
             Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
             EarnedPoint = (int?)((aPriceJobPost + aPricePinPost) / earnPoint),
             UsedPoint = jobPost.UsePoint != null ? jobPost.UsePoint : 0,
@@ -150,9 +167,10 @@ public class JobPostService : IJobPostService
             throw new Exception("You not enough point to post job");
         }
 
-        newJobPost = await _jobPostRepository.CreateJobPost(newJobPost, newJobPost.PayPerHourJob, newJobPost.PayPerTaskJob, listPin, newPayment);
+        newJobPost = await _jobPostRepository.CreateJobPost(newJobPost, newJobPost.PayPerHourJob,
+            newJobPost.PayPerTaskJob, listPin, newPayment);
         //-- Done Insert Job Post
-        
+
         var result = _mapper.Map<JobPostDetail>(newJobPost);
         return result;
     }
@@ -163,6 +181,8 @@ public class JobPostService : IJobPostService
         IQueryable<PinDate> queryPin = (IQueryable<PinDate>)_jobPostRepository.GetPinDateByJobPost(jobPost.Id);
         ICollection<PinDate> list = queryPin.ToList();
         _jobPostRepository.DeletePinDate(list);
+        _treeJobRepository.DeleteTreeJob(jobPost.Id);
+        _treeJobRepository.InsertTreeJob(jobPost.TreeJobs, jobPost.Id);
         //-- Insert PinDate Again
         ICollection<PinDate> listPin = null!;
         if (jobPost.PinDate != null && jobPost.NumberPinDay != null)
@@ -179,35 +199,49 @@ public class JobPostService : IJobPostService
                 startPin = startPin.Value.AddDays(1);
             }
         }
+
         //-- Map and restore value
         DataTier.Entities.JobPost updateJobPost = _mapper.Map<DataTier.Entities.JobPost>(jobPost);
         updateJobPost.UpdatedDate = DateTime.Now;
         updateJobPost.PublishedBy = publishedBy;
-        if (updateJobPost.PayPerHourJob != null) 
+        if (updateJobPost.PayPerHourJob != null)
             updateJobPost.Type = "PayPerHourJob";
-        else 
+        else
             updateJobPost.Type = "PayPerTaskJob";
         updateJobPost.Status = (int?)JobPostEnum.JobPostStatus.Pending;
 
         //-- Add Payment
-        
+
         //--Get Setting From Json File
         float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
         float pricePoint = float.Parse(_configuration.GetSection("Money").GetSection("Point").Value);
         float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
 
         //--Get more information to calculate
-        DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
+
+        float aPricePinPost = 0;
+        if (jobPost.PostTypeId != null)
+        {
+            
+            DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
+            if (postType == null)
+            {
+                throw new Exception("Post Type is not existed");
+            }
+
+            aPricePinPost = (float)(postType.Price * jobPost.NumberPinDay);
+        }
+
         //--Calculate Price
         float aPriceJobPost = (float)(priceJobPost * updateJobPost.NumPublishDay);
-        float aPricePinPost = (float)(postType.Price * jobPost.NumberPinDay);
         float aPriceUsePoint = 0;
         //-- Check use point
         if (jobPost.UsePoint != null || jobPost.UsePoint != 0)
         {
             aPriceUsePoint = (float)(jobPost.UsePoint * pricePoint);
         }
+
         //-- New payment
         PaymentHistory newPayment = new PaymentHistory
         {
@@ -216,7 +250,7 @@ public class JobPostService : IJobPostService
             Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Pending,
             CreatedDate = DateTime.Now,
             ActualPrice = aPriceJobPost + aPricePinPost,
-            BalanceFluctuation =  - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
+            BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
             Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
             EarnedPoint = (int?)((aPriceJobPost + aPricePinPost) / earnPoint),
             UsedPoint = jobPost.UsePoint != null ? jobPost.UsePoint : 0,
@@ -235,9 +269,10 @@ public class JobPostService : IJobPostService
         {
             throw new Exception("You not enough point to post job");
         }
-        
-        updateJobPost = await _jobPostRepository.UpdateJobPost(updateJobPost, updateJobPost.PayPerHourJob, updateJobPost.PayPerTaskJob, listPin, newPayment);
-        
+
+        updateJobPost = await _jobPostRepository.UpdateJobPost(updateJobPost, updateJobPost.PayPerHourJob,
+            updateJobPost.PayPerTaskJob, listPin, newPayment);
+
         var result = _mapper.Map<JobPostDetail>(updateJobPost);
         return result;
     }
@@ -278,14 +313,12 @@ public class JobPostService : IJobPostService
     }
 
     public async Task PostingJob()
-    { 
-       await _jobPostRepository.PostingJob();
+    {
+        await _jobPostRepository.PostingJob();
     }
 
     public async Task ExpiringJob()
-    { 
-       await _jobPostRepository.ExpiredJob();
+    {
+        await _jobPostRepository.ExpiredJob();
     }
-
-   
 }

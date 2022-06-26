@@ -1,4 +1,5 @@
 using MYRAY.Business.DTOs.JobPost;
+using MYRAY.Business.DTOs.TreeJob;
 using MYRAY.Business.Enums;
 using MYRAY.DataTier.Entities;
 

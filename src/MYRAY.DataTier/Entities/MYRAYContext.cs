@@ -498,8 +498,6 @@ namespace MYRAY.DataTier.Entities
                     .HasMaxLength(70)
                     .HasColumnName("title");
 
-                entity.Property(e => e.TreeTypeId).HasColumnName("tree_type_id");
-
                 entity.Property(e => e.Type)
                     .HasMaxLength(50)
                     .HasColumnName("type");

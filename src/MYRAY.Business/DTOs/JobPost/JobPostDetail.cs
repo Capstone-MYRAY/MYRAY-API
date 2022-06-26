@@ -1,4 +1,5 @@
 using MYRAY.Business.DTOs.Garden;
+using MYRAY.Business.DTOs.TreeJob;
 using MYRAY.Business.Enums;
 using MYRAY.DataTier.Entities;
 
@@ -9,8 +10,7 @@ public class JobPostDetail
     public int Id { get; set; }
     public int GardenId { get; set; }
     public string GardenName { get; set; }
-    public GardenDetail Garden { get; set; } = null!;
-    public int TreeTypeId { get; set; }
+    public ICollection<TreeJobDetail> TreeJobs { get; set; }
     public string TreeName { get; set; }
     public string Title { get; set; } = null!;
     public string Type { get; set; } = null!;
