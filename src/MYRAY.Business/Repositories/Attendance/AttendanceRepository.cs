@@ -1,4 +1,5 @@
 using MYRAY.Business.Repositories.Interface;
+using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.Attendance;
 
@@ -10,13 +11,30 @@ public class AttendanceRepository : IAttendanceRepository
     public AttendanceRepository(IDbContextFactory contextFactory)
     {
         _contextFactory = contextFactory;
+        _attendanceRepository =
+            _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Attendance>()!;
     }
 
 
     public async Task<DataTier.Entities.Attendance> CreateAttendance(DataTier.Entities.Attendance attendance)
     {
+        attendance.Date = DateTime.Today;
         await _attendanceRepository.InsertAsync(attendance);
+        await _contextFactory.SaveAllAsync();
         return attendance;
+    }
+
+    public async Task<DataTier.Entities.Attendance> GetAttendance(int appliedJobId, int accountId)
+    {
+        DataTier.Entities.Attendance attendance = await 
+            _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(DateTime.Today));
+        return attendance;
+    }
+
+    public IQueryable<DataTier.Entities.Attendance> GetListAttendances(int applyJobId)
+    {
+        IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a => a.AppliedJobId == applyJobId);
+        return query;
     }
 
     public async Task<DataTier.Entities.Attendance> CheckAttendance(DataTier.Entities.Attendance attendance)

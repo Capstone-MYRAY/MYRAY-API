@@ -77,6 +77,11 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
+    public async Task<PayPerHourJob> GetPayPerHourJob(int jobPostId)
+    {
+        return await _payPerHourRepository.GetFirstOrDefaultAsync(pph => pph.Id == jobPostId);
+    }
+
     public async Task<DataTier.Entities.JobPost> CreateJobPost(
         DataTier.Entities.JobPost jobPost,
         PayPerHourJob? payPerHourJob,

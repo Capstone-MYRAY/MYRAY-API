@@ -7,32 +7,32 @@ public class AttendanceEnum
         /// <summary>
         /// Có mặt
         /// </summary>
-        Present,
+        Present = 1,
         
         /// <summary>
         /// Chưa đến ngày điểm danh
         /// </summary>
-        Future,
+        Future = 2,
         
         /// <summary>
         /// Vắng mặt
         /// </summary>
-        Absent,
+        Absent = 0,
         
         /// <summary>
         /// Kết thúc
         /// </summary>
-        End,
+        End = 3,
         
         /// <summary>
         /// Xin nghỉ
         /// </summary>
-        DayOff,
+        DayOff = 4,
         
         /// <summary>
         /// Sa thải
         /// </summary>
-        Dismissed,
+        Dismissed = 5,
         
         /// <summary>
         /// Hoàn thành

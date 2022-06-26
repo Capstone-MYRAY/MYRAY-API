@@ -4,7 +4,6 @@ namespace MYRAY.Business.Services.Attendance;
 
 public interface IAttendanceService
 {
-    Task CreateAttendance();
-    Task CreateAttendanceManual(int jobPostId);
-    Task<AttendanceDetail> CheckAttendance();
+    Task CreateAttendance(CheckAttendance attendance, int checkBy, int accountId);
+    Task<List<AttendanceDetail>> GetAttendances(int jobPostId, int accountId);
 }

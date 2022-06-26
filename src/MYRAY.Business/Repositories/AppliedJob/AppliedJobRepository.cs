@@ -23,6 +23,18 @@ public class AppliedJobRepository : IAppliedJobRepository
       return query;
    }
 
+   public async Task<DataTier.Entities.AppliedJob> GetByJobAndAccount(int jobPostId, int accountId)
+   {
+      DataTier.Entities.AppliedJob appliedJob = 
+         await _appliedJobRepository.GetFirstOrDefaultAsync(a => a.JobPostId == jobPostId && a.AppliedBy == accountId);
+      if (appliedJob == null)
+      {
+         throw new Exception("Do not Applied Job");
+      }
+
+      return appliedJob;
+   }
+
    public async Task<DataTier.Entities.AppliedJob> ApplyJob(int jobId, int appliedBy)
    {
       DataTier.Entities.AppliedJob checkExisted =

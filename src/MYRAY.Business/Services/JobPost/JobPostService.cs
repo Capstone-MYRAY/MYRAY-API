@@ -7,7 +7,6 @@ using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.JobPost;
-using MYRAY.Business.Repositories.PaymentHistory;
 using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.TreeJob;
 using MYRAY.DataTier.Entities;
@@ -73,7 +72,7 @@ public class JobPostService : IJobPostService
 
         return result;
     }
-
+    
     public async Task<JobPostDetail> GetJobPostById(int id)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(id);
