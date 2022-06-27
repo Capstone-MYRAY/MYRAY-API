@@ -9,7 +9,6 @@ using MYRAY.DataTier;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(o =>
@@ -87,7 +86,7 @@ app.UseFileServer(new FileServerOptions
 });
 
 // Configure the HTTP request pipeline.
-app.UseCors("CorsPolicy");
+app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseApplicationSwagger();
 
