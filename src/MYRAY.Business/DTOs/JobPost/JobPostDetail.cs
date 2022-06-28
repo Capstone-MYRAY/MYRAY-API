@@ -29,6 +29,8 @@ public class JobPostDetail
     public int? StatusWork { get; set; }
     public string? ReasonReject { get; set; }
     public int? PostTypeId { get; set; }
+    public string? Color { get; set; }
+    public string? Background { get; set; }
     
     public PayPerHour PayPerHourJob { get; set; } = null!;
     public PayPerTask PayPerTaskJob { get; set; } = null!;
