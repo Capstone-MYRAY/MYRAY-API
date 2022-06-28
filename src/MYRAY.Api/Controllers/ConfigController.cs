@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
 using MYRAY.Business.DTOs.Config;
@@ -23,10 +24,11 @@ public class ConfigController : ControllerBase
     }
     
     /// <summary>
-    /// Get Config in system
+    /// [Authenticated user] Get Config in system
     /// </summary>
     /// <returns>Object contains config</returns>
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(typeof(ConfigDetail), StatusCodes.Status200OK)]
     public  IActionResult GetConfig()
     {
