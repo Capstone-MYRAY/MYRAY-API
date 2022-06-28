@@ -6,6 +6,7 @@ using MYRAY.Business.Services.Attendance;
 using MYRAY.Business.Services.Authentication;
 using MYRAY.Business.Services.Bookmark;
 using MYRAY.Business.Services.Comment;
+using MYRAY.Business.Services.Config;
 using MYRAY.Business.Services.Feedback;
 using MYRAY.Business.Services.File;
 using MYRAY.Business.Services.Garden;
@@ -46,5 +47,6 @@ public static class ModuleRegister
         services.AddScoped<IBookmarkService, BookmarkService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<IMessageService, MessageService>();
+        services.AddScoped<IConfigService, ConfigService>();
     }
 }

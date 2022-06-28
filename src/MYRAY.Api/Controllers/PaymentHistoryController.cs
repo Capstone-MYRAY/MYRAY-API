@@ -38,7 +38,7 @@ public class PaymentHistoryController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("{accountId}")]
     [Authorize]
-    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<PaymentHistory>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<PaymentHistoryDetail>),StatusCodes.Status200OK)]
     public Task<IActionResult> GetGuidepost(
         [FromQuery] SearchPaymentHistory searchPaymentHistory,
         [FromQuery] SortingDto<PaymentHistoryEnum.PaymentHistorySortCriteria> sortingDto,

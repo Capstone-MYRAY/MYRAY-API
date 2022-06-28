@@ -23,6 +23,8 @@ public class TreeTypeEnum
         /// <summary>
         /// Type attr.
         /// </summary>
-        Type
+        Type,
+        
+        Status
     }
 }
