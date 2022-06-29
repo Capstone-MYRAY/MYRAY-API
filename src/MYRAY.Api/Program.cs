@@ -11,14 +11,15 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors(o =>
-{
-    o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder
-        .SetIsOriginAllowed(_ => true)
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials());
-});
+// builder.Services.AddCors(o =>
+// {
+//     o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder
+//         .SetIsOriginAllowedToAllowWildcardSubdomains()
+//         .SetIsOriginAllowed(_ => true)
+//         .AllowAnyMethod()
+//         .AllowAnyHeader()
+//         .AllowCredentials());
+// });
 
 builder.Services.AddSignalR();
 builder.Services.Configure<IISServerOptions>(p => { p.MaxRequestBodySize = int.MaxValue; });
@@ -78,15 +79,25 @@ builder.Services.RegisterQuartz();
 var app = builder.Build();
 
 Directory.CreateDirectory("upload");
-app.UseFileServer(new FileServerOptions
+app.UseFileServer(new FileServerOptions()
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "upload")),
     RequestPath = "/upload",
     EnableDirectoryBrowsing = true,
+    StaticFileOptions = { OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    }}
 });
 
 // Configure the HTTP request pipeline.
-app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+app.UseCors(cor => cor
+    .SetIsOriginAllowedToAllowWildcardSubdomains()
+    .SetIsOriginAllowed(_ => true)
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
 
 app.UseApplicationSwagger();
 
