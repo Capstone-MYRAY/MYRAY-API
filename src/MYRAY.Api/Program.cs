@@ -11,15 +11,15 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-// builder.Services.AddCors(o =>
-// {
-//     o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder
-//         .SetIsOriginAllowedToAllowWildcardSubdomains()
-//         .SetIsOriginAllowed(_ => true)
-//         .AllowAnyMethod()
-//         .AllowAnyHeader()
-//         .AllowCredentials());
-// });
+builder.Services.AddCors(o =>
+{
+    o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder
+        .SetIsOriginAllowedToAllowWildcardSubdomains()
+        .SetIsOriginAllowed(_ => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
+});
 
 builder.Services.AddSignalR();
 builder.Services.Configure<IISServerOptions>(p => { p.MaxRequestBodySize = int.MaxValue; });

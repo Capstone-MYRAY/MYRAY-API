@@ -15,9 +15,9 @@ public class AttendanceEnum
         Future = 2,
         
         /// <summary>
-        /// Vắng mặt
+        /// Vắng mặt không phép
         /// </summary>
-        Absent = 0,
+        UnexcusedAbsent = 0,
         
         /// <summary>
         /// Kết thúc
@@ -35,9 +35,9 @@ public class AttendanceEnum
         Dismissed = 5,
         
         /// <summary>
-        /// Hoàn thành
+        /// Vắng có phép
         /// </summary>
-        Done
+        ExcussedAbsence = 6
         
     }
 }
