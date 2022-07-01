@@ -536,6 +536,10 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Content).HasColumnName("content");
 
+                entity.Property(e => e.ConventionId)
+                    .IsUnicode(false)
+                    .HasColumnName("convention_id");
+
                 entity.Property(e => e.CreatedDate)
                     .HasColumnType("datetime")
                     .HasColumnName("created_date")

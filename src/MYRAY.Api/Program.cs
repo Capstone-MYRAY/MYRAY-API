@@ -51,12 +51,12 @@ builder.Services.AddControllers()
     {
         o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         o.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
-        o.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
+        o.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
         o.SerializerSettings.ContractResolver = new NewtonsoftJsonContractResolver
         {
             NamingStrategy = new SnakeCaseNamingStrategy()
         };
-        o.SerializerSettings.Converters.Add(new StringEnumConverter()
+        o.SerializerSettings.Converters.Add(new StringEnumConverter
         {
             AllowIntegerValues = true
         });

@@ -62,6 +62,7 @@ public static class SwaggerSetting
                     Email = "forest.tl112@gmail.com"
                 }
             });
+            c.AddSignalRSwaggerGen();
             //--Get Assembly Name Combine extension xml 
             var xmlFile = $"{typeof(Program).GetTypeInfo().Assembly.GetName().Name}.xml";
             //--Combine Base Path to xml file name

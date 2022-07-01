@@ -27,18 +27,19 @@ public class MessageRepository : IMessageRepository
         {
             throw new Exception("Job post is not existed");
         }
-
-        DataTier.Entities.AppliedJob appliedJob =
-            (await _appliedJobRepository.GetFirstOrDefaultAsync(ap => ap.JobPostId == jobPost.Id && ap.AppliedBy == message.FromId))!;
-
-        if (appliedJob == null || appliedJob.Status != (int?)AppliedJobEnum.AppliedJobStatus.Approve)
-        {
-            throw new Exception("You not in job post");
-        }
+        
 
         await _messageRepository.InsertAsync(message);
         await _contextFactory.SaveAllAsync();
 
         return message;
+    }
+
+    public IQueryable<DataTier.Entities.Message> GetMessageByConventionId(string conventionId)
+    {
+        IQueryable<DataTier.Entities.Message> query = _messageRepository.Get(m => m.ConventionId == conventionId)
+            .OrderByDescending(m=>m.CreatedDate);
+        return query;
+        
     }
 }

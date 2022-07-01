@@ -11,6 +11,7 @@ using MYRAY.Business.Services.Feedback;
 using MYRAY.Business.Services.File;
 using MYRAY.Business.Services.Garden;
 using MYRAY.Business.Services.Guidepost;
+using MYRAY.Business.Services.Hubs;
 using MYRAY.Business.Services.JobPost;
 using MYRAY.Business.Services.Message;
 using MYRAY.Business.Services.PostType;
@@ -46,7 +47,9 @@ public static class ModuleRegister
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IBookmarkService, BookmarkService>();
         services.AddScoped<IAttendanceService, AttendanceService>();
-        services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IConfigService, ConfigService>();
+        services.AddScoped<IMessageService, MessageService>();
+        
+        services.AddSingleton<IConnectionService, ConnectionService>();
     }
 }
