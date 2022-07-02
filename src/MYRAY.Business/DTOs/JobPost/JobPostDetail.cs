@@ -25,7 +25,7 @@ public class JobPostDetail
     public int? ApprovedBy { get; set; }
     public DateTime? ApprovedDate { get; set; }
     public string? Description { get; set; }
-    public string? Status { get; set; }
+    public int? Status { get; set; }
     public int? StatusWork { get; set; }
     public string? ReasonReject { get; set; }
     public int? PostTypeId { get; set; }

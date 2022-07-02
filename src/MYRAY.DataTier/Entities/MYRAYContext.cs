@@ -23,6 +23,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<Attendance> Attendances { get; set; } = null!;
         public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
+        public virtual DbSet<ExtendTaskJob> ExtendTaskJobs { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Garden> Gardens { get; set; } = null!;
         public virtual DbSet<Guidepost> Guideposts { get; set; } = null!;
@@ -314,6 +315,50 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.GuidepostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Comment_Guidepost");
+            });
+
+            modelBuilder.Entity<ExtendTaskJob>(entity =>
+            {
+                entity.ToTable("ExtendTaskJob");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.ApprovedBy).HasColumnName("approved_by");
+
+                entity.Property(e => e.ApprovedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("approved_date");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_date");
+
+                entity.Property(e => e.ExtendEndDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("extend_end_date");
+
+                entity.Property(e => e.JobPostId).HasColumnName("job_post_id");
+
+                entity.Property(e => e.Reason).HasColumnName("reason");
+
+                entity.Property(e => e.RequestBy).HasColumnName("request_by");
+
+                entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.HasOne(d => d.ApprovedByNavigation)
+                    .WithMany(p => p.ExtendTaskJobApprovedByNavigations)
+                    .HasForeignKey(d => d.ApprovedBy)
+                    .HasConstraintName("FK_ExtendTaskJob_Account1");
+
+                entity.HasOne(d => d.JobPost)
+                    .WithMany(p => p.ExtendTaskJobs)
+                    .HasForeignKey(d => d.JobPostId)
+                    .HasConstraintName("FK_ExtendTaskJob_JobPost");
+
+                entity.HasOne(d => d.RequestByNavigation)
+                    .WithMany(p => p.ExtendTaskJobRequestByNavigations)
+                    .HasForeignKey(d => d.RequestBy)
+                    .HasConstraintName("FK_ExtendTaskJob_Account");
             });
 
             modelBuilder.Entity<Feedback>(entity =>

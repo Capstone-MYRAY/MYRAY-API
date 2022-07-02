@@ -13,6 +13,8 @@ namespace MYRAY.DataTier.Entities
             BookmarkAccounts = new HashSet<Bookmark>();
             BookmarkBookmarkNavigations = new HashSet<Bookmark>();
             Comments = new HashSet<Comment>();
+            ExtendTaskJobApprovedByNavigations = new HashSet<ExtendTaskJob>();
+            ExtendTaskJobRequestByNavigations = new HashSet<ExtendTaskJob>();
             FeedbackBelongeds = new HashSet<Feedback>();
             FeedbackCreatedByNavigations = new HashSet<Feedback>();
             Gardens = new HashSet<Garden>();
@@ -52,6 +54,8 @@ namespace MYRAY.DataTier.Entities
         public virtual ICollection<Bookmark> BookmarkAccounts { get; set; }
         public virtual ICollection<Bookmark> BookmarkBookmarkNavigations { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<ExtendTaskJob> ExtendTaskJobApprovedByNavigations { get; set; }
+        public virtual ICollection<ExtendTaskJob> ExtendTaskJobRequestByNavigations { get; set; }
         public virtual ICollection<Feedback> FeedbackBelongeds { get; set; }
         public virtual ICollection<Feedback> FeedbackCreatedByNavigations { get; set; }
         public virtual ICollection<Garden> Gardens { get; set; }

@@ -6,6 +6,7 @@ using MYRAY.Business.Repositories.AreaAccount;
 using MYRAY.Business.Repositories.Attendance;
 using MYRAY.Business.Repositories.Bookmark;
 using MYRAY.Business.Repositories.Comment;
+using MYRAY.Business.Repositories.ExtendTaskJob;
 using MYRAY.Business.Repositories.Feedback;
 using MYRAY.Business.Repositories.Garden;
 using MYRAY.Business.Repositories.Guidepost;
@@ -50,6 +51,7 @@ public static class ModuleRegister
         services.AddTransient<IAttendanceRepository, AttendanceRepository>();
         services.AddTransient<IMessageRepository, MessageRepository>();
         services.AddTransient<ITreeJobRepository, TreeJobRepository>();
+        services.AddTransient<IExtendTaskJobRepository, ExtendTaskJobRepository>();
         
         
         return services;

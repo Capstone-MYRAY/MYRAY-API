@@ -8,6 +8,7 @@ namespace MYRAY.DataTier.Entities
         public JobPost()
         {
             AppliedJobs = new HashSet<AppliedJob>();
+            ExtendTaskJobs = new HashSet<ExtendTaskJob>();
             Feedbacks = new HashSet<Feedback>();
             Messages = new HashSet<Message>();
             PaymentHistories = new HashSet<PaymentHistory>();
@@ -42,6 +43,7 @@ namespace MYRAY.DataTier.Entities
         public virtual PayPerHourJob PayPerHourJob { get; set; } = null!;
         public virtual PayPerTaskJob PayPerTaskJob { get; set; } = null!;
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }
+        public virtual ICollection<ExtendTaskJob> ExtendTaskJobs { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
         public virtual ICollection<PaymentHistory> PaymentHistories { get; set; }
