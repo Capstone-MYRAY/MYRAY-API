@@ -10,6 +10,7 @@ public class JobPostDetail
     public int Id { get; set; }
     public int GardenId { get; set; }
     public string GardenName { get; set; }
+    public string Address { get; set; }
     public ICollection<TreeJobDetail> TreeJobs { get; set; }
     public string TreeName { get; set; }
     public string Title { get; set; } = null!;
