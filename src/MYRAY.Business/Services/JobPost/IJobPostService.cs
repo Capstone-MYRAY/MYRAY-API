@@ -28,6 +28,8 @@ public interface IJobPostService
 
     Task<JobPostDetail> StartJobPost(int jobPostId);
 
+    Task<JobPostDetail> ExtendJobPostForLandowner(int jobPostId, DateTime dateTimeExtend, int usePoint = 0);
+
     Task PostingJob();
     Task ExpiringJob();
 

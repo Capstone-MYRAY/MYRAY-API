@@ -139,22 +139,20 @@ public class JobPostRepository : IJobPostRepository
         DeletePayPerHour(jobPost.Id);
         if (jobPost.Type.Equals("PayPerHourJob"))
         {
-            if (payPerHourJob == null) 
+            if (payPerHourJob == null)
                 throw new Exception("PayPerHourJob: Empty");
-           
+
             payPerHourJob.Id = jobPost.Id;
             jobPost.PayPerHourJob = payPerHourJob;
-            // _payPerHourRepository.Modify(payPerHourJob);
             await _payPerHourRepository.InsertAsync(payPerHourJob);
         }
         else
         {
-            if (payPerTaskJob == null) 
+            if (payPerTaskJob == null)
                 throw new Exception("PayPerTaskJob: Empty");
-            
+
             payPerTaskJob.Id = jobPost.Id;
             jobPost.PayPerTaskJob = payPerTaskJob;
-            // _payPerTaskRepository.Modify(payPerTaskJob);
             await _payPerTaskRepository.InsertAsync(payPerTaskJob);
         }
 
@@ -330,10 +328,24 @@ public class JobPostRepository : IJobPostRepository
         {
             throw new Exception("Job post has been started");
         }
-        /// 
 
         jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Started;
         _jobPostRepository.Modify(jobPost);
+
+        await _contextFactory.SaveAllAsync();
+
+        return jobPost;
+    }
+
+    public async Task<DataTier.Entities.JobPost> ExtendJobPostForLandowner(
+        DataTier.Entities.JobPost jobPost,
+        DataTier.Entities.PaymentHistory newPayment,
+        DataTier.Entities.Account account)
+    {
+        _jobPostRepository.Modify(jobPost);
+        _accountRepository.Modify(account);
+        
+        await _paymentHistoryRepository.InsertAsync(newPayment);
 
         await _contextFactory.SaveAllAsync();
 
@@ -350,7 +362,8 @@ public class JobPostRepository : IJobPostRepository
         {
             jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
             _jobPostRepository.Modify(jobPost);
-            Console.WriteLine($"Posted: #{jobPost.Id} - {DateTime.Now}", Console.BackgroundColor == ConsoleColor.Yellow);
+            Console.WriteLine($"Posted: #{jobPost.Id} - {DateTime.Now}",
+                Console.BackgroundColor == ConsoleColor.Yellow);
         }
 
         await _contextFactory.SaveAllAsync();
@@ -366,7 +379,8 @@ public class JobPostRepository : IJobPostRepository
         foreach (var jobPost in listExpired)
         {
             jobPost.Status = (int?)JobPostEnum.JobPostStatus.Expired;
-            Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}", Console.BackgroundColor == ConsoleColor.Yellow);
+            Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
+                Console.BackgroundColor == ConsoleColor.Yellow);
         }
 
         await _contextFactory.SaveAllAsync();
@@ -385,7 +399,7 @@ public class JobPostRepository : IJobPostRepository
             _payPerHourRepository.Delete(payPerHourJob);
         }
     }
-    
+
     private void DeletePayPerTask(int jobPostId)
     {
         PayPerTaskJob payPerTaskJob = _payPerTaskRepository.GetFirstOrDefault(ppt => ppt.Id == jobPostId);

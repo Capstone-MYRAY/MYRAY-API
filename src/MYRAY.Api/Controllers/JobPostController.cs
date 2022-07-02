@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
@@ -175,7 +176,7 @@ public class JobPostController : ControllerBase
     /// <response code="404">Returns if job post is not existed.</response>
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpDelete("cancel/{jobPostId}")]
-    // [Authorize(Roles = UserRole.LANDOWNER)]
+    [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     public async Task<IActionResult> CancelJobPost(int jobPostId)
     {
@@ -400,6 +401,35 @@ public class JobPostController : ControllerBase
         try
         {
             var result = await _jobPostService.StartJobPost(jobPostId);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// [Landowner] Endpoint for Extend end date job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <param name="extendDate">New end date for job post</param>
+    /// <param name="usePoint">Point use to extend</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Returns if extend success</response>
+    /// <response code="400">Returns if job post not existed or posted</response>
+    /// <response code="401">Returns if invalid authorize</response>
+    [HttpPatch("extendJob/{jobPostId}")]
+    // [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ExtendJobPost([Required]int jobPostId, [Required]DateTime extendDate, int usePoint = 0)
+    {
+        try
+        {
+            var result = await _jobPostService.ExtendJobPostForLandowner(jobPostId, extendDate, usePoint);
 
             return Ok(result);
         }

@@ -275,7 +275,7 @@ public class JobPostService : IJobPostService
         var result = _mapper.Map<JobPostDetail>(updateJobPost);
         return result;
     }
-
+    
     public async Task<JobPostDetail> DeleteJobPost(int jobPostId)
     {
         DataTier.Entities.JobPost deleteGuidepost = await _jobPostRepository.DeleteJobPost(jobPostId);
@@ -307,6 +307,81 @@ public class JobPostService : IJobPostService
     public async Task<JobPostDetail> StartJobPost(int jobPostId)
     {
         var jobPost = await _jobPostRepository.StartJob(jobPostId);
+        var result = _mapper.Map<JobPostDetail>(jobPost);
+        return result;
+    }
+
+    public async Task<JobPostDetail> ExtendJobPostForLandowner(int jobPostId, DateTime dateTimeExtend, int usePoint = 0)
+    {
+        var jobPost = await _jobPostRepository.GetJobPostById(jobPostId);
+        if (jobPost == null)
+        {
+            throw new Exception("Job Post is not existed");
+        }
+
+        if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.Posted)
+        {
+            throw new Exception("Job post is not posted");
+        }
+        
+        DateTime dateExpired = jobPost.PublishedDate.Value.AddDays((double)jobPost.NumPublishDay);
+
+        if (dateExpired >= dateTimeExtend)
+        {
+            throw new Exception("Datetime extend not less than current end date");
+        }
+
+        int? numberOfDayBefore = jobPost.NumPublishDay;
+        jobPost.NumPublishDay = dateTimeExtend.DayOfYear - dateExpired.DayOfYear;
+        if (numberOfDayBefore == jobPost.NumPublishDay)
+        {
+            jobPost.NumPublishDay++;
+        }
+        
+        //--Get Setting From Json File
+        float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
+        float pricePoint = float.Parse(_configuration.GetSection("Money").GetSection("Point").Value);
+        float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
+        
+        //--Calculate Price
+        float aPriceJobPost = (float)(priceJobPost * (jobPost.NumPublishDay - numberOfDayBefore));
+        float aPriceUsePoint = usePoint * pricePoint;
+        
+        //--Get more information to calculate
+        DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync((int)jobPost.PublishedBy);
+        
+        PaymentHistory newPayment = new PaymentHistory
+        {
+            JobPostId = jobPost.Id,
+            CreatedBy = jobPost.PublishedBy,
+            Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid,
+            CreatedDate = DateTime.Now,
+            ActualPrice = aPriceJobPost,
+            BalanceFluctuation = -(aPriceJobPost - aPriceUsePoint),
+            Balance = accountPost.Balance - (aPriceJobPost - aPriceUsePoint),
+            EarnedPoint = (int?)(aPriceJobPost / earnPoint),
+            UsedPoint = usePoint,
+            BelongedId = (int)jobPost.PublishedBy,
+            Message = $"Gia hạn bài đăng #{jobPost.Id} thêm {jobPost.NumPublishDay - numberOfDayBefore} ngày",
+            JobPostPrice = priceJobPost,
+            PointPrice = (int?)pricePoint
+        };
+        
+        if (newPayment.Balance < 0)
+        {
+            throw new Exception("You not enough money to post job");
+        }
+
+        if (accountPost.Point < newPayment.UsedPoint)
+        {
+            throw new Exception("You not enough point to post job");
+        }
+
+        accountPost.Balance -= (aPriceJobPost - aPriceUsePoint);
+        accountPost.Point += (newPayment.EarnedPoint - usePoint);
+        
+        await _jobPostRepository.ExtendJobPostForLandowner(jobPost, newPayment, accountPost);
+            
         var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
     }

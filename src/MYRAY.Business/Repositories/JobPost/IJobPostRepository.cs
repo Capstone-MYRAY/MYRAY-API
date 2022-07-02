@@ -41,6 +41,11 @@ public interface IJobPostRepository
 
     Task<DataTier.Entities.JobPost> StartJob(int jobPostId);
 
+    Task<DataTier.Entities.JobPost> ExtendJobPostForLandowner(
+        DataTier.Entities.JobPost jobPost, 
+        DataTier.Entities.PaymentHistory newPayment,
+        DataTier.Entities.Account account);
+
     Task PostingJob();
 
     Task ExpiredJob();
