@@ -23,6 +23,12 @@ public class AppliedJobRepository : IAppliedJobRepository
       return query;
    }
 
+   public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobsFarmer(int farmerId, AppliedJobEnum.AppliedJobStatus? status = null)
+   {
+      IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(ap => ap.AppliedBy == farmerId && (status == null || ap.Status == (int?)status));
+      return query;
+   }
+
    public async Task<DataTier.Entities.AppliedJob> GetByJobAndAccount(int jobPostId, int accountId)
    {
       DataTier.Entities.AppliedJob appliedJob = 
@@ -100,6 +106,13 @@ public class AppliedJobRepository : IAppliedJobRepository
 
       await _contextFactory.SaveAllAsync();
 
+      return appliedJob;
+   }
+
+   public async Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedBy)
+   {
+      DataTier.Entities.AppliedJob appliedJob = await 
+         _appliedJobRepository.GetFirstOrDefaultAsync(al => al.JobPostId == jobPostId && al.AppliedBy == al.AppliedBy);
       return appliedJob;
    }
 }

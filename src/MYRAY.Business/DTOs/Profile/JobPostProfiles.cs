@@ -25,7 +25,10 @@ public static class JobPostProfiles
         configuration.CreateMap<DataTier.Entities.JobPost, CreateJobPost>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.JobPost, UpdateJobPost>().ReverseMap();
 
-        configuration.CreateMap<AppliedJob, AppliedJobDetail>().ReverseMap();
+        configuration.CreateMap<AppliedJob, AppliedJobDetail>()
+            .ForMember(des => des.JobPost,
+                otp => otp.MapFrom(src=> src.JobPost))
+           .ReverseMap();
         configuration.CreateMap<PayPerHourJob, PayPerHour>().ReverseMap();
         configuration.CreateMap<PayPerTaskJob, PayPerTask>().ReverseMap();
     }

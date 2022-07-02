@@ -8,6 +8,7 @@ using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.JobPost;
+using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Api.Controllers;
 /// <summary>
@@ -313,9 +314,9 @@ public class JobPostController : ControllerBase
     [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> GetAccounts(
+    public Task<IActionResult> GetAppliedLandowner(
         [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
-        [FromQuery] int jobPostId,
+        [Required] int jobPostId,
         [FromQuery]PagingDto pagingDto)
     {
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
@@ -326,7 +327,57 @@ public class JobPostController : ControllerBase
         }
         return Task.FromResult<IActionResult>(Ok(result));
     }
+
+    /// <summary>
+    /// [Farmer] Endpoint for get all job farmer applied 
+    /// </summary>
+    /// <param name="status">Status of applied</param>
+    /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <param name="startWork">Status work of job post</param>
+    /// <returns>List of account with id applied</returns>
+    /// <response code="200">Returns the list of account with id applied.</response>
+    /// <response code="204">Returns if list of account is empty.</response>
+    /// <response code="401">Returns if token is access denied.</response>
+    [HttpGet("appliedFarmer")]
+    [Authorize(Roles = UserRole.FARMER)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetAccounts(
+        [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
+        [FromQuery]PagingDto pagingDto,
+        [FromQuery] int? startWork = null) 
+    {
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        ResponseDto.CollectiveResponse<AppliedJobDetail> result =
+            _appliedJobService.GetAccountsAppliedFarmer(pagingDto, accountId, status, startWork);
+        if (result == null)
+        {
+            return NoContent();
+        }
+        return Ok(result);
+    }
     
+    /// <summary>
+    /// [Farmer] Endpoint for check farmer apply to specific job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>List of account with id applied</returns>
+    /// <response code="200">Returns if the farmer does not applied to job post.</response>
+    /// <response code="201">Returns if the farmer has been applied to job post.</response>
+    /// <response code="401">Returns if token is access denied.</response>
+    [HttpGet("checkApplied")]
+    [Authorize(Roles = UserRole.FARMER)]
+    public async Task<IActionResult> CheckAppliedJob(int jobPostId)
+    {
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        AppliedJob? appliedJob = await _appliedJobService.CheckApplied(jobPostId, accountId);
+        if (appliedJob == null)
+        {
+            return Ok();
+        }
+        return Created(String.Empty, null);
+    }
+
     /// <summary>
     /// [Moderator] Endpoint for Approve job post
     /// </summary>

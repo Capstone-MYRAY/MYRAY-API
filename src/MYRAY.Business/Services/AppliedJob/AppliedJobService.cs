@@ -28,6 +28,20 @@ public class AppliedJobService : IAppliedJobService
         return result;
     }
 
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(PagingDto pagingDto, int farmerId, 
+        AppliedJobEnum.AppliedJobStatus? status = null,
+        int? statusWork = null)
+    {
+        IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAppliedJobsFarmer(farmerId, status);
+        if (statusWork != null)
+        {
+            query = query.Where(a => a.JobPost.StatusWork == statusWork);
+        }
+        var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
+
+        return result;
+    }
+
     public async Task<DataTier.Entities.AppliedJob> ApplyJob(int jobId, int appliedBy)
     {
         var result = await _appliedJobRepository.ApplyJob(jobId, appliedBy);
@@ -50,5 +64,10 @@ public class AppliedJobService : IAppliedJobService
     {
         var result = await _appliedJobRepository.RejectJob(appliedJobId);
         return result;
+    }
+
+    public async Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedId)
+    {
+        return await _appliedJobRepository.CheckApplied(jobPostId, appliedId);
     }
 }
