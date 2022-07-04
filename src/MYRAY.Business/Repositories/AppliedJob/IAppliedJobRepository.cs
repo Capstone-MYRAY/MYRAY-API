@@ -13,6 +13,6 @@ public interface IAppliedJobRepository
     Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId);
     Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId);
 
-    Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int accountId);
+    Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedBy);
 
 }

@@ -111,8 +111,8 @@ public class AppliedJobRepository : IAppliedJobRepository
 
    public async Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedBy)
    {
-      DataTier.Entities.AppliedJob appliedJob = await 
-         _appliedJobRepository.GetFirstOrDefaultAsync(al => al.JobPostId == jobPostId && al.AppliedBy == al.AppliedBy);
+      DataTier.Entities.AppliedJob? appliedJob = await 
+         _appliedJobRepository.GetFirstOrDefaultAsync(al => al.JobPostId == jobPostId && al.AppliedBy == appliedBy);
       return appliedJob;
    }
 }
