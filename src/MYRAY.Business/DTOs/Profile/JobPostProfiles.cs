@@ -18,7 +18,8 @@ public static class JobPostProfiles
             .ForMember(des => des.Address,
                 otp => otp.MapFrom(src => src.Garden.Address))
             .ForMember(des => des.Color, otp => otp.MapFrom(src=>src.PostType.Color))
-            .ForMember(des=>des.Background, otp => otp.MapFrom(src=>src.PostType.Background));
+            .ForMember(des=>des.Background, otp => otp.MapFrom(src=>src.PostType.Background))
+            .ForMember(des=>des.PostTypeName, otp => otp.MapFrom(src=>src.PostType.Name));
             // .ForMember(des => des.Status, 
                 // map => map.MapFrom(src => Enum.GetName(typeof(JobPostEnum.JobPostStatus), src.Status!)));
         configuration.CreateMap<JobPostDetail, DataTier.Entities.JobPost>();

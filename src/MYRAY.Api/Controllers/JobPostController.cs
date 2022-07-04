@@ -24,6 +24,11 @@ public class JobPostController : ControllerBase
     private readonly IJobPostService _jobPostService;
     private readonly IAppliedJobService _appliedJobService;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="JobPostController"/> class.
+    /// </summary>
+    /// <param name="jobPostService">Injection of <see cref="IJobPostService"/></param>
+    /// <param name="appliedJobService">Injection of <see cref="IAppliedJobService"/></param>
     public JobPostController(IJobPostService jobPostService, IAppliedJobService appliedJobService)
     {
         _jobPostService = jobPostService;
@@ -106,7 +111,7 @@ public class JobPostController : ControllerBase
             //var accountId = 3;
             var result = await _jobPostService.CreateJobPost(createJobPost, accountId);
 
-            return Ok(result);
+            return Created(string.Empty, result);
         }
         catch (Exception e)
         {
@@ -207,8 +212,8 @@ public class JobPostController : ControllerBase
     [Authorize(Roles = UserRole.FARMER)]
     public async Task<IActionResult> ApplyJob(int jobPostId)
     {
-        //var accountId = int.Parse(User.FindFirst("id")?.Value!);
-        var accountId = 3;
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        // var accountId = 3;
         try
         {
             var result = await _appliedJobService.ApplyJob(jobPostId, accountId);
