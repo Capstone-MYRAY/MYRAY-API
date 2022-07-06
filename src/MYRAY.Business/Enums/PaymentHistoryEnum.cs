@@ -15,6 +15,7 @@ public class PaymentHistoryEnum
         ActualPrice,
         UsedPoint,
         EarnedPoint,
-        Status
+        Status,
+        CreatedDate
     }
 }

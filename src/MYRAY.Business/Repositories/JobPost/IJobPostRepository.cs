@@ -9,7 +9,9 @@ public interface IJobPostRepository
 {
     IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null);
     IQueryable<DataTier.Entities.JobPost> GetPinPost();
-    
+
+    IQueryable<PinDate> GetExistedPinDateOnRange(DateTime publishedDate, int numberPublishDay, int postTypeId);
+    IQueryable<PinDate> GetNearPinDateByPinDate(DateTime pinDate, int postTypeId);
 
     IQueryable<MYRAY.DataTier.Entities.JobPost> GetInProgressJobPost();
     Task<DataTier.Entities.JobPost> GetJobPostById(int id);

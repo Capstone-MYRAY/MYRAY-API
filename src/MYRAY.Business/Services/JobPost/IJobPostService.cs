@@ -30,6 +30,10 @@ public interface IJobPostService
 
     Task<JobPostDetail> ExtendJobPostForLandowner(int jobPostId, DateTime dateTimeExtend, int usePoint = 0);
 
+    Task<IEnumerable<DateTime>> ListDateNoPin(DateTime publishedDate, int numberOfDayPublish, int postTypeId);
+
+    Task<int> MaxNumberOfPinDate(DateTime pinDate,int numberPublishDay, int postTypeId);
+
     Task PostingJob();
     Task ExpiringJob();
 

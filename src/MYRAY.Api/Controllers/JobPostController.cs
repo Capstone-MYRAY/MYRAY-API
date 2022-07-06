@@ -496,4 +496,60 @@ public class JobPostController : ControllerBase
         }
     }
 
+
+    /// <summary>
+    /// [Landowner] Endpoint to check available pin date
+    /// </summary>
+    /// <param name="publishedDate">Publish Date</param>
+    /// <param name="numberOfDayPublish">Number of publish day</param>
+    /// <param name="postTypeId">Id of post type</param>
+    /// <returns>List of datetime available</returns>
+    [HttpGet("checkPinDate")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(IEnumerable<DateTime>),StatusCodes.Status200OK)]
+    public async Task<IActionResult> CheckPinDateAvailable(
+        [Required]DateTime publishedDate,
+        [Required]int numberOfDayPublish,
+        [Required]int postTypeId)
+    {
+        try
+        {
+            var result  = await _jobPostService.ListDateNoPin(publishedDate, numberOfDayPublish, postTypeId);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+
+    
+    /// <summary>
+    /// [Landowner] Endpoint to get max pin day
+    /// </summary>
+    /// <param name="pinDate">Pin date</param>
+    /// <param name="numberPublishDay">Number of publish day</param>
+    /// <param name="postTypeId">Id of post type</param>
+    /// <returns>Number of max pindate</returns>
+    [HttpGet("getMaxPinDay")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(int),StatusCodes.Status200OK)]
+    public async Task<IActionResult> CheckNumberOfPinDate(
+        DateTime pinDate,
+        int numberPublishDay,
+        int postTypeId)
+    {
+        try
+        {
+            var result = await _jobPostService.MaxNumberOfPinDate(pinDate, numberPublishDay, postTypeId);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
 }

@@ -44,8 +44,7 @@ public class JobPostRepository : IJobPostRepository
             new[] { expHours, expTask });
         return query;
     }
-
-
+    
     public IQueryable<DataTier.Entities.JobPost> GetPinPost()
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob;
@@ -58,6 +57,27 @@ public class JobPostRepository : IJobPostRepository
         return jobPosts;
     }
 
+    public IQueryable<PinDate> GetExistedPinDateOnRange(DateTime publishedDate, int numberPublishDay, int postTypeId)
+    {
+        DateTime endPublishedDate = publishedDate.Date.AddDays(numberPublishDay);
+        IQueryable<PinDate> pinDates = _pinDateRepository.Get(pd => pd.PinDate1 >= publishedDate
+                                                                    && pd.PinDate1 <= endPublishedDate
+                                                                    && pd.JobPost.PostTypeId == postTypeId
+                                                                    && pd.Status == 1);
+        return pinDates;
+    }
+
+    public IQueryable<PinDate> GetNearPinDateByPinDate(DateTime pinDate, int postTypeId)
+    {
+        IQueryable<PinDate> nearPinDate =
+            _pinDateRepository.Get(pd => pd.PinDate1.Date > pinDate.Date 
+                                         && pd.JobPost.PostTypeId == postTypeId
+                                         && pd.Status == 1)
+                .OrderBy(pd => pd.PinDate1);
+
+        return nearPinDate;
+    }
+
     public IQueryable<DataTier.Entities.JobPost> GetInProgressJobPost()
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expAppliedJob = post => post.AppliedJobs;
@@ -65,8 +85,7 @@ public class JobPostRepository : IJobPostRepository
             post => post.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Started, new[] { expAppliedJob });
         return inProgress;
     }
-
-
+    
     public async Task<DataTier.Entities.JobPost> GetJobPostById(int id)
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob;
@@ -344,7 +363,7 @@ public class JobPostRepository : IJobPostRepository
     {
         _jobPostRepository.Modify(jobPost);
         _accountRepository.Modify(account);
-        
+    
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
         await _contextFactory.SaveAllAsync();

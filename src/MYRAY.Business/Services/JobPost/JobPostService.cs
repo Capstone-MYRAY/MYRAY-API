@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.JobPost;
@@ -150,7 +151,7 @@ public class JobPostService : IJobPostService
             BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
             Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
             EarnedPoint = (int?)((aPriceJobPost + aPricePinPost) / earnPoint),
-            UsedPoint = jobPost.UsePoint != null ? jobPost.UsePoint : 0,
+            UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + newJobPost.Id,
             JobPostPrice = priceJobPost,
@@ -252,7 +253,7 @@ public class JobPostService : IJobPostService
             BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
             Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
             EarnedPoint = (int?)((aPriceJobPost + aPricePinPost) / earnPoint),
-            UsedPoint = jobPost.UsePoint != null ? jobPost.UsePoint : 0,
+            UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + updateJobPost.Id,
             JobPostPrice = priceJobPost,
@@ -384,6 +385,39 @@ public class JobPostService : IJobPostService
             
         var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
+    }
+
+    public async Task<IEnumerable<DateTime>> ListDateNoPin(DateTime publishedDate, int numberOfDayPublish, int postTypeId)
+    {
+        if (numberOfDayPublish <= 0) throw new Exception("Number of Publish is incorrect");
+        
+        IEnumerable<DateTime> result = new List<DateTime>();
+        DateTime endPublishedDate = publishedDate.Date.AddDays(numberOfDayPublish);
+        DateTime startDate = publishedDate;
+        while (startDate.Date != endPublishedDate.Date)
+        {
+            (result as List<DateTime>)?.Add(startDate);
+            startDate = startDate.Date.AddDays(1);
+        }
+        IQueryable<PinDate> pinDates =
+            _jobPostRepository.GetExistedPinDateOnRange(publishedDate, numberOfDayPublish, postTypeId);
+        List<PinDate> list = await pinDates.ToListAsync();
+        if (list.Count != 0)
+        {
+            var listPinDate = list.Select(pd => pd.PinDate1.Date);
+            result = result.Where(r => !listPinDate.Contains(r));
+        }
+
+        return result;
+        
+    }
+
+    public async Task<int> MaxNumberOfPinDate(DateTime pinDate,int numberPublishDay,  int postTypeId)
+    {
+        IQueryable<PinDate> pinDates = _jobPostRepository.GetNearPinDateByPinDate(pinDate, postTypeId);
+        PinDate? nearPinDate = await pinDates.FirstOrDefaultAsync();
+        if (nearPinDate == null) return numberPublishDay;
+        return nearPinDate.PinDate1.DayOfYear - pinDate.DayOfYear;
     }
 
     public async Task PostingJob()

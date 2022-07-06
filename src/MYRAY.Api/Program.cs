@@ -74,6 +74,7 @@ builder.Services.RegisterSwaggerModule();
 //
 builder.Services.RegisterDataTierModule();
 builder.Services.RegisterBusinessModule();
+
 //
 builder.Services.RegisterQuartz();
 var app = builder.Build();
