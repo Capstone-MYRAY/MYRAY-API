@@ -429,4 +429,9 @@ public class JobPostService : IJobPostService
     {
         await _jobPostRepository.ExpiredJob();
     }
+
+    public async Task StartingJob()
+    {
+        await _jobPostRepository.StartJob();
+    }
 }

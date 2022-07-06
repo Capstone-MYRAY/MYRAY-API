@@ -405,6 +405,24 @@ public class JobPostRepository : IJobPostRepository
         await _contextFactory.SaveAllAsync();
     }
 
+    public async Task StartJob()
+    {
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
+            j.Status == (int?)JobPostEnum.JobPostStatus.Posted 
+            && j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Started
+            && j.StartJobDate.Value.Date == DateTime.Today);
+
+        List<DataTier.Entities.JobPost> listStart = query.ToList();
+        foreach (var jobPost in listStart)
+        {
+            jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Started;
+            Console.WriteLine($"Start: #{jobPost.Id} - {DateTime.Now}",
+                Console.BackgroundColor == ConsoleColor.Yellow);
+        }
+
+        await _contextFactory.SaveAllAsync();
+    }
+
     public async Task SaveChange()
     {
         await _contextFactory.SaveAllAsync();

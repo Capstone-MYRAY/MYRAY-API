@@ -36,5 +36,6 @@ public interface IJobPostService
 
     Task PostingJob();
     Task ExpiringJob();
+    Task StartingJob();
 
 }

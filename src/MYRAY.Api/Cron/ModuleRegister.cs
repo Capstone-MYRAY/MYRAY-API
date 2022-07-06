@@ -15,8 +15,11 @@ public static class ModuleRegister
             });
             var postJobPost = new JobKey("PostJobPostCron", "JobPostGroup");
             var expireJobPost = new JobKey("ExpireJobPostCron", "JobPostGroup");
+            var startJobPost = new JobKey("StatJobPostCron", "JobPostGroup");
+            
             q.AddJob<PostJobCron>(o => o.WithIdentity(postJobPost));
             q.AddJob<ExpireJobCron>(o => o.WithIdentity(expireJobPost));
+            q.AddJob<StartJobCron>(o => o.WithIdentity(startJobPost));
             
             
             q.AddTrigger(opts => opts.ForJob(postJobPost)
@@ -26,6 +29,12 @@ public static class ModuleRegister
             q.AddTrigger(opts => opts.ForJob(expireJobPost)
                 .WithIdentity("ExpireJobPostTrigger")
                 .WithCronSchedule("0 0 0 ? * *"));
+            
+            q.AddTrigger(opts => opts.ForJob(startJobPost)
+                .WithIdentity("StartJobPostTrigger")
+                .WithCronSchedule("0 0 0 ? * *"));
+            
+            
             q.InterruptJobsOnShutdown = true;
         });
 

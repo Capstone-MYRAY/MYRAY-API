@@ -12,6 +12,7 @@ public class PaymentHistoryDetail
     public int? EarnedPoint { get; set; }
     public string? Message { get; set; }
     public int? CreatedBy { get; set; }
+    public string CreateByName { get; set; }
     public DateTime CreatedDate { get; set; }
     public int? Status { get; set; }
     public double? JobPostPrice { get; set; }
