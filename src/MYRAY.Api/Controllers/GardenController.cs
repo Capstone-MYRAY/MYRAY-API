@@ -98,7 +98,7 @@ public class GardenController : ControllerBase
             createGarden.AccountId = accountId;
             var result = await _gardenService.CreateGarden(createGarden);
 
-            return Ok(result);
+            return Created(String.Empty,result);
         }
         catch (Exception e)
         {
