@@ -559,7 +559,7 @@ public class JobPostController : ControllerBase
     /// <param name="jobPostId">Id of job post</param>
     /// <returns>Number pin day of job post</returns>
     [HttpGet("totalPinDay/{jobPostId}")]
-    // [Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(int),StatusCodes.Status200OK)]
     public async Task<IActionResult> TotalPinDay([Required] int jobPostId)
     {
