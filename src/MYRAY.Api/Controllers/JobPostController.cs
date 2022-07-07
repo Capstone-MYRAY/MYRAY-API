@@ -532,7 +532,7 @@ public class JobPostController : ControllerBase
     /// <param name="pinDate">Pin date</param>
     /// <param name="numberPublishDay">Number of publish day</param>
     /// <param name="postTypeId">Id of post type</param>
-    /// <returns>Number of max pindate</returns>
+    /// <returns>Number of max pin date</returns>
     [HttpGet("getMaxPinDay")]
     [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(int),StatusCodes.Status200OK)]
@@ -544,6 +544,28 @@ public class JobPostController : ControllerBase
         try
         {
             var result = await _jobPostService.MaxNumberOfPinDate(pinDate, numberPublishDay, postTypeId);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// [Authenticated User] Endpoint to get total pin day of job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>Number pin day of job post</returns>
+    [HttpGet("totalPinDay/{jobPostId}")]
+    // [Authorize]
+    [ProducesResponseType(typeof(int),StatusCodes.Status200OK)]
+    public async Task<IActionResult> TotalPinDay([Required] int jobPostId)
+    {
+        try
+        {
+            int result = await _jobPostService.TotalPinDate(jobPostId);
             return Ok(result);
         }
         catch (Exception e)

@@ -49,6 +49,8 @@ public interface IJobPostRepository
         DataTier.Entities.PaymentHistory newPayment,
         DataTier.Entities.Account account);
 
+    Task<int> TotalPinDate(int jobPostId);
+
     Task PostingJob();
 
     Task ExpiredJob();

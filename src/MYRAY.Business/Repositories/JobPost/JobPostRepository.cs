@@ -371,6 +371,17 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
+    public async Task<int> TotalPinDate(int jobPostId)
+    {
+        Expression<Func<DataTier.Entities.JobPost, object>> expPinDate = post => post.PinDates;
+        DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetFirstOrDefaultAsync(
+            j => j.Id == jobPostId && j.Status != (int?)JobPostEnum.JobPostStatus.Deleted,
+            new[] { expPinDate }))!;
+
+        IEnumerable<PinDate> listPin = jobPost.PinDates.Where(p => p.Status == 1);
+        return listPin.Count();
+    }
+
     public async Task PostingJob()
     {
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>

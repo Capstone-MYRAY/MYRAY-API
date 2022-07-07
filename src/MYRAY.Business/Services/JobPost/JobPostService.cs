@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -418,6 +419,12 @@ public class JobPostService : IJobPostService
         PinDate? nearPinDate = await pinDates.FirstOrDefaultAsync();
         if (nearPinDate == null) return numberPublishDay;
         return nearPinDate.PinDate1.DayOfYear - pinDate.DayOfYear;
+    }
+
+    public async Task<int> TotalPinDate(int jobPostId)
+    {
+        int result = await _jobPostRepository.TotalPinDate(jobPostId);
+        return result;
     }
 
     public async Task PostingJob()

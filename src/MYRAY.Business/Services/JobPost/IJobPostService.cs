@@ -34,6 +34,7 @@ public interface IJobPostService
 
     Task<int> MaxNumberOfPinDate(DateTime pinDate,int numberPublishDay, int postTypeId);
 
+    Task<int> TotalPinDate(int jobPostId);
     Task PostingJob();
     Task ExpiringJob();
     Task StartingJob();
