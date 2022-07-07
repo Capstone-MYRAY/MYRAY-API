@@ -150,7 +150,7 @@ public class JobPostService : IJobPostService
             ActualPrice = aPriceJobPost + aPricePinPost,
             BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
             Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
-            EarnedPoint = (int?)((aPriceJobPost + aPricePinPost) / earnPoint),
+            EarnedPoint = (int?)Math.Round((aPriceJobPost + aPricePinPost - aPriceUsePoint) / earnPoint),
             UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + newJobPost.Id,

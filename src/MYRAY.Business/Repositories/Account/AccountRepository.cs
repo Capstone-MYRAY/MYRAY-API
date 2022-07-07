@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.AreaAccount;
@@ -15,11 +16,12 @@ public class AccountRepository : IAccountRepository
     private readonly IBaseRepository<DataTier.Entities.PaymentHistory>? _paymentHistoryRepository;
     private readonly IAreaAccountRepository _areaAccountRepository;
     private readonly IDbContextFactory _dbContextFactory;
-    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AccountRepository"/> class.
     /// </summary>
     /// <param name="dbContextFactory">Injection of <see cref="IDbContextFactory"/></param>
+    /// <param name="areaAccountRepository">Injection of see <see cref="IAreaAccountRepository"/></param>
     public AccountRepository(IDbContextFactory dbContextFactory, IAreaAccountRepository areaAccountRepository)
     {
         _dbContextFactory = dbContextFactory;
@@ -150,7 +152,12 @@ public class AccountRepository : IAccountRepository
         {
             throw new MException(StatusCodes.Status400BadRequest, "Account is not existed", nameof(id));
         }
+
+        DataTier.Entities.PaymentHistory lastPayment = await  _paymentHistoryRepository.Get(p => p.BelongedId == account.Id)
+            .OrderByDescending(p => p.CreatedDate)
+            .FirstOrDefaultAsync();
         
+        float balanceAfterPending = (float)(lastPayment == null ? account.Balance : lastPayment.Balance);
 
         if (topUp < 0)
         {
@@ -161,10 +168,12 @@ public class AccountRepository : IAccountRepository
             }
 
             account.Balance -= (topUp * -1);
+            balanceAfterPending -= (topUp * -1);
         }
         else
         {
             account.Balance += topUp;
+            balanceAfterPending += topUp;
         }
         
         _accountRepository?.Update(account);
@@ -176,7 +185,7 @@ public class AccountRepository : IAccountRepository
             CreatedDate = DateTime.Now,
             ActualPrice = topUp,
             BalanceFluctuation =  topUp,
-            Balance = account.Balance,
+            Balance = balanceAfterPending,
             EarnedPoint = 0,
             UsedPoint = 0,
             BelongedId = account.Id,
