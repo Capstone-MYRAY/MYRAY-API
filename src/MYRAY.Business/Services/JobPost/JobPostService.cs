@@ -119,11 +119,13 @@ public class JobPostService : IJobPostService
         //--Get more information to calculate
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
         float aPricePinPost = 0;
-
+        double? postTypePrice = null;
         if (jobPost.PostTypeId != null)
         {
             DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
-
+            newJobPost.TotalPinDay = jobPost.NumberPinDay;
+            newJobPost.StartPinDate = jobPost.PinDate;
+            postTypePrice = postType.Price;
             if (postType == null)
             {
                 throw new Exception("Post Type is not existed");
@@ -155,6 +157,8 @@ public class JobPostService : IJobPostService
             UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + newJobPost.Id,
+            TotalPinDay = jobPost.NumberPinDay,
+            PostTypePrice = (int?)postTypePrice,
             JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint
         };
@@ -222,10 +226,13 @@ public class JobPostService : IJobPostService
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
 
         float aPricePinPost = 0;
+        double? postTypePrice = null;
         if (jobPost.PostTypeId != null)
         {
-            
+            updateJobPost.TotalPinDay = jobPost.NumberPinDay;
+            updateJobPost.StartPinDate = jobPost.PinDate;
             DataTier.Entities.PostType postType = await _postTypeRepository.GetPostTypeById((int)jobPost.PostTypeId);
+            postTypePrice = postType.Price;
             if (postType == null)
             {
                 throw new Exception("Post Type is not existed");
@@ -257,6 +264,8 @@ public class JobPostService : IJobPostService
             UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + updateJobPost.Id,
+            TotalPinDay = jobPost.NumberPinDay,
+            PostTypePrice = (int?)postTypePrice, 
             JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint
         };

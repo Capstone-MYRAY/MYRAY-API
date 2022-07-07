@@ -531,6 +531,10 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnType("date")
                     .HasColumnName("start_job_date");
 
+                entity.Property(e => e.StartPinDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("start_pin_date");
+
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((0))");
@@ -542,6 +546,10 @@ namespace MYRAY.DataTier.Entities
                 entity.Property(e => e.Title)
                     .HasMaxLength(70)
                     .HasColumnName("title");
+
+                entity.Property(e => e.TotalPinDay)
+                    .HasColumnName("total_pin_day")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Type)
                     .HasMaxLength(50)
@@ -705,9 +713,15 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.PointPrice).HasColumnName("point_price");
 
+                entity.Property(e => e.PostTypePrice).HasColumnName("post_type_price");
+
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.TotalPinDay)
+                    .HasColumnName("total_pin_day")
+                    .HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.UsedPoint).HasColumnName("used_point");
 

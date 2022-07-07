@@ -136,6 +136,7 @@ public class JobPostRepository : IJobPostRepository
             }
         }
 
+        newPayment.Message = "Tạo bài đăng mới #" + jobPost.Id;
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
 
@@ -183,7 +184,7 @@ public class JobPostRepository : IJobPostRepository
                 await _pinDateRepository.InsertAsync(variable);
             }
         }
-
+        newPayment.Message = "Tạo bài đăng mới #" + jobPost.Id;
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
         await _contextFactory.SaveAllAsync();

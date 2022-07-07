@@ -17,4 +17,6 @@ public class PaymentHistoryDetail
     public int? Status { get; set; }
     public double? JobPostPrice { get; set; }
     public int? PointPrice { get; set; }
+    public int? PostTypePrice { get; set; }
+    public int? TotalPinDay { get; set; }
 }

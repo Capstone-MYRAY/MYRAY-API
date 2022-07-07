@@ -35,6 +35,8 @@ namespace MYRAY.DataTier.Entities
         public int? StatusWork { get; set; }
         public string? ReasonReject { get; set; }
         public int? PostTypeId { get; set; }
+        public int? TotalPinDay { get; set; }
+        public DateTime? StartPinDate { get; set; }
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual Garden Garden { get; set; } = null!;
