@@ -58,6 +58,34 @@ public class AccountController : ControllerBase
         }
         return Task.FromResult<IActionResult>(Ok(result));
     }
+
+    /// <summary>
+    /// [Authenticated user] Endpoint for get all moderator with condition
+    /// </summary>
+    /// <returns>List of account</returns>
+    /// <response code="200">Returns the list of account.</response>
+    /// <response code="204">Returns if list of account is empty.</response>
+    /// <response code="401">Returns if token is access denied.</response>
+    [HttpGet("GetModeratorNoManage")]
+    // [Authorize]
+    [ProducesResponseType(typeof(IEnumerable<GetAccountDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetModeratorNoManage()
+    {
+        try
+        {
+            var result = _accountService.GetListModeratorNotManageArea();
+            if(result != null || !result.Any())
+            return Ok(result);
+
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
     
     /// <summary>
     /// [All] Endpoint for get account information by Identifier.

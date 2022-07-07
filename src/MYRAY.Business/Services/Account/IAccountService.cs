@@ -19,6 +19,8 @@ public interface IAccountService
     public ResponseDto.CollectiveResponse<GetAccountDetail> GetAccounts(PagingDto pagingDto,
         SortingDto<AccountEnum.AccountSortCriteria> sortingDto, SearchAccountDto searchAccountDto);
 
+    public IEnumerable<GetAccountDetail> GetListModeratorNotManageArea();
+
     /// <summary>
     /// Get async an account by id
     /// </summary>

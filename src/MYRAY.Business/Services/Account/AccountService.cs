@@ -49,6 +49,14 @@ public class AccountService : IAccountService
         return result;
     }
 
+    public IEnumerable<GetAccountDetail> GetListModeratorNotManageArea()
+    {
+        IQueryable<DataTier.Entities.Account> query = _accountRepository.GetAccounts()
+            .Where(a => a.AreaAccounts.Count() == 0 && a.RoleId == 2);
+        IEnumerable<GetAccountDetail> result = _mapper.ProjectTo<GetAccountDetail>(query);
+        return result;
+    }
+
     /// <inheritdoc cref="IAccountService.GetAccountByIdAsync"/>
     public async Task<GetAccountDetail> GetAccountByIdAsync(int? id)
     {
