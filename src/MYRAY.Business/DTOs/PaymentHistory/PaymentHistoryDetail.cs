@@ -19,4 +19,5 @@ public class PaymentHistoryDetail
     public int? PointPrice { get; set; }
     public int? PostTypePrice { get; set; }
     public int? TotalPinDay { get; set; }
+    public int? NumberPublishedDay { get; set; }
 }

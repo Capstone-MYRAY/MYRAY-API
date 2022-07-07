@@ -158,6 +158,7 @@ public class JobPostService : IJobPostService
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + newJobPost.Id,
             TotalPinDay = jobPost.NumberPinDay,
+            NumberPublishedDay = jobPost.NumPublishDay,
             PostTypePrice = (int?)postTypePrice,
             JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint
@@ -265,6 +266,7 @@ public class JobPostService : IJobPostService
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + updateJobPost.Id,
             TotalPinDay = jobPost.NumberPinDay,
+            NumberPublishedDay = jobPost.NumPublishDay,
             PostTypePrice = (int?)postTypePrice, 
             JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint

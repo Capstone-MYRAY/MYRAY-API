@@ -711,6 +711,8 @@ namespace MYRAY.DataTier.Entities
                     .HasMaxLength(100)
                     .HasColumnName("message");
 
+                entity.Property(e => e.NumberPublishedDay).HasColumnName("number_published_day");
+
                 entity.Property(e => e.PointPrice).HasColumnName("point_price");
 
                 entity.Property(e => e.PostTypePrice).HasColumnName("post_type_price");
