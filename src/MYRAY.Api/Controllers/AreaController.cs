@@ -44,19 +44,27 @@ public class AreaController : ControllerBase
     [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<GetAreaDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> GetAreas(
+    public async Task<IActionResult> GetAreas(
         [FromQuery]SearchAreaDto searchAreaDto, 
         [FromQuery]SortingDto<AreaEnum.AreaSortCriteria> sortingDto,
         [FromQuery]PagingDto pagingDto)
     {
-        ResponseDto.CollectiveResponse<GetAreaDetail> result =
-            _areaService.GetAreas(pagingDto, sortingDto, searchAreaDto);
-        if (result == null)
+        try
         {
-            return Task.FromResult<IActionResult>(NoContent());
+            ResponseDto.CollectiveResponse<GetAreaDetail> result = 
+            _areaService.GetAreas(pagingDto, sortingDto, searchAreaDto);
+            if (!result.ListObject.Any())
+            {
+                return NoContent();
+            }
+            
+            return Ok(result);
         }
-
-        return Task.FromResult<IActionResult>(Ok(result));
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
     }
 
     /// <summary>

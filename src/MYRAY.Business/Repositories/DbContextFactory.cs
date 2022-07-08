@@ -164,8 +164,8 @@ public class DbContextFactory : IDbContextFactory, IDisposable
     private DbContextOptionsBuilder<TContext> ConfigureSqlServer<TContext>(string connectionString) where TContext : DbContext
     {
         DbContextOptionsBuilder<TContext> optionsBuilder = new DbContextOptionsBuilder<TContext>();
-        optionsBuilder.UseSqlServer(connectionString)
-            .UseLazyLoadingProxies();
+        optionsBuilder.UseSqlServer(connectionString);
+             // .UseLazyLoadingProxies();
         return optionsBuilder;
     }
 }

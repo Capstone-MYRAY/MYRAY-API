@@ -403,12 +403,12 @@ public class JobPostService : IJobPostService
     {
         if (numberOfDayPublish <= 0) throw new Exception("Number of Publish is incorrect");
         
-        IEnumerable<DateTime> result = new List<DateTime>();
+        ICollection<DateTime> result = new List<DateTime>();
         DateTime endPublishedDate = publishedDate.Date.AddDays(numberOfDayPublish);
         DateTime startDate = publishedDate;
         while (startDate.Date != endPublishedDate.Date)
         {
-            (result as List<DateTime>)?.Add(startDate);
+            result.Add(startDate);
             startDate = startDate.Date.AddDays(1);
         }
         IQueryable<PinDate> pinDates =
@@ -417,7 +417,7 @@ public class JobPostService : IJobPostService
         if (list.Count != 0)
         {
             var listPinDate = list.Select(pd => pd.PinDate1.Date);
-            result = result.Where(r => !listPinDate.Contains(r));
+            return result.Where(r => !listPinDate.Contains(r));
         }
 
         return result;

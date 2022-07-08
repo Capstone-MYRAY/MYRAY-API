@@ -12,7 +12,6 @@ public class JobPostDetail
     public string GardenName { get; set; }
     public string Address { get; set; }
     public ICollection<TreeJobDetail> TreeJobs { get; set; }
-    public string TreeName { get; set; }
     public string Title { get; set; } = null!;
     public string Type { get; set; } = null!;
     public DateTime? StartJobDate { get; set; }

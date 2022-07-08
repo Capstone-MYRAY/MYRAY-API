@@ -90,9 +90,11 @@ public class JobPostRepository : IJobPostRepository
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob;
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
+        Expression<Func<DataTier.Entities.JobPost, object>> expGarden = post => post.Garden;
+        Expression<Func<DataTier.Entities.JobPost, object>> expTree = post => post.TreeJobs;
         DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetFirstOrDefaultAsync(
             j => j.Id == id && j.Status != (int?)JobPostEnum.JobPostStatus.Deleted,
-            new[] { expHours, expTask }))!;
+            new[] { expHours, expTask, expGarden, expTree }))!;
         return jobPost;
     }
 
