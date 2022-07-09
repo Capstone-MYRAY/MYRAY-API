@@ -12,7 +12,7 @@ public interface IJobPostRepository
 
     IQueryable<PinDate> GetExistedPinDateOnRange(DateTime publishedDate, int numberPublishDay, int postTypeId);
     IQueryable<PinDate> GetNearPinDateByPinDate(DateTime pinDate, int postTypeId);
-
+    IQueryable<DataTier.Entities.JobPost> GetJobAvailableByGardenId(int gardenId);
     IQueryable<MYRAY.DataTier.Entities.JobPost> GetInProgressJobPost();
     Task<DataTier.Entities.JobPost> GetJobPostById(int id);
 

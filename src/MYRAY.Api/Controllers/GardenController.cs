@@ -157,4 +157,29 @@ public class GardenController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
+    /// <summary>
+    /// [Landowner] Endpoint for get no available garden.
+    /// </summary>
+    /// <param name="gardenId">Id of garden</param>
+    /// <returns>Async function</returns>
+    /// <response code="200">Returns the status garden no available</response>
+    /// <response code="500">Returns error.</response>
+    /// <response code="401">Returns if invalid authorize.</response>
+    [HttpGet("noAvailable/{gardenId}")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(bool),StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetNoAvailableGarden(int gardenId)
+    {
+        try
+        {
+            var result = await _gardenService.GetNoAvailableGarden(gardenId);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
 }

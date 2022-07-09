@@ -15,4 +15,6 @@ public interface IGardenService
     Task<GardenDetail> CreateGarden(CreateGarden garden);
     Task<GardenDetail> UpdateGarden(UpdateGarden garden);
     Task<GardenDetail> DeleteGarden(int id);
+
+    Task<bool> GetNoAvailableGarden(int gardenId);
 }

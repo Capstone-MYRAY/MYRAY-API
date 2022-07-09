@@ -78,6 +78,17 @@ public class JobPostRepository : IJobPostRepository
         return nearPinDate;
     }
 
+    public IQueryable<DataTier.Entities.JobPost> GetJobAvailableByGardenId(int gardenId)
+    {
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(jobPost => jobPost.GardenId == gardenId
+        && (jobPost.StatusWork == 1 
+            || jobPost.Status == (int)JobPostEnum.JobPostStatus.Pending 
+            || jobPost.Status == (int)JobPostEnum.JobPostStatus.Posted)
+        );
+
+        return query;
+    }
+
     public IQueryable<DataTier.Entities.JobPost> GetInProgressJobPost()
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expAppliedJob = post => post.AppliedJobs;

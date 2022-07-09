@@ -1,10 +1,12 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Garden;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Garden;
+using MYRAY.Business.Repositories.JobPost;
 
 namespace MYRAY.Business.Services.Garden;
 
@@ -12,11 +14,16 @@ public class GardenService : IGardenService
 {
     private readonly IMapper _mapper;
     private readonly IGardenRepository _gardenRepository;
+    private readonly IJobPostRepository _jobPostRepository;
 
-    public GardenService(IMapper mapper, IGardenRepository gardenRepository)
+    public GardenService(
+        IMapper mapper, 
+        IGardenRepository gardenRepository,
+        IJobPostRepository jobPostRepository)
     {
         _mapper = mapper;
         _gardenRepository = gardenRepository;
+        _jobPostRepository = jobPostRepository;
     }
 
 
@@ -65,5 +72,12 @@ public class GardenService : IGardenService
         DataTier.Entities.Garden garden = await _gardenRepository.DeleteGarden(id);
         GardenDetail result = _mapper.Map<GardenDetail>(garden);
         return result;
+    }
+
+    public async Task<bool> GetNoAvailableGarden(int gardenId)
+    {
+        IQueryable<DataTier.Entities.JobPost> list = _jobPostRepository.GetJobAvailableByGardenId(gardenId);
+        IEnumerable<DataTier.Entities.JobPost> result = await list.ToListAsync();
+        return !result.Any();
     }
 }
