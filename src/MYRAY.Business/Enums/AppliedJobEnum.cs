@@ -6,6 +6,7 @@ public class AppliedJobEnum
     {
         Approve = 1,
         Pending = 0,
-        Reject = 2
+        Reject = 2,
+        End = 3
     }
 }

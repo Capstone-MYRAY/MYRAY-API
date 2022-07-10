@@ -382,6 +382,21 @@ public class JobPostController : ControllerBase
         }
         return Created(String.Empty, null);
     }
+    
+    /// <summary>
+    /// [Farmer] Endpoint for check farmer apply to hour job post
+    /// </summary>
+    /// <returns>True if has applied hour job</returns>
+    /// <response code="200">Returns result farmer applied hour job.</response>
+     /// <response code="401">Returns if token is access denied.</response>
+    [HttpGet("checkAppliedHourJob")]
+    [Authorize(Roles = UserRole.FARMER)]
+    public async Task<IActionResult> CheckAppliedHourJob()
+    {
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        bool result = await _appliedJobService.CheckAppliedHourJob(accountId);
+        return Ok(result);
+    }
 
     /// <summary>
     /// [Moderator] Endpoint for Approve job post

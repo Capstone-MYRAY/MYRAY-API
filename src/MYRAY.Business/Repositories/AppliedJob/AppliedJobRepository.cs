@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.Interface;
@@ -114,5 +115,17 @@ public class AppliedJobRepository : IAppliedJobRepository
       DataTier.Entities.AppliedJob? appliedJob = await 
          _appliedJobRepository.GetFirstOrDefaultAsync(al => al.JobPostId == jobPostId && al.AppliedBy == appliedBy);
       return appliedJob;
+   }
+
+   public async Task<bool> CheckAppliedHourJob(int farmerId)
+   {
+      IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(a => a.AppliedBy == farmerId
+      && a.JobPost.Type.Equals("PayPerHourJob")
+      && (a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Pending 
+          || a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve)
+      );
+
+      DataTier.Entities.AppliedJob? appliedJob = await query.FirstOrDefaultAsync();
+      return appliedJob != null;
    }
 }

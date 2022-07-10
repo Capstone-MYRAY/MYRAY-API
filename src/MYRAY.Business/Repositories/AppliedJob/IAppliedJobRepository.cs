@@ -15,4 +15,6 @@ public interface IAppliedJobRepository
 
     Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedBy);
 
+    Task<bool> CheckAppliedHourJob(int farmerId);
+
 }

@@ -70,4 +70,9 @@ public class AppliedJobService : IAppliedJobService
     {
         return await _appliedJobRepository.CheckApplied(jobPostId, appliedId);
     }
+
+    public async Task<bool> CheckAppliedHourJob(int farmerId)
+    {
+        return await _appliedJobRepository.CheckAppliedHourJob(farmerId);
+    }
 }
