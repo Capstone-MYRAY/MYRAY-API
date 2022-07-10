@@ -314,7 +314,7 @@ public class JobPostRepository : IJobPostRepository
         }
 
         ICollection<PinDate> list = queryPin.ToList();
-        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.Approved;
         jobPost.ApprovedDate = DateTime.Now;
         jobPost.ApprovedBy = approvedBy;
         foreach (var pinData in list)

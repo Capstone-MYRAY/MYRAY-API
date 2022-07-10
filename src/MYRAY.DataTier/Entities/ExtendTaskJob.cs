@@ -14,6 +14,7 @@ namespace MYRAY.DataTier.Entities
         public DateTime? ExtendEndDate { get; set; }
         public string? Reason { get; set; }
         public int? Status { get; set; }
+        public DateTime? OldEndDate { get; set; }
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual JobPost? JobPost { get; set; }

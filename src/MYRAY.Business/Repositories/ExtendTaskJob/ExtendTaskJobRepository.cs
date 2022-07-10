@@ -89,6 +89,8 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
     public async Task<DataTier.Entities.ExtendTaskJob> CreateExtendTaskJob(DataTier.Entities.ExtendTaskJob extendTask)
     {
         extendTask.CreatedDate = DateTime.Now;
+        DataTier.Entities.JobPost jobPost = _jobPostRepository.GetById(extendTask.JobPostId);
+        extendTask.OldEndDate = jobPost.EndJobDate;
         await _extendTaskJobRepository.InsertAsync(extendTask);
         await _contextFactory.SaveAllAsync();
 

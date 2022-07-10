@@ -11,4 +11,6 @@ public class AppliedJobDetail
     public DateTime AppliedDate { get; set; }
 
     public GetAccountDetail AppliedByNavigation { get; set; } = null!;
+    
+    public int? Status { get; set; }
 }

@@ -339,6 +339,10 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.JobPostId).HasColumnName("job_post_id");
 
+                entity.Property(e => e.OldEndDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("old_end_date");
+
                 entity.Property(e => e.Reason).HasColumnName("reason");
 
                 entity.Property(e => e.RequestBy).HasColumnName("request_by");
