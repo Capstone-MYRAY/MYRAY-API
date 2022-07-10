@@ -217,9 +217,9 @@ public class JobPostRepository : IJobPostRepository
             throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
         }
 
-        if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.Posted)
+        if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.Approved)
         {
-            throw new Exception("Job Post is not posted");
+            throw new Exception("Job Post is not approved");
         }
 
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Cancel;
