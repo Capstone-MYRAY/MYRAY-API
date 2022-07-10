@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.ExtendTaskJob;
 using MYRAY.Business.Enums;
@@ -20,10 +21,19 @@ public class ExtendTaskJobService : IExtendTaskJobService
     }
 
 
-    public ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobs(SearchExtendRequest searchExtendRequest, PagingDto pagingDto,
-        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto, int jobPostId)
+    public async Task<ExtendTaskJobDetail> CheckOneExtend(int jobPostId)
     {
-        IQueryable<DataTier.Entities.ExtendTaskJob> query = _extendTaskJobRepository.GetExtendTaskJobs(jobPostId);
+       DataTier.Entities.ExtendTaskJob? query = await _extendTaskJobRepository.GetExtendTaskJobs(jobPostId).FirstOrDefaultAsync();
+
+       if (query == null) return null;
+
+       return _mapper.Map<ExtendTaskJobDetail>(query);
+    }
+
+    public ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobsALl(SearchExtendRequest searchExtendRequest, PagingDto pagingDto,
+        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto)
+    {
+        IQueryable<DataTier.Entities.ExtendTaskJob> query = _extendTaskJobRepository.GetExtendTaskJobsAll();
 
         query = query.GetWithSearch(searchExtendRequest);
 

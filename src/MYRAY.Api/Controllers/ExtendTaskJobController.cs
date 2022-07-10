@@ -38,21 +38,39 @@ public class ExtendTaskJobController : ControllerBase
     /// <param name="searchJobPost">An object contains filter criteria.</param>
     /// <param name="sortingDto">An object contains sorting criteria.</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
-    /// <param name="jobPostId">Id of job post of landowner</param>
     /// <returns>List of request extend</returns>
     /// <response code="200">Returns the list of request extend.</response>
     /// <response code="204">Returns if list of request extend is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
-    [HttpGet("{jobPostId}")]
+    [HttpGet]
     [Authorize(Roles = UserRole.LANDOWNER + "," + UserRole.FARMER)]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<ExtendTaskJobDetail>),StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetJobPost(
+    public Task<IActionResult> GetExtendTaskJobByFarmer(
         [FromQuery] SearchExtendRequest searchJobPost,
         [FromQuery] SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto,
-        [FromQuery] PagingDto pagingDto,
-        [Required] int jobPostId)
+        [FromQuery] PagingDto pagingDto)
     {
-        var result =  _extendTaskJobService.GetExtendTaskJobs(searchJobPost, pagingDto, sortingDto, jobPostId);
+        // var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        var result =  _extendTaskJobService.GetExtendTaskJobsALl(searchJobPost, pagingDto, sortingDto);
+        if (result == null)
+        {
+            return Task.FromResult<IActionResult>(NoContent());
+        }
+
+        return Task.FromResult<IActionResult>(Ok(result));
+    }
+
+    /// <summary>
+    /// [Farmer] Endpoint to check job post extend task existed.
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>Return if extend job is existed</returns>
+    [HttpGet("{jobPostId}")]
+    [Authorize(Roles = UserRole.FARMER)]
+    [ProducesResponseType(typeof(ExtendTaskJobDetail),StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetExtendTaskJobByJobId(int jobPostId)
+    {
+        var result = await  _extendTaskJobService.CheckOneExtend(jobPostId);
         if (result == null)
         {
             return NoContent();
@@ -60,7 +78,7 @@ public class ExtendTaskJobController : ControllerBase
 
         return Ok(result);
     }
-    
+
     /// <summary>
     /// [Farmer] Endpoint for create request extend task
     /// </summary>

@@ -1,7 +1,10 @@
+using System.ComponentModel;
+
 namespace MYRAY.Business.DTOs.ExtendTaskJob;
 
 public class SearchExtendRequest
 {
-    public int? RequestBy { get; set; }
-    public int? ApprovedBy { get; set; }
+    [DefaultValue(null)]public int? RequestBy { get; set; } = null;
+    [DefaultValue(null)]public int? ApprovedBy { get; set; } = null;
+    [DefaultValue(null)]public int? Status { get; set; } = null;
 }

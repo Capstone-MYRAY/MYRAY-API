@@ -26,6 +26,13 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
         return query;
     }
 
+    public IQueryable<DataTier.Entities.ExtendTaskJob> GetExtendTaskJobsAll()
+    {
+        IQueryable<DataTier.Entities.ExtendTaskJob> query =
+            _extendTaskJobRepository.Get();
+        return query;
+    }
+
     public async Task<DataTier.Entities.ExtendTaskJob> ApproveExtendTaskJobById(int id, int approvedBy)
     {
         DataTier.Entities.ExtendTaskJob? extendTaskJob = await 

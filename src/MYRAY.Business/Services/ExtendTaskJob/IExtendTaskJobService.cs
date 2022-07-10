@@ -7,12 +7,13 @@ namespace MYRAY.Business.Services.ExtendTaskJob;
 
 public interface IExtendTaskJobService
 {
-    ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobs(
+    Task<ExtendTaskJobDetail> CheckOneExtend(int jobPostId);
+    
+    ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobsALl(
         SearchExtendRequest searchExtendRequest,
         PagingDto pagingDto,
-        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto,
-        int jobPostId);
-    
+        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto);
+
     Task<ExtendTaskJobDetail> CreateExtendTaskJob(CreateExtendRequest extendRequest, int requestBy);
     Task<ExtendTaskJobDetail> UpdateExtendTaskJob(UpdateExtendRequest extendRequest, int requestBy);
 
