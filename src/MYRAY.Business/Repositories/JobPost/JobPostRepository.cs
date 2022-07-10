@@ -166,7 +166,7 @@ public class JobPostRepository : IJobPostRepository
     {
         jobPost.PinDates = pinDates!;
         _jobPostRepository.Modify(jobPost);
-        ChangePaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
+        DeletePayment(jobPost.Id, (int)jobPost.PublishedBy);
         jobPost.PaymentHistories = new List<DataTier.Entities.PaymentHistory> { newPayment };
         DeletePayPerTask(jobPost.Id);
         DeletePayPerHour(jobPost.Id);
@@ -201,8 +201,11 @@ public class JobPostRepository : IJobPostRepository
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
         await _contextFactory.SaveAllAsync();
-
-        return jobPost;
+        DataTier.Entities.JobPost jobPostAfterUpdate = await _jobPostRepository.Get(j => j.Id == jobPost.Id)
+            .Include(ji => ji.TreeJobs)
+            .ThenInclude(jt => jt.TreeType)
+            .FirstAsync();
+        return jobPostAfterUpdate;
     }
 
     public async Task<DataTier.Entities.JobPost> CancelJobPost(int id)
@@ -222,7 +225,7 @@ public class JobPostRepository : IJobPostRepository
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Cancel;
 
         _jobPostRepository.Modify(jobPost);
-
+        ChangePaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
         await _contextFactory.SaveAllAsync();
 
         return jobPost;
@@ -455,7 +458,7 @@ public class JobPostRepository : IJobPostRepository
 
     private void DeletePayPerHour(int jobPostId)
     {
-        PayPerHourJob payPerHourJob = _payPerHourRepository.GetFirstOrDefault(pph => pph.Id == jobPostId);
+        PayPerHourJob? payPerHourJob = _payPerHourRepository.GetFirstOrDefault(pph => pph.Id == jobPostId);
         if (payPerHourJob != null)
         {
             _payPerHourRepository.Delete(payPerHourJob);
@@ -464,10 +467,20 @@ public class JobPostRepository : IJobPostRepository
 
     private void DeletePayPerTask(int jobPostId)
     {
-        PayPerTaskJob payPerTaskJob = _payPerTaskRepository.GetFirstOrDefault(ppt => ppt.Id == jobPostId);
+        PayPerTaskJob? payPerTaskJob = _payPerTaskRepository.GetFirstOrDefault(ppt => ppt.Id == jobPostId);
         if (payPerTaskJob != null)
         {
             _payPerTaskRepository.Delete(payPerTaskJob);
+        }
+    }
+    
+    private void DeletePayment(int jobPostId, int publishId)
+    {
+        DataTier.Entities.PaymentHistory? paymentHistory = _paymentHistoryRepository.Get(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)
+            .FirstOrDefault();
+        if (paymentHistory != null)
+        {
+            _paymentHistoryRepository.Delete(paymentHistory);
         }
     }
 }

@@ -478,7 +478,7 @@ public class JobPostController : ControllerBase
     /// <response code="400">Returns if job post not existed or posted</response>
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("extendJob/{jobPostId}")]
-    // [Authorize(Roles = UserRole.LANDOWNER)]
+    [Authorize(Roles = UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ExtendJobPost([Required]int jobPostId, [Required]DateTime extendDate, int usePoint = 0)
