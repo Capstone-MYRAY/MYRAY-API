@@ -98,6 +98,8 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("point")
                     .HasDefaultValueSql("((0))");
 
+                entity.Property(e => e.Rating).HasColumnName("rating");
+
                 entity.Property(e => e.RefreshToken)
                     .HasMaxLength(500)
                     .HasColumnName("refresh_token");

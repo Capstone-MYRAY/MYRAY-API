@@ -14,4 +14,6 @@ public class GetAccountDetail
     public double Balance { get; set; }
     public int Point { get; set; }
     public string? AboutMe { get; set; }
+    public double? Rating { get; set; }
+    public virtual ICollection<AreaAccountDetail> AreaAccounts { get; set; }
 }

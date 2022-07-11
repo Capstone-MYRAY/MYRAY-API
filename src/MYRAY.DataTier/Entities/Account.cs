@@ -46,6 +46,7 @@ namespace MYRAY.DataTier.Entities
         public int? Status { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public double? Rating { get; set; }
 
         public virtual Role Role { get; set; } = null!;
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }
