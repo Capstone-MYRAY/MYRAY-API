@@ -149,11 +149,15 @@ public class JobPostRepository : IJobPostRepository
             }
         }
 
-        newPayment.Message = "Tạo bài đăng mới #" + jobPost.Id;
+
+        var id = (_jobPostRepository.Table as DbSet<DataTier.Entities.JobPost>)
+            .FromSqlRaw("SELECT CAST(IDENT_CURRENT('JobPost') AS INT) AS 'id'").Sum(j => j.Id);
+      
+        newPayment.Message = "Tạo bài đăng mới #" + ++id;
         await _paymentHistoryRepository.InsertAsync(newPayment);
-
-
         await _contextFactory.SaveAllAsync();
+
+
 
         return jobPost;
     }

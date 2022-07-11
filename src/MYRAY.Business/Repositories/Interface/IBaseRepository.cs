@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace MYRAY.Business.Repositories.Interface;
@@ -14,7 +15,7 @@ public interface IBaseRepository<TEntity> where TEntity : class
     /// Gets a table
     /// </summary>
     IQueryable<TEntity> Table { get; }
-    
+
     /// <summary>
     /// Entry to tracking and operations entity.
     /// </summary>
