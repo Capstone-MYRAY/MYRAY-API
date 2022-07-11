@@ -28,6 +28,15 @@ public class AppliedJobService : IAppliedJobService
         return result;
     }
 
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAllAccountsApplied(PagingDto pagingDto, int landownerId, AppliedJobEnum.AppliedJobStatus? status = null)
+    {
+        IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAllAppliedJobs(landownerId, status);
+
+        var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
+
+        return result;
+    }
+
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(PagingDto pagingDto, int farmerId, 
         AppliedJobEnum.AppliedJobStatus? status = null,
         int? statusWork = null)

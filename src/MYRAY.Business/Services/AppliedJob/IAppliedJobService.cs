@@ -9,6 +9,11 @@ public interface IAppliedJobService
 {
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsApplied(PagingDto pagingDto,
         int jobPostId, AppliedJobEnum.AppliedJobStatus? status = null);
+    
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAllAccountsApplied(
+        PagingDto pagingDto,
+        int landownerId,
+        AppliedJobEnum.AppliedJobStatus? status = null);
 
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(PagingDto pagingDto,
         int farmerId, AppliedJobEnum.AppliedJobStatus? status = null, int? startWork = null);

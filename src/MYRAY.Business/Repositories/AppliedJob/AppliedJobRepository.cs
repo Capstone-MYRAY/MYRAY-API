@@ -24,6 +24,12 @@ public class AppliedJobRepository : IAppliedJobRepository
       return query;
    }
 
+   public IQueryable<DataTier.Entities.AppliedJob> GetAllAppliedJobs(int landownerId, AppliedJobEnum.AppliedJobStatus? status = null)
+   {
+      IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get( aj => aj.JobPost.PublishedBy == landownerId && (status != null ? aj.Status == (int?)status : true));
+      return query;
+   }
+
    public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobsFarmer(int farmerId, AppliedJobEnum.AppliedJobStatus? status = null)
    {
       IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(ap => ap.AppliedBy == farmerId && (status == null || ap.Status == (int?)status));

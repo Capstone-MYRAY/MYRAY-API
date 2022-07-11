@@ -306,6 +306,33 @@ public class JobPostController : ControllerBase
     }
 
     /// <summary>
+    /// [Landowner] Endpoint for get all apply 
+    /// </summary>
+    /// <param name="status">Status of applied</param>
+    /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <returns>List of account with id applied</returns>
+    /// <response code="200">Returns the list of account with id applied.</response>
+    /// <response code="204">Returns if list of account is empty.</response>
+    /// <response code="401">Returns if token is access denied.</response>
+    [HttpGet("allApplied")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public Task<IActionResult> GetAllAppliedLandowner(
+        [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
+        [FromQuery]PagingDto pagingDto)
+    {
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        ResponseDto.CollectiveResponse<AppliedJobDetail> result =
+            _appliedJobService.GetAllAccountsApplied(pagingDto, accountId, status);
+        if (result == null)
+        {
+            return Task.FromResult<IActionResult>(NoContent());
+        }
+        return Task.FromResult<IActionResult>(Ok(result));
+    }
+    
+    /// <summary>
     /// [Landowner] Endpoint for get all account apply to job post
     /// </summary>
     /// <param name="status">Status of applied</param>
