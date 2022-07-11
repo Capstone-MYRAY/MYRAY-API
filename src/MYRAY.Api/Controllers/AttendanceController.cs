@@ -32,7 +32,7 @@ public class AttendanceController : ControllerBase
     /// <summary>
     /// [Authenticated user] Endpoint for get all attendance list
     /// </summary>
-    /// <returns>List of area</returns>
+    /// <returns>List of attendance</returns>
     /// <response code="200">Returns the list of attendance.</response>
     /// <response code="204">Return if list of attendance is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
@@ -45,6 +45,30 @@ public class AttendanceController : ControllerBase
         List<AttendanceDetail> result = await 
             _attendanceService.GetAttendances(jobPostId, accountId);
         if (result == null)
+        {
+            return NoContent();
+        }
+
+        return Ok(result);
+    }
+    
+    /// <summary>
+    /// [Farmer] Endpoint for get all attendance day off list
+    /// </summary>
+    /// <returns>List of attendance</returns>
+    /// <response code="200">Returns the list of day-off attendance.</response>
+    /// <response code="204">Return if list of attendance is empty.</response>
+    /// <response code="403">Returns if token is access denied.</response>
+    [HttpGet("dayOff")]
+    [Authorize(Roles = UserRole.FARMER)]
+    [ProducesResponseType(typeof(List<AttendanceDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetDayOffAttendances(int? jobPostId = null)
+    {
+        var farmerId = int.Parse(User.FindFirst("id")?.Value!);
+        List<AttendanceDetail> result = await 
+            _attendanceService.GetListDayOff(farmerId, jobPostId);
+        if (!result.Any())
         {
             return NoContent();
         }
