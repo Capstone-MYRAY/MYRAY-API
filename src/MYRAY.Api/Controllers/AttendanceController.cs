@@ -61,7 +61,7 @@ public class AttendanceController : ControllerBase
     /// <response code="400">Returns if attendance input is empty or create error</response>
     [HttpPost]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(GetAreaDetail), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> CheckAttendance([FromBody]CheckAttendance? attendance)
     {
         try
@@ -78,5 +78,35 @@ public class AttendanceController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    
+    /// <summary>
+    /// [Farmer] Endpoint for request day off attendance .
+    /// </summary>
+    /// <returns>Check day off Attendance</returns>
+    /// <exception cref="Exception">Error if input is empty</exception>
+    /// <response code="201">Returns the attendance</response>
+    /// <response code="400">Returns if attendance input is empty or create error</response>
+    /// <response code="500">Returns if attendance input is error</response>
+    [HttpPost("dayOff")]
+    [Authorize(Roles = UserRole.FARMER)]
+    [ProducesResponseType(typeof(AttendanceDetail), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CheckDayOff([FromBody]RequestDayOff? attendance)
+    {
+        try
+        {
+            if (attendance == null)
+                throw new Exception("Attendance is empty data");
+            var createBy = int.Parse(User.FindFirst("id")?.Value!);
+           AttendanceDetail result = await _attendanceService.CreateDayOff(attendance, createBy);
+
+            return Created(String.Empty, result);
+        }
+        catch (MException e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
+    
 
 }

@@ -13,6 +13,7 @@ namespace MYRAY.DataTier.Entities
         public int? Status { get; set; }
         public int AppliedJobId { get; set; }
         public int AccountId { get; set; }
+        public string? Reason { get; set; }
 
         public virtual Account Account { get; set; } = null!;
         public virtual AppliedJob AppliedJob { get; set; } = null!;

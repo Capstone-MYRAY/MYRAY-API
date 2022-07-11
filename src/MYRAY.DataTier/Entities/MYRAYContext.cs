@@ -231,6 +231,8 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnType("datetime")
                     .HasColumnName("date");
 
+                entity.Property(e => e.Reason).HasColumnName("reason");
+
                 entity.Property(e => e.Salary).HasColumnName("salary");
 
                 entity.Property(e => e.Signature).HasColumnName("signature");
