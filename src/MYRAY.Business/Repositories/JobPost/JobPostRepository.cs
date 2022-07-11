@@ -226,6 +226,7 @@ public class JobPostRepository : IJobPostRepository
 
         _jobPostRepository.Modify(jobPost);
         ChangePaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
+        await RefundPaymentHistory(jobPost.Id, (int)jobPost.PublishedBy);
         await _contextFactory.SaveAllAsync();
 
         return jobPost;
@@ -239,7 +240,7 @@ public class JobPostRepository : IJobPostRepository
         }
     }
 
-    public void ChangePaymentHistory(int jobPostId, int publishId)
+    private void ChangePaymentHistory(int jobPostId, int publishId)
     {
         DataTier.Entities.PaymentHistory paymentHistory =
             _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)!;
@@ -275,6 +276,40 @@ public class JobPostRepository : IJobPostRepository
         paymentHistory.Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid;
     }
 
+    private async Task RefundPaymentHistory(int jobPostId, int publishId)
+    {
+        DataTier.Entities.PaymentHistory paymentHistory =
+            _paymentHistoryRepository.GetFirstOrDefault(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)!;
+        DataTier.Entities.Account account = _accountRepository.GetById(publishId)!;
+        //-- Refund money
+        account.Balance += paymentHistory.ActualPrice;
+        account.Point += paymentHistory.UsedPoint;
+        account.Point -= paymentHistory.EarnedPoint;
+        //-- New Refund Payment
+        DataTier.Entities.PaymentHistory refundPayment = new DataTier.Entities.PaymentHistory
+        {
+            JobPostId = paymentHistory.JobPostId,
+            CreatedBy = paymentHistory.CreatedBy,
+            Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid,
+            CreatedDate = DateTime.Now,
+            ActualPrice = paymentHistory.ActualPrice,
+            BalanceFluctuation = paymentHistory.BalanceFluctuation * -1,
+            Balance = account.Balance,
+            EarnedPoint = 0,
+            UsedPoint = 0,
+            BelongedId = paymentHistory.BelongedId,
+            Message = "Hoàn tiền cho bài đăng mới #" + jobPostId,
+            TotalPinDay = paymentHistory.TotalPinDay,
+            NumberPublishedDay = paymentHistory.NumberPublishedDay,
+            PostTypePrice = paymentHistory.PostTypePrice,
+            JobPostPrice = paymentHistory.JobPostPrice,
+            PointPrice = (paymentHistory.PointPrice)
+        };
+        
+        await _paymentHistoryRepository.InsertAsync(refundPayment);
+
+    }
+
     public async Task<DataTier.Entities.JobPost> DeleteJobPost(int id)
     {
         DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(id);
@@ -291,7 +326,7 @@ public class JobPostRepository : IJobPostRepository
         IQueryable<PinDate> queryPin = (IQueryable<PinDate>)GetPinDateByJobPost(jobPost.Id);
         ICollection<PinDate> list = queryPin.ToList();
         DeletePinDate(list);
-        ChangePaymentHistory(jobPost.Id, ((int)jobPost.PublishedBy)!);
+        DeletePayment(jobPost.Id, ((int)jobPost.PublishedBy)!);
 
         await _contextFactory.SaveAllAsync();
 

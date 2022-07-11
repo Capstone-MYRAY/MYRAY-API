@@ -34,8 +34,7 @@ public interface IJobPostRepository
     Task<DataTier.Entities.JobPost> CancelJobPost(int id);
 
     void DeletePinDate(ICollection<PinDate> pinDates);
-
-    void ChangePaymentHistory(int jobPostId, int publishId);
+    
     IQueryable GetPinDateByJobPost(int id);
     
     Task<DataTier.Entities.JobPost> ApproveJobPost(int jobPostId, int approvedBy);
