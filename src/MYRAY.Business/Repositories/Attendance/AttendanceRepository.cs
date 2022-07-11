@@ -1,3 +1,4 @@
+using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
 
@@ -36,6 +37,14 @@ public class AttendanceRepository : IAttendanceRepository
         DataTier.Entities.Attendance attendance = await 
             _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(dateTime.Date));
         return attendance;
+    }
+
+    public IQueryable<DataTier.Entities.Attendance> GetListDayOff(int farmerId, int? jobPostId = null)
+    {
+        IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a => a.AppliedJob.AppliedBy == farmerId
+            && a.Status == (int?)AttendanceEnum.AttendanceStatus.DayOff
+            && (jobPostId == null || a.AppliedJob.JobPostId == jobPostId));
+        return query;
     }
 
     public IQueryable<DataTier.Entities.Attendance> GetListAttendances(int applyJobId)

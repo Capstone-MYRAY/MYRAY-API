@@ -9,4 +9,12 @@ public class AppliedJobEnum
         Reject = 2,
         End = 3
     }
+    
+    public enum SortCriteriaAppliedJob
+    {
+        AppliedDate,
+        ApprovedDate,
+        StartDate,
+        EndDate
+    }
 }

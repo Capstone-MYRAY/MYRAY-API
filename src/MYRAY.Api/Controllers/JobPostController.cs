@@ -310,6 +310,7 @@ public class JobPostController : ControllerBase
     /// </summary>
     /// <param name="status">Status of applied</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <param name="sortingDto">An object contains sorting criteria</param>
     /// <returns>List of account with id applied</returns>
     /// <response code="200">Returns the list of account with id applied.</response>
     /// <response code="204">Returns if list of account is empty.</response>
@@ -320,24 +321,26 @@ public class JobPostController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAllAppliedLandowner(
         [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
-        [FromQuery]PagingDto pagingDto)
+        [FromQuery]PagingDto pagingDto,
+        [FromQuery]SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto)
     {
         var accountId = int.Parse(User.FindFirst("id")?.Value!);
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
-            _appliedJobService.GetAllAccountsApplied(pagingDto, accountId, status);
+            _appliedJobService.GetAllAccountsApplied(pagingDto, sortingDto, accountId, status);
         if (result == null)
         {
             return Task.FromResult<IActionResult>(NoContent());
         }
         return Task.FromResult<IActionResult>(Ok(result));
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for get all account apply to job post
     /// </summary>
     /// <param name="status">Status of applied</param>
     /// <param name="jobPostId">Id of job post</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <param name="sortingDto">An object contains sorting criteria</param>
     /// <returns>List of account with id applied</returns>
     /// <response code="200">Returns the list of account with id applied.</response>
     /// <response code="204">Returns if list of account is empty.</response>
@@ -349,10 +352,11 @@ public class JobPostController : ControllerBase
     public Task<IActionResult> GetAppliedLandowner(
         [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
         [Required] int jobPostId,
-        [FromQuery]PagingDto pagingDto)
+        [FromQuery]PagingDto pagingDto,
+        [FromQuery]SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto)
     {
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
-            _appliedJobService.GetAccountsApplied(pagingDto, jobPostId, status);
+            _appliedJobService.GetAccountsApplied(pagingDto, sortingDto, jobPostId, status);
         if (result == null)
         {
             return Task.FromResult<IActionResult>(NoContent());
@@ -365,6 +369,7 @@ public class JobPostController : ControllerBase
     /// </summary>
     /// <param name="status">Status of applied</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
+    /// <param name="sortingDto">An object contains sorting criteria.</param>
     /// <param name="startWork">Status work of job post</param>
     /// <returns>List of account with id applied</returns>
     /// <response code="200">Returns the list of account with id applied.</response>
@@ -377,11 +382,12 @@ public class JobPostController : ControllerBase
     public async Task<IActionResult> GetAccounts(
         [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
         [FromQuery]PagingDto pagingDto,
+        [FromQuery]SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
         [FromQuery] int? startWork = null) 
     {
         var accountId = int.Parse(User.FindFirst("id")?.Value!);
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
-            _appliedJobService.GetAccountsAppliedFarmer(pagingDto, accountId, status, startWork);
+            _appliedJobService.GetAccountsAppliedFarmer(pagingDto,sortingDto, accountId, status, startWork);
         if (result == null)
         {
             return NoContent();

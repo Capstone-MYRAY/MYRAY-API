@@ -26,7 +26,8 @@ public class AppliedJobRepository : IAppliedJobRepository
 
    public IQueryable<DataTier.Entities.AppliedJob> GetAllAppliedJobs(int landownerId, AppliedJobEnum.AppliedJobStatus? status = null)
    {
-      IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get( aj => aj.JobPost.PublishedBy == landownerId && (status != null ? aj.Status == (int?)status : true));
+      IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(aj =>
+         aj.JobPost.PublishedBy == landownerId && (status != null ? aj.Status == (int?)status : true));
       return query;
    }
 

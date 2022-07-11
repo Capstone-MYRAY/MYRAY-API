@@ -19,25 +19,39 @@ public class AppliedJobService : IAppliedJobService
     }
 
 
-    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsApplied(PagingDto pagingDto, int jobPostId, AppliedJobEnum.AppliedJobStatus? status = null)
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsApplied(
+        PagingDto pagingDto, 
+        SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
+        int jobPostId, AppliedJobEnum.AppliedJobStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAppliedJobs(jobPostId, status);
 
+        query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
+        
         var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
 
         return result;
     }
 
-    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAllAccountsApplied(PagingDto pagingDto, int landownerId, AppliedJobEnum.AppliedJobStatus? status = null)
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAllAccountsApplied(
+        PagingDto pagingDto, 
+        SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
+        int landownerId, 
+        AppliedJobEnum.AppliedJobStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAllAppliedJobs(landownerId, status);
 
+        query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
+        
         var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
 
         return result;
     }
 
-    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(PagingDto pagingDto, int farmerId, 
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(
+        PagingDto pagingDto, 
+        SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
+        int farmerId, 
         AppliedJobEnum.AppliedJobStatus? status = null,
         int? statusWork = null)
     {
@@ -46,6 +60,8 @@ public class AppliedJobService : IAppliedJobService
         {
             query = query.Where(a => a.JobPost.StatusWork == statusWork);
         }
+        query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
+        
         var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
 
         return result;

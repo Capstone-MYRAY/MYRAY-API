@@ -7,16 +7,22 @@ namespace MYRAY.Business.Services.AppliedJob;
 
 public interface IAppliedJobService
 {
-    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsApplied(PagingDto pagingDto,
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsApplied(
+        PagingDto pagingDto,
+        SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
         int jobPostId, AppliedJobEnum.AppliedJobStatus? status = null);
     
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAllAccountsApplied(
         PagingDto pagingDto,
+        SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
         int landownerId,
         AppliedJobEnum.AppliedJobStatus? status = null);
 
-    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(PagingDto pagingDto,
-        int farmerId, AppliedJobEnum.AppliedJobStatus? status = null, int? startWork = null);
+    public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(
+        PagingDto pagingDto,
+        SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
+        int farmerId, 
+        AppliedJobEnum.AppliedJobStatus? status = null, int? startWork = null);
 
     public Task<DataTier.Entities.AppliedJob> ApplyJob(int jobId, int appliedBy);
     public Task<DataTier.Entities.AppliedJob> CancelApply(int jobId, int appliedBy);
