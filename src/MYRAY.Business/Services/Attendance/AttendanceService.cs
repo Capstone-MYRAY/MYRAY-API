@@ -60,10 +60,7 @@ public class AttendanceService : IAttendanceService
 
     public async Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId)
     {
-        if (requestDayOff.DayOff.Date < DateTime.Now.AddHours(24))
-        {
-            throw new Exception("Day-off must from the current 24hour");
-        }
+       
         
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(requestDayOff.JobPostId);
         if (jobPost == null)
@@ -75,7 +72,11 @@ public class AttendanceService : IAttendanceService
         {
             throw new Exception("Job post is not started");
         }
-        //PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
+        PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
+        if (requestDayOff.DayOff.Date.AddHours(payPerHourJob.StartTime.Value.Hours) < DateTime.Now.AddHours(24))
+        {
+            throw new Exception("Day-off must from the current 24hour");
+        }
         DataTier.Entities.AppliedJob appliedJob = await 
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
         DataTier.Entities.Attendance existedAttendance = await _attendanceRepository.GetAttendanceByDate(appliedJob.Id, appliedJob.AppliedBy, requestDayOff.DayOff);
