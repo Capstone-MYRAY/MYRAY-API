@@ -171,6 +171,8 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.Address).HasColumnName("address");
+
                 entity.Property(e => e.Commune)
                     .HasMaxLength(100)
                     .HasColumnName("commune");
