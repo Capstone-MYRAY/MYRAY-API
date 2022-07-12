@@ -77,6 +77,24 @@ public class AttendanceController : ControllerBase
     }
     
     /// <summary>
+    /// [Landowner] Endpoint for get total expense
+    /// </summary>
+    /// <returns>Total expense to now</returns>
+    /// <response code="200">Returns the total expense or zero to no total.</response>
+    /// <response code="500">Return if error to get total.</response>
+    /// <response code="403">Returns if token is access denied.</response>
+    [HttpGet("totalExpense/{jobPostId}")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(double?),StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTotalExpense([Required]int jobPostId)
+    {
+        double? result = await 
+            _attendanceService.GetTotalExpense(jobPostId);
+      
+        return Ok(result);
+    }
+    
+    /// <summary>
     /// [Landowner] Endpoint for check attendance .
     /// </summary>
     /// <returns>Check Attendance</returns>

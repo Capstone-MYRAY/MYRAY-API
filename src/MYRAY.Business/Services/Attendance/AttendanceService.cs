@@ -118,4 +118,10 @@ public class AttendanceService : IAttendanceService
        var list = await result.ToListAsync();
        return list;
     }
+
+    public async Task<double?> GetTotalExpense(int jobPostId)
+    {
+        double? result = await _attendanceRepository.GetTotalExpense(jobPostId);
+        return result;
+    }
 }

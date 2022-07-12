@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
@@ -30,6 +31,15 @@ public class AttendanceRepository : IAttendanceRepository
         DataTier.Entities.Attendance attendance = await 
             _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(DateTime.Today));
         return attendance;
+    }
+
+    public async Task<double?> GetTotalExpense(int jobPostId)
+    {
+        IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a =>
+            a.AppliedJob.JobPostId == jobPostId
+            && a.Date.Value <= DateTime.Today);
+        double? totalExpense = await query.SumAsync(a => a.Salary);
+        return totalExpense;
     }
 
     public async Task<DataTier.Entities.Attendance> GetAttendanceByDate(int appliedJobId, int accountId, DateTime dateTime)

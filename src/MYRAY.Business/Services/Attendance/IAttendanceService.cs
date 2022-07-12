@@ -10,4 +10,5 @@ public interface IAttendanceService
     Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId);
     Task<List<AttendanceDetail>> GetListDayOff(int farmerId, int? jobPostId);
     Task<List<AttendanceDetail>> GetAttendances(int jobPostId, int accountId);
+    Task<double?> GetTotalExpense(int jobPostId);
 }
