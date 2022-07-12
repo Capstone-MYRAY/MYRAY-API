@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs.Account;
 using MYRAY.Business.DTOs.Authentication;
+using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Repositories.Account;
@@ -45,6 +46,11 @@ public class AuthenticationService : IAuthenticationService
         if (!queryAccount.Password.Equals(password))
         {
             throw new MException(StatusCodes.Status401Unauthorized, "Invalid Password");
+        }
+
+        if (queryAccount.Status == (int?)AccountEnum.AccountStatus.Banned)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Account has been locked");
         }
 
         string role = "";
