@@ -52,6 +52,11 @@ public class AuthenticationService : IAuthenticationService
         {
             throw new MException(StatusCodes.Status400BadRequest, "Account has been locked");
         }
+        if (queryAccount.Status == (int?)AccountEnum.AccountStatus.Inactive)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Account has been deleted");
+        }
+        
 
         string role = "";
 

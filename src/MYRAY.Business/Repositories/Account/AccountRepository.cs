@@ -49,7 +49,7 @@ public class AccountRepository : IAccountRepository
     {
         DataTier.Entities.Account queryAccount =
             await _accountRepository.GetFirstOrDefaultAsync(a =>
-                a.PhoneNumber.Equals(phoneNumber) && a.Status == (int?)AccountEnum.AccountStatus.Active);
+                a.PhoneNumber.Equals(phoneNumber));
         if (queryAccount == null)
         {
             return null;
