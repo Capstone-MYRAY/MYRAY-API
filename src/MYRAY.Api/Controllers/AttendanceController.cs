@@ -3,13 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
 using MYRAY.Business.Constants;
-using MYRAY.Business.DTOs;
-using MYRAY.Business.DTOs.Area;
 using MYRAY.Business.DTOs.Attendance;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Services.Attendance;
-using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Api.Controllers;
 /// <summary>
@@ -27,6 +24,32 @@ public class AttendanceController : ControllerBase
     public AttendanceController(IAttendanceService attendanceService)
     {
         _attendanceService = attendanceService;
+    }
+    
+    /// <summary>
+    /// [Authenticated user] Endpoint for get attendance list by date
+    /// </summary>
+    /// <returns>List of attendance for one date</returns>
+    /// <response code="200">Returns the list of attendance of a day.</response>
+    /// <response code="204">Return if list of attendance is empty.</response>
+    /// <response code="403">Returns if token is access denied.</response>
+    [HttpGet("day")]
+    [Authorize]
+    [ProducesResponseType(typeof(List<AttendanceDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetAttendancesOfDay(
+        [Required]int jobPostId,
+        [Required]DateTime dateTime, 
+        AttendanceEnum.AttendanceStatus? status = null)
+    {
+        List<AttendanceByJob?> result = await 
+            _attendanceService.GetAttendanceByDate(jobPostId, dateTime, status);
+        if (result == null)
+        {
+            return NoContent();
+        }
+
+        return Ok(result);
     }
     
     /// <summary>

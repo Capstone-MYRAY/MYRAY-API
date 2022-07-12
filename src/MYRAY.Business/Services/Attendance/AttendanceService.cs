@@ -60,8 +60,6 @@ public class AttendanceService : IAttendanceService
 
     public async Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId)
     {
-       
-        
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(requestDayOff.JobPostId);
         if (jobPost == null)
         {
@@ -122,6 +120,36 @@ public class AttendanceService : IAttendanceService
     public async Task<double?> GetTotalExpense(int jobPostId)
     {
         double? result = await _attendanceRepository.GetTotalExpense(jobPostId);
+        return result;
+    }
+
+    public async Task<List<AttendanceByJob?>> GetAttendanceByDate(int jobPostId, DateTime dateTime,
+        AttendanceEnum.AttendanceStatus? status = null)
+    {
+        IQueryable<DataTier.Entities.AppliedJob> query =
+            _appliedJobRepository.GetAppliedJobs(jobPostId, AppliedJobEnum.AppliedJobStatus.Approve);
+        IQueryable<AttendanceByJob> map = _mapper.ProjectTo<AttendanceByJob>(query);
+        List<AttendanceByJob> result = await map.ToListAsync();
+        foreach (var attendanceByJob in result)
+        {
+            attendanceByJob.Attendances =
+                attendanceByJob.Attendances.Where(a => a.Date.Value.Date == dateTime.Date).ToList();
+        }
+
+        if (status != null)
+        {
+            result = result.Where(abj =>
+            {
+                AttendanceDetail? attendance = abj.Attendances.FirstOrDefault();
+                if (attendance == null)
+                {
+                    return status == AttendanceEnum.AttendanceStatus.Future;
+                }
+
+                return attendance.Status == (int?)status;
+            }).ToList();
+        }
+
         return result;
     }
 }

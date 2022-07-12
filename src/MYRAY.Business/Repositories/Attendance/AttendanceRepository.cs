@@ -48,6 +48,8 @@ public class AttendanceRepository : IAttendanceRepository
             _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(dateTime.Date));
         return attendance;
     }
+    
+    
 
     public IQueryable<DataTier.Entities.Attendance> GetListDayOff(int farmerId, int? jobPostId = null)
     {
