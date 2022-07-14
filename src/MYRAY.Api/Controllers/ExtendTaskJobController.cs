@@ -163,7 +163,7 @@ public class ExtendTaskJobController : ControllerBase
     }
     
     /// <summary>
-    /// [Farmer] Endpoint for Approve request extend
+    /// [Landowner] Endpoint for Approve request extend
     /// </summary>
     /// <param name="extendTaskJobId">Id of extend request</param>
     /// <returns>IActionResult</returns>
@@ -190,7 +190,7 @@ public class ExtendTaskJobController : ControllerBase
     }
     
     /// <summary>
-    /// [Farmer] Endpoint for Reject request extend
+    /// [Landowner] Endpoint for Reject request extend
     /// </summary>
     /// <param name="extendTaskJobid">Id of extend request</param>
     /// <returns>IActionResult</returns>
