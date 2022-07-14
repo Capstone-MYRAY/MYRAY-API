@@ -79,6 +79,9 @@ builder.Services.RegisterBusinessModule();
 builder.Services.RegisterQuartz();
 var app = builder.Build();
 
+app.UseWebSockets(new (){ KeepAliveInterval = TimeSpan.FromSeconds(40)});
+
+
 Directory.CreateDirectory("upload");
 app.UseFileServer(new FileServerOptions()
 {
