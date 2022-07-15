@@ -56,5 +56,7 @@ public interface IJobPostRepository
 
     Task StartJob();
 
+    Task ExpiredApproveJob();
+
     Task SaveChange();
 }

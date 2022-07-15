@@ -490,6 +490,23 @@ public class JobPostRepository : IJobPostRepository
         await _contextFactory.SaveAllAsync();
     }
 
+    public async Task ExpiredApproveJob()
+    {
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
+            j.Status == (int?)JobPostEnum.JobPostStatus.Pending &&
+            j.PublishedDate!.Value.Date < DateTime.Today);
+
+        List<DataTier.Entities.JobPost> listOutOfDate = query.ToList();
+        foreach (var jobPost in listOutOfDate)
+        {
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.OutOfDate;
+            Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
+                Console.BackgroundColor == ConsoleColor.Yellow);
+        }
+
+        await _contextFactory.SaveAllAsync();
+    }
+
     public async Task SaveChange()
     {
         await _contextFactory.SaveAllAsync();

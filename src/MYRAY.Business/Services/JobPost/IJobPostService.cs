@@ -37,6 +37,7 @@ public interface IJobPostService
     Task<int> TotalPinDate(int jobPostId);
     Task PostingJob();
     Task ExpiringJob();
+    Task OutOfDateJob();
     Task StartingJob();
 
 }

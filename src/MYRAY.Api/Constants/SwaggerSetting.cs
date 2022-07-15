@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
 
@@ -62,7 +63,10 @@ public static class SwaggerSetting
                     Email = "forest.tl112@gmail.com"
                 }
             });
-            c.AddSignalRSwaggerGen();
+          
+            
+            c.DocInclusionPredicate((_, _) => true);
+            
             //--Get Assembly Name Combine extension xml 
             var xmlFile = $"{typeof(Program).GetTypeInfo().Assembly.GetName().Name}.xml";
             //--Combine Base Path to xml file name

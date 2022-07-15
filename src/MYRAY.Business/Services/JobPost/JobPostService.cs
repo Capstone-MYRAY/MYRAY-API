@@ -448,6 +448,11 @@ public class JobPostService : IJobPostService
         await _jobPostRepository.ExpiredJob();
     }
 
+    public async Task OutOfDateJob()
+    {
+        await _jobPostRepository.ExpiredApproveJob();
+    }
+
     public async Task StartingJob()
     {
         await _jobPostRepository.StartJob();

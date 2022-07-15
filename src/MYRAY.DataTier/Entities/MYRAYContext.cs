@@ -612,6 +612,10 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.ImageUrl).HasColumnName("image_url");
 
+                entity.Property(e => e.IsRead)
+                    .HasColumnName("is_read")
+                    .HasDefaultValueSql("((0))");
+
                 entity.Property(e => e.JobPostId).HasColumnName("job_post_id");
 
                 entity.Property(e => e.ToId).HasColumnName("to_id");

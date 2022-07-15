@@ -13,6 +13,7 @@ namespace MYRAY.DataTier.Entities
         public string? ImageUrl { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string? ConventionId { get; set; }
+        public bool? IsRead { get; set; }
 
         public virtual Account From { get; set; } = null!;
         public virtual JobPost? JobPost { get; set; }
