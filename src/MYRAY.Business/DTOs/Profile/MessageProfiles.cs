@@ -8,5 +8,7 @@ public static class MessageProfiles
     public static void ConfigMessageModule(this IMapperConfigurationExpression configuration)
     {
         configuration.CreateMap<DataTier.Entities.Message, NewMessageRequest>().ReverseMap();
+        configuration.CreateMap<DataTier.Entities.Message, MessageDetail>().ReverseMap();
+        
     }
 }

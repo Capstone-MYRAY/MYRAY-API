@@ -41,9 +41,15 @@ public class MessageService : IMessageService
         
     }
 
-    public async Task<List<DataTier.Entities.Message>> GetMessageByConventionId(string conventionId)
+    public async Task<List<MessageDetail>> GetMessageByConventionId(string conventionId)
     {
-        List<DataTier.Entities.Message> result = await _messageRepository.GetMessageByConventionId(conventionId).ToListAsync();
-        return result;
+        IQueryable<DataTier.Entities.Message> query = _messageRepository.GetMessageByConventionId(conventionId);
+        IQueryable<MessageDetail> result = _mapper.ProjectTo<MessageDetail>(query);
+        return await result.ToListAsync();
+    }
+
+    public async Task<List<MessageJobPost>> GetListMessageForLandowner(int landownerId)
+    {
+        return await _messageRepository.GetMessageByLandowner(landownerId);
     }
 }

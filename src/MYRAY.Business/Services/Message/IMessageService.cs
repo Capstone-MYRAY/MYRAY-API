@@ -5,5 +5,7 @@ namespace MYRAY.Business.Services.Message;
 public interface IMessageService
 {
     Task StoreNewMessage(NewMessageRequest newMessageRequest);
-    Task<List<DataTier.Entities.Message>> GetMessageByConventionId(string conventionId);
+    Task<List<MessageDetail>> GetMessageByConventionId(string conventionId);
+    
+    Task<List<MessageJobPost>> GetListMessageForLandowner(int landownerId);
 }

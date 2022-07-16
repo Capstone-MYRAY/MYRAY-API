@@ -9,5 +9,6 @@ public class AttendanceDetail
     public string? Signature { get; set; }
     public int? Status { get; set; }
     public int AppliedJobId { get; set; }
+    public string? Reason { get; set; }
     public int AccountId { get; set; }
 }

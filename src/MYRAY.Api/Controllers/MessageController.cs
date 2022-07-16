@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
+using MYRAY.Business.DTOs.Message;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Services.Message;
 using MYRAY.DataTier.Entities;
@@ -39,12 +40,12 @@ public class MessageController : ControllerBase
     /// <response code="401">Returns if token is access denied.</response>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(List<Message>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<MessageDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetAccounts(
         [FromQuery]string conventionId)
     {
-        List<Message> result = await _messageService.GetMessageByConventionId(conventionId);
+        List<MessageDetail> result = await _messageService.GetMessageByConventionId(conventionId);
         if (result == null)
         {
             return NoContent();
