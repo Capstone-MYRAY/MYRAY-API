@@ -1,6 +1,7 @@
+using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs.Message;
-using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
 
@@ -12,14 +13,16 @@ public class MessageRepository : IMessageRepository
     private readonly IBaseRepository<DataTier.Entities.Message> _messageRepository;
     private readonly IBaseRepository<DataTier.Entities.JobPost> _jobPostRepository;
     private readonly IBaseRepository<DataTier.Entities.AppliedJob> _appliedJobRepository;
+    private readonly IMapper _mapper;
 
-    public MessageRepository(IDbContextFactory contextFactory)
+    public MessageRepository(IDbContextFactory contextFactory, IMapper mapper)
     {
         _contextFactory = contextFactory;
         _messageRepository = _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Message>()!;
         _jobPostRepository = _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.JobPost>()!;
         _appliedJobRepository =
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.AppliedJob>()!;
+        _mapper = mapper;
     }
 
     public async Task<DataTier.Entities.Message> CreateNewMessage(DataTier.Entities.Message message)
@@ -45,43 +48,73 @@ public class MessageRepository : IMessageRepository
         return query;
     }
 
-    public async Task<List<MessageJobPost>> GetMessageByLandowner(int landownerId)
+    public async Task<List<MessageJobPost>?> GetMessageByLandowner(int landownerId)
     {
         List<MessageJobPost>? result = null;
-        IQueryable<int?> queryJobPostId = _messageRepository
+        IQueryable<DataTier.Entities.JobPost> queryJobPost = _messageRepository
             .Get()
             .AsNoTracking()
             .Where(m => m.JobPost.PublishedBy == landownerId)
-            .Select(m => m.JobPostId).Distinct();
-        List<int?> listJobPostId = await queryJobPostId.ToListAsync();
-        if (!listJobPostId.Any())
+            .Select(m => m.JobPost).Distinct();
+        List<DataTier.Entities.JobPost> listJobPost = await queryJobPost.ToListAsync();
+        if (queryJobPost.Any())
             result = new List<MessageJobPost>();
 
-        IQueryable<DataTier.Entities.JobPost> queryJobPost = _jobPostRepository.Get()
-            .AsNoTracking()
-            .Where(j => listJobPostId.Contains(j.Id));
-        List<DataTier.Entities.JobPost> listJobPost = await queryJobPost.ToListAsync();
-        
-        foreach (var jobPost in listJobPost)
+        if(listJobPost.Any())
+            foreach (var jobPost in listJobPost)
+            {
+                string conventionId = jobPost.Id + landownerId.ToString();
+                Expression<Func<DataTier.Entities.Message, object>> expFrom = message => message.From; 
+                Expression<Func<DataTier.Entities.Message, object>> expTo = message => message.To; 
+                IEnumerable<DataTier.Entities.Message> listFarmer = _messageRepository
+                    .Get(includeProperties: new []{expFrom, expTo})
+                    .AsNoTracking()
+                    .OrderByDescending(m => m.CreatedDate)
+                    .Where(m => m.ConventionId.Contains(conventionId))
+                    .AsEnumerable()
+                    .DistinctBy(m => m.ConventionId);
+                List<DataTier.Entities.Message> messageToFarmer = listFarmer.ToList();
+                List<Farmer> bindListFarmer = new List<Farmer>();
+                foreach (var lastMessage in messageToFarmer)
+                {
+                    DataTier.Entities.Account accountFarmer =
+                        lastMessage.FromId != landownerId ? lastMessage.From : lastMessage.To;
+                    Farmer oneFarmer = new Farmer()
+                    {
+                        Id = accountFarmer.Id,
+                        Image = accountFarmer.ImageUrl,
+                        Name = accountFarmer.Fullname,
+                        ConventionId = jobPost.Id + landownerId.ToString() + accountFarmer.Id,
+                        LastMessage = _mapper.Map<MessageDetail>(lastMessage)
+                    };
+                    if (lastMessage.FromId == landownerId)
+                    {
+                        oneFarmer.LastMessage.IsRead = true;
+                    }
+                    bindListFarmer.Add(oneFarmer);
+                }
+
+                MessageJobPost oneJobPost = new MessageJobPost()
+                {
+                    JobPostId = jobPost.Id,
+                    JobPostTitle = jobPost.Title,
+                    Farmers = bindListFarmer
+                };
+                result!.Add(oneJobPost);
+            }
+
+        return result;
+    }
+
+    public async Task MarkRead(int accountId, string conventionId)
+    {
+        IQueryable<DataTier.Entities.Message> message = _messageRepository.Get(m => m.ConventionId.Equals(conventionId)
+            && m.ToId == accountId);
+        List<DataTier.Entities.Message> list = await message.ToListAsync();
+        foreach (var markMessage in list)
         {
-            string conventionId = jobPost.Id + landownerId.ToString();
-            IQueryable<DataTier.Entities.Message> queryFarmer = _messageRepository
-                .Get()
-                .AsNoTracking()
-                .OrderByDescending(m => m.CreatedDate)
-                .Where(m => m.ConventionId.Contains(conventionId)
-                            && m.FromId != landownerId)
-                .DistinctBy(m => m.ConventionId);
-
-        //    MessageJobPost oneJobPost = new MessageJobPost()
-        //     {
-        //         JobPostId = jobPost.Id,
-        //         JobPostTitle = jobPost.Title,
-        //         Farmers = await queryFarmer.ToListAsync();
-        //     }
-        //     result!.Add();
+            markMessage.IsRead = true;
         }
-
-        return null;
+        await _contextFactory.SaveAllAsync();
     }
 }

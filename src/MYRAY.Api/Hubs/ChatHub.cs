@@ -47,7 +47,7 @@ public class ChatHub : Hub
         {
             Console.WriteLine($"Send message to {info.Account.Fullname} - {newMessageRequest.Content}");
             await Clients.Client(info.ConnectionId).SendAsync("chat", info, newMessageRequest);
-
+            //If Send List convention for 2 role
         }
         else
         {
@@ -57,6 +57,34 @@ public class ChatHub : Hub
         await _messageService.StoreNewMessage(newMessageRequest);
         Console.WriteLine("Message send");
     }
+
+    public async Task GetListMessageForLandowner(int landownerId)
+    {
+        ObjectInfo? info = _connectionService.GetConnectionById(landownerId);
+        
+        if(info != null)
+        {
+            List<MessageJobPost>? listConventions = await _messageService.GetListMessageForLandowner(landownerId);
+            if(listConventions != null)
+            {
+                Console.WriteLine($"Get List Convention to {info.Account.Fullname} - {listConventions.Count}");
+                await Clients.Client(info.ConnectionId).SendAsync("convention", info, listConventions);
+            }
+        }
+        else
+        {
+            Console.WriteLine(" User is offline");
+        }
+    }
+
+    public async Task MarkRead(int accountId, string conventionId)
+    {
+        Console.WriteLine($"Mark Read {accountId} - {conventionId}");
+
+        await _messageService.MarkRead(accountId, conventionId);
+    }
+    
+    
     
     
     /// <summary>

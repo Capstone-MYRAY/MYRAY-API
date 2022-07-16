@@ -48,8 +48,13 @@ public class MessageService : IMessageService
         return await result.ToListAsync();
     }
 
-    public async Task<List<MessageJobPost>> GetListMessageForLandowner(int landownerId)
+    public async Task<List<MessageJobPost>?> GetListMessageForLandowner(int landownerId)
     {
         return await _messageRepository.GetMessageByLandowner(landownerId);
+    }
+
+    public async Task MarkRead(int accountId, string conventionId)
+    {
+        await _messageRepository.MarkRead(accountId, conventionId);
     }
 }
