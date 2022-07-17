@@ -10,8 +10,10 @@ public class MessageJobPost
 public class MessageFarmer
 {
     public int Id { get; set; }
-    public string Title { get; set; }
+    public string? Title { get; set; }
+    public int? PublishedId { get; set; }
     public string PublishedBy { get; set; }
+    public string? AvatarUrl { get; set; }
     public DateTime? LastMessageTime { get; set; }
 }
 
