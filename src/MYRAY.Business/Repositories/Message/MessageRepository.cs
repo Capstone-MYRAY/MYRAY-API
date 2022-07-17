@@ -133,7 +133,8 @@ public class MessageRepository : IMessageRepository
                 PublishedBy = jobPost.PublishedByNavigation.Fullname,
                 PublishedId = jobPost.PublishedBy,
                 AvatarUrl = jobPost.PublishedByNavigation.ImageUrl,
-                LastMessageTime = last.CreatedDate
+                LastMessageTime = last.CreatedDate,
+                IsRead = last.IsRead
             });
         }
         

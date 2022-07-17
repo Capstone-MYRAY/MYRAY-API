@@ -15,6 +15,7 @@ public class MessageFarmer
     public string PublishedBy { get; set; }
     public string? AvatarUrl { get; set; }
     public DateTime? LastMessageTime { get; set; }
+    public bool? IsRead { get; set; }
 }
 
 public class Farmer
