@@ -67,8 +67,27 @@ public class ChatHub : Hub
             List<MessageJobPost>? listConventions = await _messageService.GetListMessageForLandowner(landownerId);
             if(listConventions != null)
             {
-                Console.WriteLine($"Get List Convention to {info.Account.Fullname} - {listConventions.Count}");
+                Console.WriteLine($"Get List Convention Landowner {info.Account.Fullname} - {listConventions.Count}");
                 await Clients.Client(info.ConnectionId).SendAsync("convention", info, listConventions);
+            }
+        }
+        else
+        {
+            Console.WriteLine(" User is offline");
+        }
+    }
+    
+    public async Task GetListMessageForFarmer(int farmerId)
+    {
+        ObjectInfo? info = _connectionService.GetConnectionById(farmerId);
+        
+        if(info != null)
+        {
+            List<MessageFarmer>? listConventions = await _messageService.GetListMessageForFarmer(farmerId);
+            if(listConventions != null)
+            {
+                Console.WriteLine($"Get List Convention Farmer {info.Account.Fullname} - {listConventions.Count}");
+                await Clients.Client(info.ConnectionId).SendAsync("conventionFarmer", info, listConventions);
             }
         }
         else
@@ -83,10 +102,7 @@ public class ChatHub : Hub
 
         await _messageService.MarkRead(accountId, conventionId);
     }
-    
-    
-    
-    
+
     /// <summary>
     /// On user connected to hub
     /// </summary>

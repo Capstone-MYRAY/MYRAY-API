@@ -11,7 +11,7 @@ public interface IBookmarkService
     /// </summary>
     /// <returns>list of bookmark.</returns>
     public ResponseDto.CollectiveResponse<BookmarkDetail> GetBookmarks(PagingDto pagingDto,
-        SortingDto<BookmarkEnum.BookmarkSortCriterial> sortingDto, int accountId);
+        SortingDto<BookmarkEnum.BookmarkSortCriteria> sortingDto, int accountId);
     
     /// <summary>
     /// Create an new bookmark.

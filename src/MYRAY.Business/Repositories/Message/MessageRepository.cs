@@ -106,6 +106,38 @@ public class MessageRepository : IMessageRepository
         return result;
     }
 
+    public async Task<List<MessageFarmer>> GetMessageByFarmer(int farmerId)
+    {
+        string farmerIdS = farmerId.ToString();
+        Expression<Func<DataTier.Entities.Message, object>> expPublish = post => post.JobPost.PublishedByNavigation;
+        IEnumerable<DataTier.Entities.JobPost> listConventions = _messageRepository
+            .Get(includeProperties: new []{expPublish})
+            .AsNoTracking()
+            .Where(m => m.ConventionId.EndsWith(farmerIdS))
+            .AsEnumerable()
+            .DistinctBy(m => m.ConventionId)
+            .Select(m => m.JobPost);
+
+        List<MessageFarmer> result = new List<MessageFarmer>();
+        foreach (var jobPost in listConventions)
+        {
+            string conventionId = jobPost.Id + jobPost.PublishedBy.ToString() + farmerId;
+            IQueryable<DataTier.Entities.Message> lastMessage = _messageRepository
+                .Get(m => m.ConventionId.Equals(conventionId))
+                .OrderByDescending(m => m.CreatedDate);
+            DataTier.Entities.Message last = await lastMessage.FirstOrDefaultAsync();
+            result.Add(new MessageFarmer()
+            {
+                Id = jobPost.Id,
+                Title = jobPost.Title,
+                PublishedBy = jobPost.PublishedByNavigation.Fullname,
+                LastMessageTime = last.CreatedDate
+            });
+        }
+        
+        return result;
+    }
+
     public async Task MarkRead(int accountId, string conventionId)
     {
         IQueryable<DataTier.Entities.Message> message = _messageRepository.Get(m => m.ConventionId.Equals(conventionId)

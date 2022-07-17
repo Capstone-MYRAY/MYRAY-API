@@ -2,8 +2,8 @@ namespace MYRAY.Business.Enums;
 
 public class BookmarkEnum
 {
-    public enum BookmarkSortCriterial
+    public enum BookmarkSortCriteria
     {
-        
+        CreatedDate
     }
 }

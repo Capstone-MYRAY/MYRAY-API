@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
@@ -40,19 +41,19 @@ public class BookmarkController : ControllerBase
     [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<BookmarkDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public Task<IActionResult> GetBookmarks(
-           [FromQuery]SortingDto<BookmarkEnum.BookmarkSortCriterial> sortingDto,
+    public async Task<IActionResult> GetBookmarks(
+           [FromQuery]SortingDto<BookmarkEnum.BookmarkSortCriteria> sortingDto,
         [FromQuery]PagingDto pagingDto,
-           [FromQuery] int accountId)
+           [Required] int accountId)
     {
         ResponseDto.CollectiveResponse<BookmarkDetail> result =
             _bookmarkService.GetBookmarks(pagingDto, sortingDto, accountId);
         if (result == null)
         {
-            return Task.FromResult<IActionResult>(NoContent());
+            return NoContent();
         }
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return Ok(result);
     }
        
     /// <summary>

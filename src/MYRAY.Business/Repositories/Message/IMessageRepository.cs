@@ -8,6 +8,7 @@ public interface IMessageRepository
     IQueryable<DataTier.Entities.Message> GetMessageByConventionId(string conventionId);
 
     Task<List<MessageJobPost>?> GetMessageByLandowner(int landownerId);
+    Task<List<MessageFarmer>> GetMessageByFarmer(int farmerId);
 
     Task MarkRead(int accountId, string conventionId);
 }

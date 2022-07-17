@@ -7,8 +7,17 @@ public class MessageJobPost
     public List<Farmer> Farmers { get; set; }
 }
 
+public class MessageFarmer
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string PublishedBy { get; set; }
+    public DateTime? LastMessageTime { get; set; }
+}
+
 public class Farmer
 {
+    
     public int Id { get; set; }
     public string Name { get; set; }
     public string? Image { get; set; }

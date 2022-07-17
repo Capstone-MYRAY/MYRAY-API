@@ -20,7 +20,7 @@ public class BookmarkService : IBookmarkService
     }
 
 
-    public ResponseDto.CollectiveResponse<BookmarkDetail> GetBookmarks(PagingDto pagingDto, SortingDto<BookmarkEnum.BookmarkSortCriterial> sortingDto, int accountId)
+    public ResponseDto.CollectiveResponse<BookmarkDetail> GetBookmarks(PagingDto pagingDto, SortingDto<BookmarkEnum.BookmarkSortCriteria> sortingDto, int accountId)
     {
         IQueryable<DataTier.Entities.Bookmark> queryable = _bookmarkRepository.GetBookmarks(accountId);
 

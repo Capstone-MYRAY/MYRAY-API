@@ -53,6 +53,11 @@ public class MessageService : IMessageService
         return await _messageRepository.GetMessageByLandowner(landownerId);
     }
 
+    public async Task<List<MessageFarmer>?> GetListMessageForFarmer(int farmerId)
+    {
+        return await _messageRepository.GetMessageByFarmer(farmerId);
+    }
+
     public async Task MarkRead(int accountId, string conventionId)
     {
         await _messageRepository.MarkRead(accountId, conventionId);

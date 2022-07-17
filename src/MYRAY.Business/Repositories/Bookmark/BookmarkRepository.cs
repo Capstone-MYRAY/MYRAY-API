@@ -27,7 +27,8 @@ public class BookmarkRepository : IBookmarkRepository
             DataTier.Entities.Bookmark bookmark = new DataTier.Entities.Bookmark()
             {
                 AccountId = accountId,
-                BookmarkId = bookmarkId
+                BookmarkId = bookmarkId,
+                CreatedDate = DateTime.Now
             };
             await _bookmarkRepository.InsertAsync(bookmark);
 

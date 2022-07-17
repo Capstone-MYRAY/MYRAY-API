@@ -8,6 +8,7 @@ public interface IMessageService
     Task<List<MessageDetail>> GetMessageByConventionId(string conventionId);
     
     Task<List<MessageJobPost>?> GetListMessageForLandowner(int landownerId);
+    Task<List<MessageFarmer>?> GetListMessageForFarmer(int farmerId);
 
     Task MarkRead(int accountId, string conventionId);
 }

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using AutoMapper;
 using MYRAY.Business.DTOs.JobPost;
+using MYRAY.Business.DTOs.Message;
 using MYRAY.Business.Enums;
 using MYRAY.DataTier.Entities;
 
@@ -32,5 +33,8 @@ public static class JobPostProfiles
            .ReverseMap();
         configuration.CreateMap<PayPerHourJob, PayPerHour>().ReverseMap();
         configuration.CreateMap<PayPerTaskJob, PayPerTask>().ReverseMap();
+
+        configuration.CreateMap<DataTier.Entities.JobPost, MessageFarmer>()
+            .ForMember(des => des.PublishedBy, opt => opt.MapFrom(src => src.PublishedByNavigation.Fullname)).ReverseMap();
     }
 }
