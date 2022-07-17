@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs.Message;
 using MYRAY.Business.Services.Account;
 using MYRAY.Business.Services.Hubs;
@@ -48,6 +49,14 @@ public class ChatHub : Hub
             Console.WriteLine($"Send message to {info.Account.Fullname} - {newMessageRequest.Content}");
             await Clients.Client(info.ConnectionId).SendAsync("chat", info, newMessageRequest);
             //If Send List convention for 2 role
+            if (info.Account.RoleId == 3)
+            {
+                await GetListMessageForLandowner(newMessageRequest.ToId);
+            }
+            else
+            {
+                await GetListMessageForFarmer(newMessageRequest.ToId);
+            }
         }
         else
         {
