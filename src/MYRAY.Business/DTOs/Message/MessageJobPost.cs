@@ -5,6 +5,7 @@ public class MessageJobPost
     public int JobPostId { get; set; }
     public string JobPostTitle { get; set; }
     public List<Farmer> Farmers { get; set; }
+    public bool InTop { get; set; }
 }
 
 public class MessageFarmer

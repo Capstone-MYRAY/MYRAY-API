@@ -98,11 +98,13 @@ public class MessageRepository : IMessageRepository
                 {
                     JobPostId = jobPost.Id,
                     JobPostTitle = jobPost.Title,
-                    Farmers = bindListFarmer
+                    Farmers = bindListFarmer.OrderBy(b => b.LastMessage.IsRead).ToList(),
+                    InTop = bindListFarmer.Where(bind => bind.LastMessage.IsRead == false).Count() != 0 
                 };
                 result!.Add(oneJobPost);
             }
 
+        result = result.OrderBy(r => r.InTop).ToList();
         return result;
     }
 
@@ -134,10 +136,11 @@ public class MessageRepository : IMessageRepository
                 PublishedId = jobPost.PublishedBy,
                 AvatarUrl = jobPost.PublishedByNavigation.ImageUrl,
                 LastMessageTime = last.CreatedDate,
-                IsRead = last.IsRead
+                IsRead = last.FromId == farmerId ? true : last.IsRead
             });
         }
-        
+
+        result = result.OrderBy(r => r.IsRead).ToList();
         return result;
     }
 
