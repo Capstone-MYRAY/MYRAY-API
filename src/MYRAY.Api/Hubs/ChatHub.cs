@@ -48,6 +48,9 @@ public class ChatHub : Hub
         {
             Console.WriteLine($"Send message to {info.Account.Fullname} - {newMessageRequest.Content}");
             await Clients.Client(info.ConnectionId).SendAsync("chat", info, newMessageRequest);
+            //- Store message to DB
+            await _messageService.StoreNewMessage(newMessageRequest);
+            Console.WriteLine("Message send");
             //If Send List convention for 2 role
             if (info.Account.RoleId == 3)
             {
@@ -62,9 +65,7 @@ public class ChatHub : Hub
         {
             Console.WriteLine(" User is offline");
         }
-        //- Store message to DB
-        await _messageService.StoreNewMessage(newMessageRequest);
-        Console.WriteLine("Message send");
+        
     }
 
     public async Task GetListMessageForLandowner(int landownerId)
