@@ -98,13 +98,13 @@ public class MessageRepository : IMessageRepository
                 {
                     JobPostId = jobPost.Id,
                     JobPostTitle = jobPost.Title,
-                    Farmers = bindListFarmer.OrderBy(b => b.LastMessage.IsRead).ToList(),
+                    Farmers = bindListFarmer.OrderByDescending(b => b.LastMessage.IsRead).ToList(),
                     InTop = bindListFarmer.Where(bind => bind.LastMessage.IsRead == false).Count() != 0 
                 };
                 result!.Add(oneJobPost);
             }
 
-        result = result.OrderBy(r => r.InTop).ToList();
+        result = result.OrderByDescending(r => r.InTop).ToList();
         return result;
     }
 
@@ -140,7 +140,7 @@ public class MessageRepository : IMessageRepository
             });
         }
 
-        result = result.OrderBy(r => r.IsRead).ToList();
+        result = result.OrderByDescending(r => r.IsRead).ToList();
         return result;
     }
 
