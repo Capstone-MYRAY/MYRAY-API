@@ -98,7 +98,7 @@ public class MessageRepository : IMessageRepository
                 {
                     JobPostId = jobPost.Id,
                     JobPostTitle = jobPost.Title,
-                    Farmers = bindListFarmer.OrderByDescending(b => b.LastMessage.IsRead).ToList(),
+                    Farmers = bindListFarmer.OrderBy(b => b.LastMessage.IsRead).ToList(),
                     InTop = bindListFarmer.Where(bind => bind.LastMessage.IsRead == false).Count() != 0 
                 };
                 result!.Add(oneJobPost);
