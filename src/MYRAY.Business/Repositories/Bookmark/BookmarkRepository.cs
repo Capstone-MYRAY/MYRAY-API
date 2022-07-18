@@ -20,6 +20,13 @@ public class BookmarkRepository : IBookmarkRepository
         return query;
     }
 
+    public async Task<DataTier.Entities.Bookmark?> GetBookmarksById(int accountId, int bookmarkId)
+    {
+        DataTier.Entities.Bookmark? bookmark = await 
+            _bookmarkRepository.GetFirstOrDefaultAsync(b => b.AccountId == accountId && b.BookmarkId == bookmarkId);
+        return bookmark;
+    }
+
     public async Task<DataTier.Entities.Bookmark> CreateBookmark(int accountId, int bookmarkId)
     {
         try

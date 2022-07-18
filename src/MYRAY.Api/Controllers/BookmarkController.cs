@@ -55,6 +55,29 @@ public class BookmarkController : ControllerBase
 
         return Ok(result);
     }
+    
+    /// <summary>
+    /// [Authenticated user] Endpoint for get bookmark with id
+    /// </summary>
+    /// <param name="bookmarkId">Account to view bookmark</param>
+    /// <returns>BookmarkDetail</returns>
+    [HttpGet("{bookmarkId}")]
+    [Authorize]
+    [ProducesResponseType(typeof(BookmarkDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetBookmarksById(
+        [Required] int bookmarkId)
+    {
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        BookmarkDetail? result = await _bookmarkService.GetBookmarkByIdAsync(accountId, bookmarkId);
+
+          if (result == null)
+        {
+            return NoContent();
+        }
+
+        return Ok(result);
+    }
        
     /// <summary>
     /// [Landowner, Farmer] Endpoint for create bookmark.

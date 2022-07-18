@@ -12,7 +12,9 @@ public interface IBookmarkService
     /// <returns>list of bookmark.</returns>
     public ResponseDto.CollectiveResponse<BookmarkDetail> GetBookmarks(PagingDto pagingDto,
         SortingDto<BookmarkEnum.BookmarkSortCriteria> sortingDto, int accountId);
-    
+
+    public Task<BookmarkDetail?> GetBookmarkByIdAsync(int accountId, int bookmarkId);
+
     /// <summary>
     /// Create an new bookmark.
     /// </summary>

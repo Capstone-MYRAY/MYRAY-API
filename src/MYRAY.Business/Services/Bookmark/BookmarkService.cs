@@ -20,13 +20,23 @@ public class BookmarkService : IBookmarkService
     }
 
 
-    public ResponseDto.CollectiveResponse<BookmarkDetail> GetBookmarks(PagingDto pagingDto, SortingDto<BookmarkEnum.BookmarkSortCriteria> sortingDto, int accountId)
+    public ResponseDto.CollectiveResponse<BookmarkDetail> GetBookmarks(PagingDto pagingDto,
+        SortingDto<BookmarkEnum.BookmarkSortCriteria> sortingDto, int accountId)
     {
         IQueryable<DataTier.Entities.Bookmark> queryable = _bookmarkRepository.GetBookmarks(accountId);
 
         queryable = queryable.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
 
         var result = queryable.GetWithPaging<BookmarkDetail, DataTier.Entities.Bookmark>(pagingDto, _mapper);
+        return result;
+    }
+
+    public async Task<BookmarkDetail?> GetBookmarkByIdAsync(int accountId, int bookmarkId)
+    {
+        DataTier.Entities.Bookmark? bookmark = await _bookmarkRepository.GetBookmarksById(accountId, bookmarkId);
+        if (bookmark == null) 
+            return null;
+        BookmarkDetail result = _mapper.Map<BookmarkDetail>(bookmark);
         return result;
     }
 
