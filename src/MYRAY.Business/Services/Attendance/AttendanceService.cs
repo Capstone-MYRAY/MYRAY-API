@@ -66,6 +66,11 @@ public class AttendanceService : IAttendanceService
             throw new Exception("Job post is not existed");
         }
 
+        if (!jobPost.Type.Equals("PayPerHourJob"))
+        {
+            throw new Exception("Day Off just for hour job");
+        }
+
         if (jobPost.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Started)
         {
             throw new Exception("Job post is not started");
