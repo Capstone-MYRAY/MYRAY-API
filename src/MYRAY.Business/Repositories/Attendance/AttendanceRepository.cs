@@ -51,11 +51,12 @@ public class AttendanceRepository : IAttendanceRepository
     
     
 
-    public IQueryable<DataTier.Entities.Attendance> GetListDayOff(int farmerId, int? jobPostId = null)
+    public IQueryable<DataTier.Entities.Attendance> GetListDayOffByJob(int farmerId, int? jobPostId = null)
     {
         IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a => a.AppliedJob.AppliedBy == farmerId
             && a.Status == (int?)AttendanceEnum.AttendanceStatus.DayOff
-            && (jobPostId == null || a.AppliedJob.JobPostId == jobPostId));
+            && (jobPostId == null || a.AppliedJob.JobPostId == jobPostId))
+            .OrderByDescending(m => m.Date.Value);
         return query;
     }
 

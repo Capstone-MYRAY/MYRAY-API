@@ -90,7 +90,7 @@ public class AttendanceController : ControllerBase
     {
         var farmerId = int.Parse(User.FindFirst("id")?.Value!);
         List<AttendanceDetail> result = await 
-            _attendanceService.GetListDayOff(farmerId, jobPostId);
+            _attendanceService.GetListDayOffByJob(farmerId, jobPostId);
         if (!result.Any())
         {
             return NoContent();

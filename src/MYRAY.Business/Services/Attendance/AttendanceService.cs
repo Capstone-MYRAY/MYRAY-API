@@ -104,9 +104,9 @@ public class AttendanceService : IAttendanceService
         return attendanceDetail;
     }
 
-    public async Task<List<AttendanceDetail>> GetListDayOff(int farmerId, int? jobPostId)
+    public async Task<List<AttendanceDetail>> GetListDayOffByJob(int farmerId, int? jobPostId)
     {
-        IQueryable<DataTier.Entities.Attendance> attendances = _attendanceRepository.GetListDayOff(farmerId,jobPostId);
+        IQueryable<DataTier.Entities.Attendance> attendances = _attendanceRepository.GetListDayOffByJob(farmerId,jobPostId);
         IQueryable<AttendanceDetail> result = _mapper.ProjectTo<AttendanceDetail>(attendances);
         var list = await result.ToListAsync();
         return list;

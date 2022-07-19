@@ -11,4 +11,7 @@ public class AttendanceDetail
     public int AppliedJobId { get; set; }
     public string? Reason { get; set; }
     public int AccountId { get; set; }
+    public string? ImageUrl { get; set; }
+    public string Fullname { get; set; }
+    public string PhoneNumber { get; set; }
 }
