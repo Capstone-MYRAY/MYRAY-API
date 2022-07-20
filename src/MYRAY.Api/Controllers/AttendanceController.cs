@@ -35,7 +35,7 @@ public class AttendanceController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("day")]
     [Authorize]
-    [ProducesResponseType(typeof(List<AttendanceDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<AttendanceByJob>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetAttendancesOfDay(
         [Required]int jobPostId,
