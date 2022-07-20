@@ -9,7 +9,6 @@ public class CheckAttendance
     public int JobPostId { get; set; }
 
     public int AccountId { get; set; }
-    [Required]
     public string? Signature { get; set; }
     public AttendanceEnum.AttendanceStatus Status { get; set; }
 }
