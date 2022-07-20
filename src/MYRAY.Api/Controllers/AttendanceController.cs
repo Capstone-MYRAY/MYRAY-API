@@ -134,7 +134,7 @@ public class AttendanceController : ControllerBase
             if (attendance == null)
                 throw new Exception("Attendance is empty data");
             var createBy = int.Parse(User.FindFirst("id")?.Value!);
-            await _attendanceService.CreateAttendance(attendance, createBy, attendance.AccountId);
+            await _attendanceService.CreateAttendance(attendance, createBy, attendance.AccountId, attendance.DateAttendance);
 
             return Created(String.Empty, null);
         }
