@@ -38,7 +38,7 @@ public class ReportController : ControllerBase
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<ReportDetail>),StatusCodes.Status200OK)]
-    public Task<IActionResult> GetReport(
+    public async Task<IActionResult> GetReport(
         [FromQuery] SearchReport searchReport,
         [FromQuery] SortingDto<ReportEnum.ReportSortCriterial> sortingDto,
         [FromQuery] PagingDto pagingDto)
@@ -46,10 +46,10 @@ public class ReportController : ControllerBase
         var result =  _reportService.GetReport(searchReport, pagingDto, sortingDto);
         if (result == null)
         {
-            return Task.FromResult<IActionResult>(NoContent());
+            return NoContent();
         }
 
-        return Task.FromResult<IActionResult>(Ok(result));
+        return Ok(result);
     }
 
     /// <summary>
