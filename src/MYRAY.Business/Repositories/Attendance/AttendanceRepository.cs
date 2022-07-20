@@ -9,12 +9,16 @@ public class AttendanceRepository : IAttendanceRepository
 {
     private readonly IDbContextFactory _contextFactory;
     private readonly IBaseRepository<DataTier.Entities.Attendance> _attendanceRepository;
+    private readonly IBaseRepository<DataTier.Entities.Account> _accountRepository;
 
     public AttendanceRepository(IDbContextFactory contextFactory)
     {
         _contextFactory = contextFactory;
         _attendanceRepository =
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Attendance>()!;
+        _accountRepository =
+            _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Account>()!;
+
     }
 
 
@@ -22,14 +26,16 @@ public class AttendanceRepository : IAttendanceRepository
     {
         attendance.Date = DateTime.Today;
         await _attendanceRepository.InsertAsync(attendance);
+        DataTier.Entities.Account? account = await _accountRepository.GetByIdAsync(attendance.AccountId);
+        account.Point += attendance.BonusPoint;
         await _contextFactory.SaveAllAsync();
         return attendance;
     }
 
-    public async Task<DataTier.Entities.Attendance> GetAttendance(int appliedJobId, int accountId)
+    public async Task<DataTier.Entities.Attendance?> GetAttendance(int appliedJobId, int accountId, DateTime dateTime)
     {
         DataTier.Entities.Attendance attendance = await 
-            _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(DateTime.Today));
+            _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(dateTime));
         return attendance;
     }
 

@@ -148,8 +148,7 @@ public class JobPostRepository : IJobPostRepository
                 await _pinDateRepository.InsertAsync(variable);
             }
         }
-
-
+        
         var id = (_jobPostRepository.Table as DbSet<DataTier.Entities.JobPost>)
             .FromSqlRaw("SELECT CAST(IDENT_CURRENT('JobPost') AS INT) AS 'id'").Sum(j => j.Id);
       
@@ -354,6 +353,11 @@ public class JobPostRepository : IJobPostRepository
 
         ICollection<PinDate> list = queryPin.ToList();
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Approved;
+        if (jobPost.PublishedDate.Value.Date == DateTime.Today)
+        {
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
+        }
+        
         jobPost.ApprovedDate = DateTime.Now;
         jobPost.ApprovedBy = approvedBy;
         foreach (var pinData in list)
@@ -500,6 +504,9 @@ public class JobPostRepository : IJobPostRepository
         foreach (var jobPost in listOutOfDate)
         {
             jobPost.Status = (int?)JobPostEnum.JobPostStatus.OutOfDate;
+            DataTier.Entities.PaymentHistory? paymentHistories = await 
+                _paymentHistoryRepository.GetFirstOrDefaultAsync(p => p.JobPostId == jobPost.Id && p.BelongedId == jobPost.PublishedBy);
+            _paymentHistoryRepository.Delete(paymentHistories!);
             Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
                 Console.BackgroundColor == ConsoleColor.Yellow);
         }

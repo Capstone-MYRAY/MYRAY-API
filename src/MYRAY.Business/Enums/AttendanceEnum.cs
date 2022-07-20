@@ -25,7 +25,7 @@ public class AttendanceEnum
         End = 3,
         
         /// <summary>
-        /// Xin nghỉ
+        /// Xin nghỉ 
         /// </summary>
         DayOff = 4,
         
@@ -34,10 +34,6 @@ public class AttendanceEnum
         /// </summary>
         Dismissed = 5,
         
-        /// <summary>
-        /// Vắng có phép
-        /// </summary>
-        ExcussedAbsence = 6
         
     }
 }
