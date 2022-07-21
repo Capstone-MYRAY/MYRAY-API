@@ -82,7 +82,7 @@ public class AttendanceService : IAttendanceService
         {
             throw new Exception("Job post is not started");
         }
-
+    
         PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
         if (requestDayOff.DayOff.Date.AddHours(payPerHourJob.StartTime.Value.Hours) < DateTime.Now.AddHours(24))
         {
@@ -105,7 +105,8 @@ public class AttendanceService : IAttendanceService
             Status = (int?)AttendanceEnum.AttendanceStatus.DayOff,
             AppliedJobId = appliedJob.Id,
             AccountId = accountId,
-            BonusPoint = 0
+            BonusPoint = 0,
+            Reason = requestDayOff.Reason
         };
 
         await _attendanceRepository.CreateAttendance(newAttendance);
