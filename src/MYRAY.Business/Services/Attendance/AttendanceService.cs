@@ -15,15 +15,18 @@ public class AttendanceService : IAttendanceService
     private readonly IAttendanceRepository _attendanceRepository;
     private readonly IJobPostRepository _jobPostRepository;
     private readonly IAppliedJobRepository _appliedJobRepository;
-    public AttendanceService(IMapper mapper, IAttendanceRepository attendanceRepository, IJobPostRepository jobPostRepository, IAppliedJobRepository appliedJobRepository)
+
+    public AttendanceService(IMapper mapper, IAttendanceRepository attendanceRepository,
+        IJobPostRepository jobPostRepository, IAppliedJobRepository appliedJobRepository)
     {
         _mapper = mapper;
         _attendanceRepository = attendanceRepository;
         _jobPostRepository = jobPostRepository;
         _appliedJobRepository = appliedJobRepository;
     }
-    
-    public async Task CreateAttendance(CheckAttendance attendance, int checkBy, int accountId, DateTime dateTime)
+
+    public async Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy, int accountId,
+        DateTime dateTime)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(attendance.JobPostId);
         if (jobPost == null)
@@ -35,14 +38,17 @@ public class AttendanceService : IAttendanceService
         {
             throw new Exception("Job post is not approved");
         }
+
         PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
-        DataTier.Entities.AppliedJob appliedJob = await 
+        DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
-        DataTier.Entities.Attendance existedAttendance = await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, dateTime);
+        DataTier.Entities.Attendance existedAttendance =
+            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, dateTime);
         if (existedAttendance != null)
         {
             throw new Exception("You have been attended");
         }
+
         DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = dateTime,
@@ -51,11 +57,12 @@ public class AttendanceService : IAttendanceService
             Signature = attendance.Signature,
             AppliedJobId = appliedJob.Id,
             AccountId = checkBy,
-            BonusPoint = 1
+            BonusPoint = attendance.Status == AttendanceEnum.AttendanceStatus.Present ? 1 : 0
         };
 
-       await _attendanceRepository.CreateAttendance(newAttendance);
-       
+        newAttendance = await _attendanceRepository.CreateAttendance(newAttendance);
+        AttendanceDetail result = _mapper.Map<AttendanceDetail>(newAttendance);
+        return result;
     }
 
     public async Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId)
@@ -75,19 +82,22 @@ public class AttendanceService : IAttendanceService
         {
             throw new Exception("Job post is not started");
         }
+
         PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
         if (requestDayOff.DayOff.Date.AddHours(payPerHourJob.StartTime.Value.Hours) < DateTime.Now.AddHours(24))
         {
             throw new Exception("Day-off must from the current 24hour");
         }
-        DataTier.Entities.AppliedJob appliedJob = await 
+
+        DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
-        DataTier.Entities.Attendance existedAttendance = await _attendanceRepository.GetAttendanceByDate(appliedJob.Id, appliedJob.AppliedBy, requestDayOff.DayOff);
+        DataTier.Entities.Attendance existedAttendance =
+            await _attendanceRepository.GetAttendanceByDate(appliedJob.Id, appliedJob.AppliedBy, requestDayOff.DayOff);
         if (existedAttendance != null)
         {
             throw new Exception("You have been request day off");
         }
-        
+
         DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = requestDayOff.DayOff.Date,
@@ -106,7 +116,8 @@ public class AttendanceService : IAttendanceService
 
     public async Task<List<AttendanceDetail>> GetListDayOffByJob(int farmerId, int? jobPostId)
     {
-        IQueryable<DataTier.Entities.Attendance> attendances = _attendanceRepository.GetListDayOffByJob(farmerId,jobPostId);
+        IQueryable<DataTier.Entities.Attendance> attendances =
+            _attendanceRepository.GetListDayOffByJob(farmerId, jobPostId);
         IQueryable<AttendanceDetail> result = _mapper.ProjectTo<AttendanceDetail>(attendances);
         var list = await result.ToListAsync();
         return list;
@@ -114,12 +125,12 @@ public class AttendanceService : IAttendanceService
 
     public async Task<List<AttendanceDetail>> GetAttendances(int jobPostId, int accountId)
     {
-        DataTier.Entities.AppliedJob appliedJob = await 
+        DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPostId, accountId);
-       IQueryable<DataTier.Entities.Attendance> attendances = _attendanceRepository.GetListAttendances(appliedJob.Id);
-       IQueryable<AttendanceDetail> result = _mapper.ProjectTo<AttendanceDetail>(attendances);
-       var list = await result.ToListAsync();
-       return list;
+        IQueryable<DataTier.Entities.Attendance> attendances = _attendanceRepository.GetListAttendances(appliedJob.Id);
+        IQueryable<AttendanceDetail> result = _mapper.ProjectTo<AttendanceDetail>(attendances);
+        var list = await result.ToListAsync();
+        return list;
     }
 
     public async Task<double?> GetTotalExpense(int jobPostId)

@@ -126,7 +126,7 @@ public class AttendanceController : ControllerBase
     /// <response code="400">Returns if attendance input is empty or create error</response>
     [HttpPost]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(AttendanceDetail),StatusCodes.Status201Created)]
     public async Task<IActionResult> CheckAttendance([FromBody]CheckAttendance? attendance)
     {
         try
@@ -134,9 +134,9 @@ public class AttendanceController : ControllerBase
             if (attendance == null)
                 throw new Exception("Attendance is empty data");
             var createBy = int.Parse(User.FindFirst("id")?.Value!);
-            await _attendanceService.CreateAttendance(attendance, createBy, attendance.AccountId, attendance.DateAttendance);
+           var result =  await _attendanceService.CreateAttendance(attendance, createBy, attendance.AccountId, attendance.DateAttendance);
 
-            return Created(String.Empty, null);
+            return Created(String.Empty, result);
         }
         catch (MException e)
         {

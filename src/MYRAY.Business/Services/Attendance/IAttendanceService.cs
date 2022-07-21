@@ -7,7 +7,7 @@ namespace MYRAY.Business.Services.Attendance;
 public interface IAttendanceService
 {
     // public ResponseDto.CollectiveResponse<AttendanceByJob> GetAttendanceByJob(PagingDto pagingDto);
-    Task CreateAttendance(CheckAttendance attendance, int checkBy, int accountId, DateTime dateTime);
+    Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy, int accountId, DateTime dateTime);
     Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId);
     Task<List<AttendanceDetail>> GetListDayOffByJob(int farmerId, int? jobPostId);
     Task<List<AttendanceDetail>> GetAttendances(int jobPostId, int accountId);
