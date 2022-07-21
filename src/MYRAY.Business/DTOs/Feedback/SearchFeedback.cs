@@ -8,5 +8,5 @@ public class SearchFeedback
     [DefaultValue(null)]public byte? NumStar { get; set; }  = null;
     [DefaultValue(null)]public int? JobPostId { get; set; } = null;
     // public int? BelongedId { get; set; } = null;
-    // public int? CreatedBy { get; set; } = null;
+    [DefaultValue(null)]public int? CreatedBy { get; set; } = null;
 }
