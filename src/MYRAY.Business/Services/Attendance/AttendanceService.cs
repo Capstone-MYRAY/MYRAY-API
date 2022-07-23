@@ -25,8 +25,7 @@ public class AttendanceService : IAttendanceService
         _appliedJobRepository = appliedJobRepository;
     }
 
-    public async Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy, int accountId,
-        DateTime dateTime)
+    public async Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy, int accountId)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(attendance.JobPostId);
         if (jobPost == null)
@@ -43,7 +42,7 @@ public class AttendanceService : IAttendanceService
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
         DataTier.Entities.Attendance existedAttendance =
-            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, dateTime);
+            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, attendance.DateAttendance);
         if (existedAttendance != null)
         {
             throw new Exception("You have been attended");
@@ -51,7 +50,7 @@ public class AttendanceService : IAttendanceService
 
         DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
-            Date = dateTime,
+            Date = attendance.DateAttendance,
             Salary = payPerHourJob.Salary,
             Status = (int?)attendance.Status,
             Signature = attendance.Signature,
