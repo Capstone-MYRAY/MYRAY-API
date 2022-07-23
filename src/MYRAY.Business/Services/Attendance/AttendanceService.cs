@@ -41,8 +41,8 @@ public class AttendanceService : IAttendanceService
         PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
-        DataTier.Entities.Attendance existedAttendance =
-            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, attendance.DateAttendance);
+        DataTier.Entities.Attendance? existedAttendance =
+            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, attendance.DateAttendance.Date);
         if (existedAttendance != null)
         {
             throw new Exception("You have been attended");
