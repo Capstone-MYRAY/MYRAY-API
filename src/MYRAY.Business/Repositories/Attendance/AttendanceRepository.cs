@@ -24,7 +24,7 @@ public class AttendanceRepository : IAttendanceRepository
 
     public async Task<DataTier.Entities.Attendance> CreateAttendance(DataTier.Entities.Attendance attendance)
     {
-        attendance.Date = DateTime.Today;
+        // attendance.Date = DateTime.Today;
         await _attendanceRepository.InsertAsync(attendance);
         DataTier.Entities.Account? account = await _accountRepository.GetByIdAsync(attendance.AccountId);
         account.Point += attendance.BonusPoint;
