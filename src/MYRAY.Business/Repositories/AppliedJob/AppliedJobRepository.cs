@@ -24,11 +24,11 @@ public class AppliedJobRepository : IAppliedJobRepository
       return query;
    }
    
-   public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobsApproveAndFired(int jobId)
+   public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobsExceptPending(int jobId)
    {
       IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(ap => ap.JobPostId == jobId && 
-         (ap.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve 
-          || ap.Status == (int?)AppliedJobEnum.AppliedJobStatus.Fired));
+         (ap.Status != (int?)AppliedJobEnum.AppliedJobStatus.Pending 
+          && ap.Status != (int?)AppliedJobEnum.AppliedJobStatus.Reject));
       return query;
    }
    

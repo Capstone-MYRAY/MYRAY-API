@@ -151,7 +151,7 @@ public class AttendanceService : IAttendanceService
         AttendanceEnum.AttendanceStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query =
-            _appliedJobRepository.GetAppliedJobsApproveAndFired(jobPostId);
+            _appliedJobRepository.GetAppliedJobsExceptPending(jobPostId);
         IQueryable<AttendanceByJob> map = _mapper.ProjectTo<AttendanceByJob>(query);
         List<AttendanceByJob> result = await map.ToListAsync();
         foreach (var attendanceByJob in result)
