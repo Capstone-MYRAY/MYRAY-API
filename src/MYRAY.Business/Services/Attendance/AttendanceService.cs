@@ -25,7 +25,7 @@ public class AttendanceService : IAttendanceService
         _appliedJobRepository = appliedJobRepository;
     }
 
-    public async Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy, int accountId)
+    public async Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(attendance.JobPostId);
         if (jobPost == null)
@@ -40,7 +40,7 @@ public class AttendanceService : IAttendanceService
 
         PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
         DataTier.Entities.AppliedJob appliedJob = await
-            _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
+            _appliedJobRepository.GetByJobAndAccount(jobPost.Id, attendance.AccountId);
         DataTier.Entities.Attendance? existedAttendance =
             await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, attendance.DateAttendance.Date);
         if (existedAttendance != null)
@@ -55,7 +55,7 @@ public class AttendanceService : IAttendanceService
             Status = (int?)attendance.Status,
             Signature = attendance.Signature,
             AppliedJobId = appliedJob.Id,
-            AccountId = checkBy,
+            AccountId = attendance.AccountId,
             BonusPoint = attendance.Status == AttendanceEnum.AttendanceStatus.Present ? 1 : 0
         };
 

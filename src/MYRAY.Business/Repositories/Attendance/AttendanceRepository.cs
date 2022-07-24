@@ -35,7 +35,9 @@ public class AttendanceRepository : IAttendanceRepository
     public async Task<DataTier.Entities.Attendance?> GetAttendance(int appliedJobId, int accountId, DateTime dateTime)
     {
         DataTier.Entities.Attendance attendance = await 
-            _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(dateTime));
+            _attendanceRepository.GetFirstOrDefaultAsync(a => a.AppliedJobId == appliedJobId 
+                                                              && a.AccountId == accountId 
+                                                              && a.Date.Value.Date.Equals(dateTime));
         return attendance;
     }
 
