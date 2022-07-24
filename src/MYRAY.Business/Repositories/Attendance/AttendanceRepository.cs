@@ -10,6 +10,7 @@ public class AttendanceRepository : IAttendanceRepository
     private readonly IDbContextFactory _contextFactory;
     private readonly IBaseRepository<DataTier.Entities.Attendance> _attendanceRepository;
     private readonly IBaseRepository<DataTier.Entities.Account> _accountRepository;
+    private readonly IBaseRepository<DataTier.Entities.AppliedJob> _appliedRepository;
 
     public AttendanceRepository(IDbContextFactory contextFactory)
     {
@@ -18,6 +19,8 @@ public class AttendanceRepository : IAttendanceRepository
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Attendance>()!;
         _accountRepository =
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Account>()!;
+        _appliedRepository =
+            _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.AppliedJob>()!;
 
     }
 
@@ -27,7 +30,17 @@ public class AttendanceRepository : IAttendanceRepository
         // attendance.Date = DateTime.Today;
         await _attendanceRepository.InsertAsync(attendance);
         DataTier.Entities.Account? account = await _accountRepository.GetByIdAsync(attendance.AccountId);
-        account.Point += attendance.BonusPoint;
+        account!.Point += attendance.BonusPoint;
+        DataTier.Entities.AppliedJob? appliedJob = await _appliedRepository.GetFirstOrDefaultAsync(a => a.Id == attendance.AppliedJobId);
+        if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.Dismissed)
+        {
+            appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.Fired;
+        }
+        if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.End)
+        {
+            appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
+        }
+        
         await _contextFactory.SaveAllAsync();
         return attendance;
     }

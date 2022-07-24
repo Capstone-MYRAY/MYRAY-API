@@ -381,6 +381,7 @@ public class JobPostRepository : IJobPostRepository
             throw new MException(StatusCodes.Status400BadRequest, "Job Post is not existed.");
         }
 
+        jobPost.ApprovedBy = approvedBy;
         jobPost.ReasonReject = rejectJobPost.ReasonReject;
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Reject;
         _jobPostRepository.Modify(jobPost);

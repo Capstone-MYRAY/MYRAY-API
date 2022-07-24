@@ -23,6 +23,15 @@ public class AppliedJobRepository : IAppliedJobRepository
       IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(ap => ap.JobPostId == jobId && (status != null ? ap.Status == (int?)status : true));
       return query;
    }
+   
+   public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobsApproveAndFired(int jobId)
+   {
+      IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.Get(ap => ap.JobPostId == jobId && 
+         (ap.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve 
+          || ap.Status == (int?)AppliedJobEnum.AppliedJobStatus.Fired));
+      return query;
+   }
+   
 
    public IQueryable<DataTier.Entities.AppliedJob> GetAllAppliedJobs(int landownerId, AppliedJobEnum.AppliedJobStatus? status = null)
    {

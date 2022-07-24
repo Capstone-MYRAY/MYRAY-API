@@ -16,6 +16,7 @@ public static class AttendanceProfiles
 
         configuration.CreateMap<AppliedJob, AttendanceByJob>()
             .ForMember(des => des.Account, otp => otp.MapFrom(src => src.AppliedByNavigation))
+            .ForMember(des => des.Status, opt => opt.MapFrom(src => src.Status))
             ;
     }
 }

@@ -48,15 +48,23 @@ public class AttendanceService : IAttendanceService
             throw new Exception("You have been attended");
         }
 
+        int point = (attendance.Status == AttendanceEnum.AttendanceStatus.Present
+                     || attendance.Status == AttendanceEnum.AttendanceStatus.End)
+            ? 1
+            : 0;
+        double salary = (attendance.Status == AttendanceEnum.AttendanceStatus.Present
+                         || attendance.Status == AttendanceEnum.AttendanceStatus.End)
+            ? payPerHourJob.Salary
+            : 0;
         DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = attendance.DateAttendance,
-            Salary = payPerHourJob.Salary,
+            Salary = salary,
             Status = (int?)attendance.Status,
             Signature = attendance.Signature,
             AppliedJobId = appliedJob.Id,
             AccountId = attendance.AccountId,
-            BonusPoint = attendance.Status == AttendanceEnum.AttendanceStatus.Present ? 1 : 0
+            BonusPoint = point
         };
 
         newAttendance = await _attendanceRepository.CreateAttendance(newAttendance);
@@ -143,7 +151,7 @@ public class AttendanceService : IAttendanceService
         AttendanceEnum.AttendanceStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query =
-            _appliedJobRepository.GetAppliedJobs(jobPostId, AppliedJobEnum.AppliedJobStatus.Approve);
+            _appliedJobRepository.GetAppliedJobsApproveAndFired(jobPostId);
         IQueryable<AttendanceByJob> map = _mapper.ProjectTo<AttendanceByJob>(query);
         List<AttendanceByJob> result = await map.ToListAsync();
         foreach (var attendanceByJob in result)

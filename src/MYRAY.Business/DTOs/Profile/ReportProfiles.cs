@@ -10,6 +10,8 @@ public static class ReportProfiles
         configuration.CreateMap<DataTier.Entities.Report, ReportDetail>()
             .ForMember(des => des.RoleIdCreated, opt => opt.MapFrom(src=>src.CreatedByNavigation.Role.Name))
             .ForMember(des => des.RoleIdReported, opt => opt.MapFrom(src => src.Reported.Role.Name))
+            .ForMember(des => des.CreatedName, opt => opt.MapFrom(src => src.CreatedByNavigation.Fullname))
+            .ForMember(des => des.ReportedName, opt => opt.MapFrom(src => src.Reported.Fullname))
             .ReverseMap();
         configuration.CreateMap<DataTier.Entities.Report, CreateReport>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.Report, UpdateReport>().ReverseMap();
