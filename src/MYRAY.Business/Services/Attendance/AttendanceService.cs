@@ -64,7 +64,8 @@ public class AttendanceService : IAttendanceService
             Signature = attendance.Signature,
             AppliedJobId = appliedJob.Id,
             AccountId = attendance.AccountId,
-            BonusPoint = point
+            BonusPoint = point,
+            Reason = attendance.Reason
         };
 
         newAttendance = await _attendanceRepository.CreateAttendance(newAttendance);
