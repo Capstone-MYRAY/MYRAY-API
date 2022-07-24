@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
@@ -8,6 +9,7 @@ using MYRAY.Business.Enums;
 using MYRAY.Business.Services.Report;
 
 namespace MYRAY.Api.Controllers;
+
 /// <summary>
 /// Handle request related to report
 /// </summary>
@@ -24,7 +26,7 @@ public class ReportController : ControllerBase
     {
         _reportService = reportService;
     }
-    
+
     /// <summary>
     /// [Authenticated user] Endpoint for get all report with condition
     /// </summary>
@@ -37,13 +39,13 @@ public class ReportController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<ReportDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<ReportDetail>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetReport(
         [FromQuery] SearchReport searchReport,
         [FromQuery] SortingDto<ReportEnum.ReportSortCriterial> sortingDto,
         [FromQuery] PagingDto pagingDto)
     {
-        var result =  _reportService.GetReport(searchReport, pagingDto, sortingDto);
+        var result = _reportService.GetReport(searchReport, pagingDto, sortingDto);
         if (result == null)
         {
             return NoContent();
@@ -62,13 +64,41 @@ public class ReportController : ControllerBase
     /// <response code="401">Returns if not authorize</response>
     [HttpGet("{reportId}")]
     [Authorize]
-    [ProducesResponseType(typeof(ReportDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ReportDetail), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetReportById(int reportId)
     {
         try
         {
             var result = await _reportService.GetReportById(reportId);
-            
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// [Authenticated user] Endpoint for get a report information with condition.
+    /// </summary>
+    /// <returns>An account</returns>
+    /// <response code="200">Returns the report.</response>
+    /// <response code="400">Returns if report is not existed.</response>
+    /// <response code="401">Returns if not authorize</response>
+    [HttpGet("one")]
+    [Authorize]
+    [ProducesResponseType(typeof(ReportDetail), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetOneReportById(
+        [Required]int jobPostId, 
+        [Required]int reportedId, 
+        [Required]int createById)
+    {
+        try
+        {
+            var result = await _reportService.GetOneReportById(jobPostId, reportedId, createById);
+            if (result == null)
+                return NoContent();
             return Ok(result);
         }
         catch (Exception e)
@@ -89,7 +119,7 @@ public class ReportController : ControllerBase
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPost]
     [Authorize(Roles = UserRole.LANDOWNER + "," + UserRole.FARMER)]
-    [ProducesResponseType(typeof(ReportDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ReportDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateReport(CreateReport createReport)
     {
         try
@@ -116,7 +146,7 @@ public class ReportController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpPut]
     [Authorize(Roles = UserRole.LANDOWNER + "," + UserRole.FARMER)]
-    [ProducesResponseType(typeof(ReportDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ReportDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> UpdateReport(UpdateReport updateReport)
     {
         try
@@ -132,7 +162,7 @@ public class ReportController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Admin, Moderator] Endpoint for resolve report
     /// </summary>
@@ -143,7 +173,7 @@ public class ReportController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpPut("resolve")]
     [Authorize(Roles = UserRole.ADMIN + "," + UserRole.MODERATOR)]
-    [ProducesResponseType(typeof(ReportDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ReportDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> ResolveReport(ResolvedReport resolvedReport)
     {
         try
@@ -159,7 +189,7 @@ public class ReportController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
 
     /// <summary>
     /// [Landowner, Farmer] Endpoint for delete report.
@@ -171,7 +201,7 @@ public class ReportController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpDelete("{reportId}")]
     [Authorize(Roles = UserRole.LANDOWNER + "," + UserRole.FARMER)]
-    [ProducesResponseType(typeof(ReportDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ReportDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> DeleteReport(int reportId)
     {
         try

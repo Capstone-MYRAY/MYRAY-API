@@ -39,6 +39,13 @@ public class FeedbackService : IFeedbackService
         return result;
     }
 
+    public async Task<FeedbackDetail> GetOneFeedback(int jobPostId, int belongId, int createById)
+    {
+        DataTier.Entities.Feedback? report = await _feedbackRepository.GetOneFeedback(jobPostId, belongId, createById);
+        FeedbackDetail result = _mapper.Map<FeedbackDetail>(report);
+        return result;
+    }
+
     public async Task<FeedbackDetail> CreateFeedback(CreateFeedback feedback, int createBy)
     {
         DataTier.Entities.Feedback feedbackOri = _mapper.Map<DataTier.Entities.Feedback>(feedback);

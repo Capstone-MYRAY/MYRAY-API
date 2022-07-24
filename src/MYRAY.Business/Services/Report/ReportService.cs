@@ -40,6 +40,13 @@ public class ReportService : IReportService
         return result;
     }
 
+    public async Task<ReportDetail> GetOneReportById(int jobPostId, int reportedId, int createById)
+    {
+        DataTier.Entities.Report? report = await _reportRepository.GetOneReportById(jobPostId, reportedId, createById);
+        ReportDetail result = _mapper.Map<ReportDetail>(report);
+        return result;
+    }
+
     public async Task<ReportDetail> CreateReport(CreateReport report, int createBy)
     {
         DataTier.Entities.Report reportOri = _mapper.Map<DataTier.Entities.Report>(report);

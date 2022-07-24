@@ -29,6 +29,15 @@ public class ReportRepository : IReportRepository
         return report;
     }
 
+    public async Task<DataTier.Entities.Report?> GetOneReportById(int jobPostId, int reportedId, int createById)
+    {
+        DataTier.Entities.Report? report =
+            await _reportRepository.GetFirstOrDefaultAsync(r => r.JobPostId == jobPostId
+                                                                && r.ReportedId == reportedId
+                                                                && r.CreatedBy == createById);
+        return report;
+    }
+
     public async Task<DataTier.Entities.Report> CreateReport(DataTier.Entities.Report report)
     {
         await _reportRepository.InsertAsync(report);

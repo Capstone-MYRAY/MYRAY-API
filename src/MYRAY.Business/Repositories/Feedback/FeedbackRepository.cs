@@ -27,6 +27,16 @@ public class FeedbackRepository : IFeedbackRepository
         return feedback;
     }
 
+    public async Task<DataTier.Entities.Feedback?> GetOneFeedback(int jobPostId, int belongId, int createId)
+    {
+        DataTier.Entities.Feedback? feedback =
+            await _feedbackRepository.GetFirstOrDefaultAsync(r => r.JobPostId == jobPostId 
+                                                                  && r.BelongedId == belongId 
+                                                                  && r.CreatedBy == createId);
+        return feedback;
+    }
+
+
     public async Task<DataTier.Entities.Feedback> CreateFeedback(DataTier.Entities.Feedback feedback)
     {
         await _feedbackRepository.InsertAsync(feedback);

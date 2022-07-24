@@ -12,6 +12,7 @@ public interface IReportService
         SortingDto<ReportEnum.ReportSortCriterial> sortingDto);
     
     Task<ReportDetail> GetReportById(int id);
+    Task<ReportDetail> GetOneReportById(int jobPostId, int reportedId, int createById);
     Task<ReportDetail> CreateReport(CreateReport report, int createBy);
     Task<ReportDetail> UpdateReport(UpdateReport report, int createBy);
     Task<ReportDetail> ResolvedReport(ResolvedReport resolvedReport, int resolveBy);

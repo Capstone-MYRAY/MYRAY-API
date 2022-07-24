@@ -12,6 +12,7 @@ public interface IFeedbackService
         SortingDto<FeedbackEnum.FeedbackSortCriteria> sortingDto);
     
     Task<FeedbackDetail> GetFeedbackById(int id);
+    Task<FeedbackDetail> GetOneFeedback(int jobPostId, int belongId, int createById);
     Task<FeedbackDetail> CreateFeedback(CreateFeedback feedback, int createBy);
     Task<FeedbackDetail> UpdateFeedback(UpdateFeedback feedback, int createBy);
     Task<FeedbackDetail> DeleteFeedback(int id);
