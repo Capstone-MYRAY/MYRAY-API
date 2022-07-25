@@ -337,7 +337,7 @@ public class JobPostService : IJobPostService
             throw new Exception("Job post is not posted");
         }
         
-        DateTime dateExpired = jobPost.PublishedDate.Value.AddDays((double)jobPost.NumPublishDay);
+        DateTime dateExpired = jobPost.PublishedDate.Value.AddDays((double)jobPost.NumPublishDay - 1);
 
         if (dateExpired >= dateTimeExtend)
         {
