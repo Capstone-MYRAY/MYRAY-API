@@ -345,11 +345,9 @@ public class JobPostService : IJobPostService
         }
 
         int? numberOfDayBefore = jobPost.NumPublishDay;
-        jobPost.NumPublishDay = dateTimeExtend.DayOfYear - dateExpired.DayOfYear;
-        if (numberOfDayBefore == jobPost.NumPublishDay)
-        {
-            jobPost.NumPublishDay++;
-        }
+        int? dayExtend = dateTimeExtend.DayOfYear - dateExpired.DayOfYear;
+        jobPost.NumPublishDay = numberOfDayBefore + dayExtend;
+        
         
         //--Get Setting From Json File
         float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
@@ -357,7 +355,7 @@ public class JobPostService : IJobPostService
         float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
         
         //--Calculate Price
-        float aPriceJobPost = (float)(priceJobPost * (jobPost.NumPublishDay - numberOfDayBefore));
+        float aPriceJobPost = (float)(priceJobPost * (dayExtend));
         float aPriceUsePoint = usePoint * pricePoint;
         
         //--Get more information to calculate
@@ -375,7 +373,7 @@ public class JobPostService : IJobPostService
             EarnedPoint = (int?)(aPriceJobPost / earnPoint),
             UsedPoint = usePoint,
             BelongedId = (int)jobPost.PublishedBy,
-            Message = $"Gia hạn bài đăng #{jobPost.Id} thêm {jobPost.NumPublishDay - numberOfDayBefore} ngày",
+            Message = $"Gia hạn bài đăng #{jobPost.Id} thêm {dayExtend} ngày",
             JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint
         };
