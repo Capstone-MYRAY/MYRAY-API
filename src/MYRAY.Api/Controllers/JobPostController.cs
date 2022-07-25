@@ -138,8 +138,8 @@ public class JobPostController : ControllerBase
             var accountId = int.Parse(User.FindFirst("id")?.Value!);
             //var accountId = 3;
             var result = await _jobPostService.UpdateJobPost(updateJobPost, accountId);
-
-            return Ok(result);
+            
+            return await GetJobPostById(result.Id);
         }
         catch (Exception e)
         {

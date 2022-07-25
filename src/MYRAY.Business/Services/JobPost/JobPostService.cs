@@ -375,7 +375,8 @@ public class JobPostService : IJobPostService
             BelongedId = (int)jobPost.PublishedBy,
             Message = $"Gia hạn bài đăng #{jobPost.Id} thêm {dayExtend} ngày",
             JobPostPrice = priceJobPost,
-            PointPrice = (int?)pricePoint
+            PointPrice = (int?)pricePoint,
+            NumberPublishedDay = dayExtend 
         };
         
         if (newPayment.Balance < 0)
