@@ -1,0 +1,24 @@
+{
+    "BaseRequestUrl": "/api/v1/position",
+    "Get": {
+        "ShouldReturn200OK_WhenRequestedWithNoParams": {
+            "RequestParams": {},
+            "RequestBody": [],
+            "ResponseBody": [
+                {
+                    "ids": "1",
+                    "position_name": "Team lead"
+                },
+                {
+                    "id": "2",
+                    "position_name": "Architecture"
+                },
+                {
+                    "id": "3",
+                    "position_name": "Web Developer"
+                }
+            ],
+            "ResponseCode": 200
+        }
+    }
+}

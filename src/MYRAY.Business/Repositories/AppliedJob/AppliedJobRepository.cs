@@ -104,7 +104,17 @@ public class AppliedJobRepository : IAppliedJobRepository
       appliedJob.Status = (int)AppliedJobEnum.AppliedJobStatus.Approve;
       appliedJob.ApprovedDate = DateTime.Now;
       _appliedJobRepository.Modify(appliedJob);
-
+      if (appliedJob.JobPost.Type.Equals("PayPerTaskJob"))
+      {
+         IQueryable<DataTier.Entities.AppliedJob> rejectList = _appliedJobRepository.Get(a =>
+            a.JobPostId == appliedJob.JobPostId
+            && a.AppliedBy != appliedJob.AppliedBy);
+         List<DataTier.Entities.AppliedJob> listAppliedJob = await rejectList.ToListAsync();
+         listAppliedJob.ForEach(la =>
+         {
+            la.Status = (int)AppliedJobEnum.AppliedJobStatus.Reject;
+         });
+      }
       await _contextFactory.SaveAllAsync();
 
       return appliedJob;
