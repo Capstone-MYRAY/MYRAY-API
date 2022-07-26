@@ -35,10 +35,12 @@ public class AttendanceRepository : IAttendanceRepository
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.Dismissed)
         {
             appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.Fired;
+            appliedJob.EndDate = DateTime.Today;
         }
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.End)
         {
             appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
+            appliedJob.EndDate = DateTime.Today;
         }
         
         await _contextFactory.SaveAllAsync();
