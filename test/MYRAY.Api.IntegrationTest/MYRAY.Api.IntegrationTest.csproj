@@ -22,9 +22,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Constants" />
       <Folder Include="Controller" />
       <Folder Include="Helper" />
+      <Folder Include="Utils" />
     </ItemGroup>
 
 </Project>
