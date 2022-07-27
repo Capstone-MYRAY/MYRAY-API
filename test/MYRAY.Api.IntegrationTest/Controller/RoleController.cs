@@ -12,14 +12,14 @@ public class RoleController: IClassFixture<ServerFixture<Program>>
     private readonly ServerFixture<Program> _factory;
     private readonly JObject _testData;
     private readonly HttpClient _client;
-    private readonly string baseRequestUrl;
+    private readonly string _baseRequestUrl;
 
     public RoleController(ServerFixture<Program> factory)
     {
         _factory = factory;
         _client = _factory.ApiClient;
         _testData = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(TestDataPath.RoleController))!;
-        baseRequestUrl = _testData[Support.TestData.BaseUrlConst]!.ToString();
+        _baseRequestUrl = _testData[Support.TestData.BaseUrlConst]!.ToString();
 
     }
     
@@ -37,7 +37,7 @@ public class RoleController: IClassFixture<ServerFixture<Program>>
                 JToken httpMethod = _testData[GetType().Name]!;
                 JToken function = httpMethod[UtilText.CurrentMethod()]!;
                 // Arrange
-                var data = new Support.TestData(baseRequestUrl, function);
+                var data = new Support.TestData(_baseRequestUrl, function);
                 
                 // Act
                 var responseObj = await _client.GetObjectFromApiAsync<IList<GetRoleDetail>>(data.RequestUrl);
