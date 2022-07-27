@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
@@ -31,10 +32,11 @@ public class ReportRepository : IReportRepository
 
     public async Task<DataTier.Entities.Report?> GetOneReportById(int jobPostId, int reportedId, int createById)
     {
+        Expression<Func<DataTier.Entities.Report, object>> expResolved = report1 => report1.ResolvedByNavigation; 
         DataTier.Entities.Report? report =
             await _reportRepository.GetFirstOrDefaultAsync(r => r.JobPostId == jobPostId
                                                                 && r.ReportedId == reportedId
-                                                                && r.CreatedBy == createById);
+                                                                && r.CreatedBy == createById, new []{expResolved});
         return report;
     }
 
