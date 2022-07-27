@@ -115,3 +115,9 @@ app.MapControllers();
 
 // SchedulerTask.StartAsync().GetAwaiter().GetResult();
 app.Run();
+
+
+/// <summary>
+/// Share Bootstrap to test
+/// </summary>
+public partial class Program{}

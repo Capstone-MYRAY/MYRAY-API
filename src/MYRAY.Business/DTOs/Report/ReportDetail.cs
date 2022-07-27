@@ -15,5 +15,6 @@ public class ReportDetail
     public DateTime CreatedDate { get; set; }
     public DateTime? ResolvedDate { get; set; }
     public int? ResolvedBy { get; set; }
+    public string ResolvedName { get; set; }
     public int? Status { get; set; }
 }
