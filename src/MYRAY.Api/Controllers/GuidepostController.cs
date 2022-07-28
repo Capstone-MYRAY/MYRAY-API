@@ -101,7 +101,7 @@ public class GuidepostController :ControllerBase
             var accountId = int.Parse(User.FindFirst("id")?.Value!);
             var result = await _guidepostService.CreateGuidepost(createGuidepost, accountId);
 
-            return Ok(result);
+            return await GetGuidepostById(result.Id);
         }
         catch (Exception e)
         {
