@@ -11,6 +11,6 @@ public class CommentEnum
     public enum CommentSortCriteria
     {
         CommentBy,
-        CreateDate
+        CreatedDate
     }
 }

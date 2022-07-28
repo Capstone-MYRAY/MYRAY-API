@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
@@ -43,7 +44,7 @@ public class CommentController : ControllerBase
         [FromQuery] SearchComment searchComment,
         [FromQuery] SortingDto<CommentEnum.CommentSortCriteria> sortingDto,
         [FromQuery] PagingDto pagingDto,
-        int guidepostId)
+        [Required] int guidepostId)
     {
         var result =  _commentService.GetComments(searchComment, pagingDto, sortingDto, guidepostId);
         if (result == null)

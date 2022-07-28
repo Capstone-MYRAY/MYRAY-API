@@ -8,4 +8,5 @@ public class SearchReport
     public int? ReportedId { get; set; } = null;
     public int? CreatedBy { get; set; } = null;
     public int? ResolvedBy { get; set; } = null;
+    public int? Status { get; set; } = null;
 }

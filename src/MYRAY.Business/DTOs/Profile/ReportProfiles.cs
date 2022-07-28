@@ -13,6 +13,9 @@ public static class ReportProfiles
             .ForMember(des => des.CreatedName, opt => opt.MapFrom(src => src.CreatedByNavigation.Fullname))
             .ForMember(des => des.ReportedName, opt => opt.MapFrom(src => src.Reported.Fullname))
             .ForMember(des => des.ResolvedName, opt => opt.MapFrom(src => src.ResolvedByNavigation.Fullname))
+            .ForMember(des => des.JobPostTitle, opt => opt.MapFrom(src => src.JobPost.Title))
+            .ForMember(des => des.ReportedPhone, opt => opt.MapFrom(src => src.Reported.PhoneNumber))
+            .ForMember(des => des.ReportedAvatar, opt => opt.MapFrom(src => src.Reported.ImageUrl))
             .ReverseMap();
         configuration.CreateMap<DataTier.Entities.Report, CreateReport>().ReverseMap();
         configuration.CreateMap<DataTier.Entities.Report, UpdateReport>().ReverseMap();
