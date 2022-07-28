@@ -50,8 +50,12 @@ public class ExtendTaskJobController : ControllerBase
         [FromQuery] SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto,
         [FromQuery] PagingDto pagingDto)
     {
-        // var accountId = int.Parse(User.FindFirst("id")?.Value!);
-        var result =  _extendTaskJobService.GetExtendTaskJobsALl(searchJobPost, pagingDto, sortingDto);
+        int? accountId = null;
+        if (User.Claims.First().Value.Equals("Landowner"))
+        {
+            accountId = int.Parse(User.FindFirst("id")!.Value);
+        }
+        var result =  _extendTaskJobService.GetExtendTaskJobsAll(searchJobPost, pagingDto, sortingDto, accountId);
         if (result == null)
         {
             return Task.FromResult<IActionResult>(NoContent());

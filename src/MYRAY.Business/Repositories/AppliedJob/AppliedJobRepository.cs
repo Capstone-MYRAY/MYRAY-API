@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
@@ -11,11 +12,13 @@ public class AppliedJobRepository : IAppliedJobRepository
 {
    private readonly IDbContextFactory _contextFactory;
    private readonly IBaseRepository<DataTier.Entities.AppliedJob> _appliedJobRepository;
+   private readonly IBaseRepository<DataTier.Entities.JobPost> _jobPostRepository;
 
    public AppliedJobRepository(IDbContextFactory contextFactory)
    {
       _contextFactory = contextFactory;
       _appliedJobRepository = _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.AppliedJob>()!;
+      _jobPostRepository = _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.JobPost>()!;
    }
    
    public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobs(int jobId, AppliedJobEnum.AppliedJobStatus? status = null)
@@ -104,7 +107,8 @@ public class AppliedJobRepository : IAppliedJobRepository
       appliedJob.Status = (int)AppliedJobEnum.AppliedJobStatus.Approve;
       appliedJob.ApprovedDate = DateTime.Now;
       _appliedJobRepository.Modify(appliedJob);
-      if (appliedJob.JobPost.Type.Equals("PayPerTaskJob"))
+      DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(appliedJob.JobPostId);
+      if (jobPost!.Type.Equals("PayPerTaskJob"))
       {
          IQueryable<DataTier.Entities.AppliedJob> rejectList = _appliedJobRepository.Get(a =>
             a.JobPostId == appliedJob.JobPostId

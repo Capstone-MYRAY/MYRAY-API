@@ -3,7 +3,7 @@ namespace MYRAY.Business.Repositories.ExtendTaskJob;
 public interface IExtendTaskJobRepository
 {
     IQueryable<DataTier.Entities.ExtendTaskJob> GetExtendTaskJobs(int jobPostId);
-    IQueryable<DataTier.Entities.ExtendTaskJob> GetExtendTaskJobsAll();
+    IQueryable<DataTier.Entities.ExtendTaskJob> GetExtendTaskJobsAll(int? accountId = null);
     Task<DataTier.Entities.ExtendTaskJob> ApproveExtendTaskJobById(int id, int approvedBy);
     Task<DataTier.Entities.ExtendTaskJob> RejectExtendTaskJobById(int id, int approvedBy);
     Task<DataTier.Entities.ExtendTaskJob> CreateExtendTaskJob(DataTier.Entities.ExtendTaskJob extendTask);

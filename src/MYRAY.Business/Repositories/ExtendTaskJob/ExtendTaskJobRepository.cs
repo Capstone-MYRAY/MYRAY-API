@@ -26,10 +26,10 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
         return query;
     }
 
-    public IQueryable<DataTier.Entities.ExtendTaskJob> GetExtendTaskJobsAll()
+    public IQueryable<DataTier.Entities.ExtendTaskJob> GetExtendTaskJobsAll(int? accountId = null)
     {
         IQueryable<DataTier.Entities.ExtendTaskJob> query =
-            _extendTaskJobRepository.Get();
+            _extendTaskJobRepository.Get(etj => accountId == null || etj.JobPost.PublishedBy == accountId);
         return query;
     }
 

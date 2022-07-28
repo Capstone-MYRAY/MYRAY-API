@@ -9,10 +9,11 @@ public interface IExtendTaskJobService
 {
     Task<ExtendTaskJobDetail> CheckOneExtend(int jobPostId);
     
-    ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobsALl(
+    ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobsAll(
         SearchExtendRequest searchExtendRequest,
         PagingDto pagingDto,
-        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto);
+        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto,
+        int? accountId = null);
 
     Task<ExtendTaskJobDetail> CreateExtendTaskJob(CreateExtendRequest extendRequest, int requestBy);
     Task<ExtendTaskJobDetail> UpdateExtendTaskJob(UpdateExtendRequest extendRequest, int requestBy);

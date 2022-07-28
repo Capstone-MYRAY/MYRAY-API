@@ -30,10 +30,11 @@ public class ExtendTaskJobService : IExtendTaskJobService
        return _mapper.Map<ExtendTaskJobDetail>(query);
     }
 
-    public ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobsALl(SearchExtendRequest searchExtendRequest, PagingDto pagingDto,
-        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto)
+    public ResponseDto.CollectiveResponse<ExtendTaskJobDetail> GetExtendTaskJobsAll(SearchExtendRequest searchExtendRequest, PagingDto pagingDto,
+        SortingDto<ExtendTaskJobEnum.SortCriteriaExtendTaskJob> sortingDto,
+        int? accountId = null)
     {
-        IQueryable<DataTier.Entities.ExtendTaskJob> query = _extendTaskJobRepository.GetExtendTaskJobsAll();
+        IQueryable<DataTier.Entities.ExtendTaskJob> query = _extendTaskJobRepository.GetExtendTaskJobsAll(accountId);
 
         query = query.GetWithSearch(searchExtendRequest);
 

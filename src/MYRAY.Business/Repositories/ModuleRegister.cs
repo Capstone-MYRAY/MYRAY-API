@@ -17,6 +17,7 @@ using MYRAY.Business.Repositories.PaymentHistory;
 using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.Report;
 using MYRAY.Business.Repositories.Role;
+using MYRAY.Business.Repositories.Statistic;
 using MYRAY.Business.Repositories.TreeJob;
 using MYRAY.Business.Repositories.TreeType;
 
@@ -52,6 +53,7 @@ public static class ModuleRegister
         services.AddTransient<IMessageRepository, MessageRepository>();
         services.AddTransient<ITreeJobRepository, TreeJobRepository>();
         services.AddTransient<IExtendTaskJobRepository, ExtendTaskJobRepository>();
+        services.AddTransient<IStatisticRepository, StatisticRepository>();
         
         
         return services;
