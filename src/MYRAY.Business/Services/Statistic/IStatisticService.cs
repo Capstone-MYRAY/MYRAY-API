@@ -1,7 +1,10 @@
+using MYRAY.Business.DTOs.Statistic;
+
 namespace MYRAY.Business.Services.Statistic;
 
 public interface IStatisticService
 {
+    Task<StatisticDetail> GetStatistic(int? moderatorId = null);
     Task<double> TotalMoney(int? moderatorId = null);
     Task<int> TotalJobPost(int? moderatorId = null);
     Task<int> TotalLandowner(int? moderatorId = null);

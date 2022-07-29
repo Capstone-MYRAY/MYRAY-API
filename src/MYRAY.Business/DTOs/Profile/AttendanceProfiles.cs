@@ -12,6 +12,7 @@ public static class AttendanceProfiles
             .ForMember(des => des.Fullname, opt => opt.MapFrom(src => src.Account.Fullname))
             .ForMember(des => des.ImageUrl, opt => opt.MapFrom(src => src.Account.ImageUrl))
             .ForMember(des => des.PhoneNumber, opt => opt.MapFrom(src => src.Account.PhoneNumber))
+            .ForMember(des => des.AppliedJobTitle, opt => opt.MapFrom(src => src.AppliedJob.JobPost.Title))
             .ReverseMap();
 
         configuration.CreateMap<AppliedJob, AttendanceByJob>()

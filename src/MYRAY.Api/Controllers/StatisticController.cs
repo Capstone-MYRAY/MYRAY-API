@@ -29,12 +29,11 @@ public class StatisticController : ControllerBase
     
     
     /// <summary>
-    /// [Admin, Moderator] Endpoint to get statistic total money
+    /// [Admin, Moderator] Endpoint to get statistic total 
     /// </summary>
-    /// <returns>double</returns>
-    [HttpGet("money")]
+    [HttpGet]
     [Authorize(Roles = UserRole.ADMIN + "," + UserRole.MODERATOR)]
-    public async Task<IActionResult> TotalMoney()
+    public async Task<IActionResult> Statistic()
     {
         int? moderatorId = null;
         try
@@ -44,7 +43,7 @@ public class StatisticController : ControllerBase
             {
                 moderatorId = int.Parse(User.FindFirst("id")?.Value!);
             }
-            var result = await _statisticService.TotalMoney(moderatorId);
+            var result = await _statisticService.GetStatistic(moderatorId);
             return Ok(result);
         }
         catch (Exception e)
@@ -53,88 +52,5 @@ public class StatisticController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
-    /// <summary>
-    /// [Admin, Moderator] Endpoint to get statistic total job post
-    /// </summary>
-    /// <returns>int</returns>
-    [HttpGet("jobPost")]
-    [Authorize(Roles = UserRole.ADMIN + "," + UserRole.MODERATOR)]
-    public async Task<IActionResult> TotalJobPost()
-    {
-        int? moderatorId = null;
-        try
-        {
-            string role = User.Claims.First().Value;
-            if (role.Equals("Moderator"))
-            {
-                moderatorId = int.Parse(User.FindFirst("id")?.Value!);
-            }
-            var result = await _statisticService.TotalJobPost(moderatorId);
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return BadRequest(e.Message);
-        }
-    }
-    
-    /// <summary>
-    /// [Admin, Moderator] Endpoint to get statistic total Landowner
-    /// </summary>
-    /// <returns>int</returns>
-    [HttpGet("landowner")]
-    [Authorize(Roles = UserRole.ADMIN + "," + UserRole.MODERATOR)]
-    public async Task<IActionResult> TotalLandowner()
-    {
-        int? moderatorId = null;
-        try
-        {
-            string role = User.Claims.First().Value;
-            if (role.Equals("Moderator"))
-            {
-                moderatorId = int.Parse(User.FindFirst("id")?.Value!);
-            }
-            int result = await _statisticService.TotalLandowner(moderatorId);
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return BadRequest(e.Message);
-        }
-    }
-    
-    /// <summary>
-    /// [Admin, Moderator] Endpoint to get statistic total Farmer
-    /// </summary>
-    /// <returns>int</returns>
-    [HttpGet("farmer")]
-    [Authorize(Roles = UserRole.ADMIN + "," + UserRole.MODERATOR)]
-    public async Task<IActionResult> TotalFarmer()
-    {
-        int? moderatorId = null;
-        try
-        { 
-            string role = User.Claims.First().Value;
-            if (role.Equals("Moderator"))
-            {
-                moderatorId = int.Parse(User.FindFirst("id")?.Value!);
-            }
-            int result = await _statisticService.TotalFarmer(moderatorId);
-            return Ok(result);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            return BadRequest(e.Message);
-        }
-    }
-    
-    
-    
-    
-    
     
 }

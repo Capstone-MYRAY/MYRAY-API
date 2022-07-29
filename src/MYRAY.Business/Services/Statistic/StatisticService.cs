@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using MYRAY.Business.DTOs.Statistic;
 using MYRAY.Business.Repositories.Statistic;
 using MYRAY.DataTier.Entities;
 
@@ -14,6 +15,26 @@ public class StatisticService : IStatisticService
     {
         _mapper = mapper;
         _statisticRepository = statisticRepository;
+    }
+
+    public async Task<StatisticDetail> GetStatistic(int? moderatorId = null)
+    {
+        StatisticDetail result = null;
+        int? areaId = null;
+        if (moderatorId != null)
+        {
+            DataTier.Entities.Area area = await _statisticRepository.GetAreaByModeratorId((int)moderatorId);
+            areaId = area.Id;
+        }
+
+        result = new StatisticDetail()
+        {
+            TotalMoney = await _statisticRepository.TotalMoney(areaId),
+            TotalJobPost =  _statisticRepository.TotalJobPosts(areaId).Count(),
+            TotalLandowner =  _statisticRepository.TotalLandowner(areaId).Count(),
+            TotalFarmer =  _statisticRepository.TotalFarmer(areaId).Count()
+        };
+        return result;
     }
 
     public async Task<double> TotalMoney(int? moderatorId = null)
