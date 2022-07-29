@@ -9,6 +9,8 @@ public class AttendanceDetail
     public string? Signature { get; set; }
     public int? Status { get; set; }
     public int AppliedJobId { get; set; }
+    public string AppliedJobTitle { get; set; }
+    public DateTime CreatedDateJob { get; set; }
     public string? Reason { get; set; }
     public int AccountId { get; set; }
     public string? ImageUrl { get; set; }
