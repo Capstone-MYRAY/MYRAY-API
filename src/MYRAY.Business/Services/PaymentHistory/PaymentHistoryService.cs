@@ -29,6 +29,11 @@ public class PaymentHistoryService : IPaymentHistoryService
         IQueryable<PaymentHistory> query = _paymentHistoryRepository.GetPayments(accountId);
 
         query = query.GetWithSearch(searchPaymentHistory);
+        query = query.Where(p =>
+            searchPaymentHistory.MinDate == null || p.CreatedDate.Date >= searchPaymentHistory.MinDate);
+        
+        query = query.Where(p =>
+            searchPaymentHistory.MaxDate == null || p.CreatedDate.Date <= searchPaymentHistory.MaxDate);
 
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
 
