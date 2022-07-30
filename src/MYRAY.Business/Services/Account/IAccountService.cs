@@ -55,8 +55,9 @@ public interface IAccountService
     /// <param name="id">Id of account</param>
     /// <param name="newPassword">New password to change</param>
     /// <returns>a updated account</returns>
-    public Task<UpdateAccountDto> ChangPasswordAsync(int id, string newPassword);
-    
+    public Task<UpdateAccountDto> ChangePasswordAsync(int id, string newPassword);
+
+    public Task<bool> CheckCorrectPassword(int id, string password);
     /// <summary>
     /// Update an existed account.
     /// </summary>

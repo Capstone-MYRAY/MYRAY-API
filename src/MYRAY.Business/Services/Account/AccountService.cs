@@ -116,7 +116,7 @@ public class AccountService : IAccountService
         return await CreateAccountAsync(insertAccountDto);
     }
 
-    public async Task<UpdateAccountDto> ChangPasswordAsync(int id, string newPassword)
+    public async Task<UpdateAccountDto> ChangePasswordAsync(int id, string newPassword)
     {
         try
         {
@@ -129,6 +129,20 @@ public class AccountService : IAccountService
         catch (Exception e)
         {
             throw new MException(StatusCodes.Status400BadRequest, e.Message, nameof(e.TargetSite.Name));
+        }
+    }
+
+    public async Task<bool> CheckCorrectPassword(int id, string password)
+    {
+        try
+        {
+            DataTier.Entities.Account account = await _accountRepository.GetAccountByIdAsync(id);
+            return account.Password.Equals(password);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 

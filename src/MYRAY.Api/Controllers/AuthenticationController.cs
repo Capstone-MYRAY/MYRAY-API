@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
@@ -145,7 +146,7 @@ public class AuthenticationController : ControllerBase
     /// <response code="400">Returns if new password input is empty or invalid</response>
     /// <response code="401">Returns if unauthorized</response>
     [HttpPost]
-    [Route("changpassword")]
+    [Route("changepassword")]
     [Authorize]
     [ProducesResponseType(typeof(UpdateAccountDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -156,7 +157,32 @@ public class AuthenticationController : ControllerBase
             var accountId = int.Parse(User.FindFirst("id")?.Value!);
             if (bodyDto.Password.Length < 6)
                 throw new MException(StatusCodes.Status400BadRequest, "Password min length 6 character");
-            UpdateAccountDto result = await _accountService.ChangPasswordAsync(accountId, bodyDto.Password);
+            UpdateAccountDto result = await _accountService.ChangePasswordAsync(accountId, bodyDto.Password);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(new ErrorCustomMessage {Message = e.Message, Target = nameof(ChangePassword)});
+        }
+    }
+
+    /// <summary>
+    /// [Authenticated User] Check correct password
+    /// </summary>
+    /// <param name="password">Password of account</param>
+    /// <returns>result boolean</returns>
+    /// <exception cref="MException">Not Valid Password</exception>
+    [HttpGet("check")]
+    [Authorize]
+    public async Task<IActionResult> CheckPassword([Required]string password)
+    {
+        try
+        {
+            var accountId = int.Parse(User.FindFirst("id")?.Value!);
+            if (password.Length < 6)
+                throw new MException(StatusCodes.Status400BadRequest, "Password min length 6 character");
+            bool result = await _accountService.CheckCorrectPassword(accountId, password);
             return Ok(result);
         }
         catch (Exception e)
