@@ -42,7 +42,8 @@ public class AttendanceService : IAttendanceService
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, attendance.AccountId);
         DataTier.Entities.Attendance? existedAttendance =
-            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy, attendance.DateAttendance.Date);
+            await _attendanceRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy,
+                attendance.DateAttendance.Date);
         if (existedAttendance != null)
         {
             throw new Exception("You have been attended");
@@ -65,7 +66,8 @@ public class AttendanceService : IAttendanceService
             AppliedJobId = appliedJob.Id,
             AccountId = attendance.AccountId,
             BonusPoint = point,
-            Reason = attendance.Reason
+            Reason = attendance.Reason,
+            CreatedDate = DateTime.Now
         };
 
         newAttendance = await _attendanceRepository.CreateAttendance(newAttendance);
@@ -90,7 +92,7 @@ public class AttendanceService : IAttendanceService
         {
             throw new Exception("Job post is not started");
         }
-    
+
         PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
         if (requestDayOff.DayOff.Date.AddHours(payPerHourJob.StartTime.Value.Hours) < DateTime.Now.AddHours(24))
         {
@@ -114,7 +116,8 @@ public class AttendanceService : IAttendanceService
             AppliedJobId = appliedJob.Id,
             AccountId = accountId,
             BonusPoint = 0,
-            Reason = requestDayOff.Reason
+            Reason = requestDayOff.Reason,
+            CreatedDate = DateTime.Now
         };
 
         await _attendanceRepository.CreateAttendance(newAttendance);

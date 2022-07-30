@@ -14,6 +14,7 @@ namespace MYRAY.DataTier.Entities
         public int AppliedJobId { get; set; }
         public int AccountId { get; set; }
         public string? Reason { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
         public virtual Account Account { get; set; } = null!;
         public virtual AppliedJob AppliedJob { get; set; } = null!;

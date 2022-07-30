@@ -231,6 +231,11 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnName("bonus_point")
                     .HasDefaultValueSql("((1))");
 
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_date")
+                    .HasDefaultValueSql("(getdate())");
+
                 entity.Property(e => e.Date)
                     .HasColumnType("datetime")
                     .HasColumnName("date");
