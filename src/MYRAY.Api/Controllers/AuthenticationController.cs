@@ -173,9 +173,9 @@ public class AuthenticationController : ControllerBase
     /// <param name="password">Password of account</param>
     /// <returns>result boolean</returns>
     /// <exception cref="MException">Not Valid Password</exception>
-    [HttpGet("check")]
+    [HttpPost("checkPassword")]
     [Authorize]
-    public async Task<IActionResult> CheckPassword([Required]string password)
+    public async Task<IActionResult> CheckPassword([FromBody]string password)
     {
         try
         {
