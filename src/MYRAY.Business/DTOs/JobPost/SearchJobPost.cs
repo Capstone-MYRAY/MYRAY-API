@@ -11,6 +11,7 @@ public class SearchJobPost
     public string Type { get; set; } = "";
     public int? PostTypeId { get; set; } = null;
     [DefaultValue(null)] public int? StatusWork { get; set; } = null;
+    public int? GardenId { get; set; } = null;
 
     public bool? IsNotEndWork { get; set; } = null;
 }
