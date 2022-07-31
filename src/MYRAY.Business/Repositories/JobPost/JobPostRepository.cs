@@ -394,6 +394,7 @@ public class JobPostRepository : IJobPostRepository
         }
 
         jobPost.ApprovedBy = approvedBy;
+        jobPost.ApprovedDate = DateTime.Now;
         jobPost.ReasonReject = rejectJobPost.ReasonReject;
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Reject;
         _jobPostRepository.Modify(jobPost);
