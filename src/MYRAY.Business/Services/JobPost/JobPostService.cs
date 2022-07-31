@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -56,6 +55,10 @@ public class JobPostService : IJobPostService
 
         query = query.GetWithSearch(searchJobPost);
 
+        if (searchJobPost.IsNotEndWork is true)
+        {
+            query = query.Where(j => j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Done);
+        }
         if (isFarmer)
         {
             listPin = _jobPostRepository.GetPinPost().ToList();
@@ -292,6 +295,13 @@ public class JobPostService : IJobPostService
     public async Task<JobPostDetail> DeleteJobPost(int jobPostId)
     {
         DataTier.Entities.JobPost deleteGuidepost = await _jobPostRepository.DeleteJobPost(jobPostId);
+        var result = _mapper.Map<JobPostDetail>(deleteGuidepost);
+        return result;
+    }
+
+    public async Task<JobPostDetail> EndJobPost(int jobPostId)
+    {
+        DataTier.Entities.JobPost deleteGuidepost = await _jobPostRepository.EndJobPost(jobPostId);
         var result = _mapper.Map<JobPostDetail>(deleteGuidepost);
         return result;
     }

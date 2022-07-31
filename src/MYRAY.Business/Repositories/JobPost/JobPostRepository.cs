@@ -44,7 +44,7 @@ public class JobPostRepository : IJobPostRepository
             new[] { expHours, expTask });
         return query;
     }
-    
+
     public IQueryable<DataTier.Entities.JobPost> GetPinPost()
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob;
@@ -70,7 +70,7 @@ public class JobPostRepository : IJobPostRepository
     public IQueryable<PinDate> GetNearPinDateByPinDate(DateTime pinDate, int postTypeId)
     {
         IQueryable<PinDate> nearPinDate =
-            _pinDateRepository.Get(pd => pd.PinDate1.Date > pinDate.Date 
+            _pinDateRepository.Get(pd => pd.PinDate1.Date > pinDate.Date
                                          && pd.JobPost.PostTypeId == postTypeId
                                          && pd.Status == 1)
                 .OrderBy(pd => pd.PinDate1);
@@ -81,9 +81,9 @@ public class JobPostRepository : IJobPostRepository
     public IQueryable<DataTier.Entities.JobPost> GetJobAvailableByGardenId(int gardenId)
     {
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(jobPost => jobPost.GardenId == gardenId
-        && (jobPost.StatusWork == 1 
-            || jobPost.Status == (int)JobPostEnum.JobPostStatus.Pending 
-            || jobPost.Status == (int)JobPostEnum.JobPostStatus.Posted)
+            && (jobPost.StatusWork == 1
+                || jobPost.Status == (int)JobPostEnum.JobPostStatus.Pending
+                || jobPost.Status == (int)JobPostEnum.JobPostStatus.Posted)
         );
 
         return query;
@@ -96,7 +96,7 @@ public class JobPostRepository : IJobPostRepository
             post => post.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Started, new[] { expAppliedJob });
         return inProgress;
     }
-    
+
     public async Task<DataTier.Entities.JobPost> GetJobPostById(int id)
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob;
@@ -148,14 +148,13 @@ public class JobPostRepository : IJobPostRepository
                 await _pinDateRepository.InsertAsync(variable);
             }
         }
-        
+
         var id = (_jobPostRepository.Table as DbSet<DataTier.Entities.JobPost>)
             .FromSqlRaw("SELECT CAST(IDENT_CURRENT('JobPost') AS INT) AS 'id'").Sum(j => j.Id);
-      
+
         newPayment.Message = "Tạo bài đăng mới #" + ++id;
         await _paymentHistoryRepository.InsertAsync(newPayment);
         await _contextFactory.SaveAllAsync();
-
 
 
         return jobPost;
@@ -200,6 +199,7 @@ public class JobPostRepository : IJobPostRepository
                 await _pinDateRepository.InsertAsync(variable);
             }
         }
+
         newPayment.Message = "Tạo bài đăng mới #" + jobPost.Id;
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
@@ -209,6 +209,19 @@ public class JobPostRepository : IJobPostRepository
             .ThenInclude(jt => jt.TreeType)
             .FirstAsync();
         return jobPostAfterUpdate;
+    }
+
+    public async Task<DataTier.Entities.JobPost> EndJobPost(int id)
+    {
+        DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(id);
+        if (jobPost == null) throw new Exception("Job Post Not Found");
+        if (jobPost.StatusWork == (int?)JobPostEnum.JobPostWorkStatus.Done)
+        {
+            throw new Exception("Job post has been end");
+        }
+        jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Done;
+        await _contextFactory.SaveAllAsync();
+        return jobPost;
     }
 
     public async Task<DataTier.Entities.JobPost> CancelJobPost(int id)
@@ -308,9 +321,8 @@ public class JobPostRepository : IJobPostRepository
             JobPostPrice = paymentHistory.JobPostPrice,
             PointPrice = (paymentHistory.PointPrice)
         };
-        
-        await _paymentHistoryRepository.InsertAsync(refundPayment);
 
+        await _paymentHistoryRepository.InsertAsync(refundPayment);
     }
 
     public async Task<DataTier.Entities.JobPost> DeleteJobPost(int id)
@@ -357,7 +369,7 @@ public class JobPostRepository : IJobPostRepository
         {
             jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
         }
-        
+
         jobPost.ApprovedDate = DateTime.Now;
         jobPost.ApprovedBy = approvedBy;
         foreach (var pinData in list)
@@ -424,7 +436,7 @@ public class JobPostRepository : IJobPostRepository
     {
         _jobPostRepository.Modify(jobPost);
         _accountRepository.Modify(account);
-    
+
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
         await _contextFactory.SaveAllAsync();
@@ -480,7 +492,7 @@ public class JobPostRepository : IJobPostRepository
     public async Task StartJob()
     {
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
-            j.Status == (int?)JobPostEnum.JobPostStatus.Posted 
+            j.Status == (int?)JobPostEnum.JobPostStatus.Posted
             && j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Started
             && j.StartJobDate.Value.Date == DateTime.Today);
 
@@ -505,8 +517,9 @@ public class JobPostRepository : IJobPostRepository
         foreach (var jobPost in listOutOfDate)
         {
             jobPost.Status = (int?)JobPostEnum.JobPostStatus.OutOfDate;
-            DataTier.Entities.PaymentHistory? paymentHistories = await 
-                _paymentHistoryRepository.GetFirstOrDefaultAsync(p => p.JobPostId == jobPost.Id && p.BelongedId == jobPost.PublishedBy);
+            DataTier.Entities.PaymentHistory? paymentHistories = await
+                _paymentHistoryRepository.GetFirstOrDefaultAsync(p =>
+                    p.JobPostId == jobPost.Id && p.BelongedId == jobPost.PublishedBy);
             _paymentHistoryRepository.Delete(paymentHistories!);
             Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
                 Console.BackgroundColor == ConsoleColor.Yellow);
@@ -537,10 +550,11 @@ public class JobPostRepository : IJobPostRepository
             _payPerTaskRepository.Delete(payPerTaskJob);
         }
     }
-    
+
     private void DeletePayment(int jobPostId, int publishId)
     {
-        DataTier.Entities.PaymentHistory? paymentHistory = _paymentHistoryRepository.Get(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)
+        DataTier.Entities.PaymentHistory? paymentHistory = _paymentHistoryRepository
+            .Get(ph => ph.JobPostId == jobPostId && ph.BelongedId == publishId)
             .FirstOrDefault();
         if (paymentHistory != null)
         {

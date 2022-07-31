@@ -226,6 +226,32 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    
+    /// <summary>
+    /// [Landowner] Endpoint for End job post
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Returns if end success</response>
+    /// <response code="400">Returns if job post not existed or applied</response>
+    /// <response code="401">Returns if invalid authorize</response>
+    [HttpPatch("end/{jobPostId}")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    public async Task<IActionResult> EndJob(int jobPostId)
+    {
+        // var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        try
+        {
+            var result = await _jobPostService.EndJobPost(jobPostId);
+
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
 
     
     /// <summary>

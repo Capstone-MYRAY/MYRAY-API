@@ -31,6 +31,7 @@ public interface IJobPostRepository
         DataTier.Entities.PaymentHistory newPayment);
     Task<DataTier.Entities.JobPost> DeleteJobPost(int id);
 
+    Task<MYRAY.DataTier.Entities.JobPost> EndJobPost(int id);
     Task<DataTier.Entities.JobPost> CancelJobPost(int id);
 
     void DeletePinDate(ICollection<PinDate> pinDates);
