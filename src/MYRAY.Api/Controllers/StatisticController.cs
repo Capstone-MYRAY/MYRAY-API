@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
@@ -44,6 +45,27 @@ public class StatisticController : ControllerBase
                 moderatorId = int.Parse(User.FindFirst("id")?.Value!);
             }
             var result = await _statisticService.GetStatistic(moderatorId);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// [Admin, Moderator] Endpoint to get statistic total money for year
+    /// </summary>
+    [HttpGet("year")]
+    [Authorize(Roles = UserRole.ADMIN + "," + UserRole.MODERATOR)]
+    public async Task<IActionResult> StatisticByYear([Required] int year)
+    {
+        int? moderatorId = null;
+        try
+        {
+         
+            var result = await _statisticService.GetStatisticByYear(year ,moderatorId);
             return Ok(result);
         }
         catch (Exception e)

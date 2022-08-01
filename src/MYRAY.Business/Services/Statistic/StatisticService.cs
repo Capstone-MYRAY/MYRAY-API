@@ -1,8 +1,6 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs.Statistic;
 using MYRAY.Business.Repositories.Statistic;
-using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Services.Statistic;
 
@@ -35,6 +33,11 @@ public class StatisticService : IStatisticService
             TotalFarmer =  _statisticRepository.TotalFarmer(areaId).Count()
         };
         return result;
+    }
+
+    public async Task<Dictionary<int, double>> GetStatisticByYear(int year, int? moderatorId = null)
+    {
+        return await _statisticRepository.GetTotalMoneyByYear(year);
     }
 
     public async Task<double> TotalMoney(int? moderatorId = null)

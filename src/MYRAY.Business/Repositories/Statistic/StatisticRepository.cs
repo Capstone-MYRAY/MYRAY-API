@@ -2,7 +2,6 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
-using MYRAY.Business.Services.Statistic;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.Statistic;
@@ -63,6 +62,26 @@ public class StatisticRepository : IStatisticRepository
         }
 
         return total ?? 0;
+    }
+
+    public async Task<Dictionary<int, double>> GetTotalMoneyByYear(int year)
+    {
+        Dictionary<int, double> result = new Dictionary<int, double>();
+
+        var query = _paymentHistoryRepository.Get(p => p.Status == (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid
+                                                       && p.CreatedDate.Year == year)
+            .AsEnumerable()
+            .GroupBy(p=> p.CreatedDate.Month);
+
+        var list = query.ToList();
+        foreach (var igr in list)
+        {
+            double total = igr.Sum(k=> k.ActualPrice) ?? 0;
+            var key = igr.Key;
+            result.Add(key, total);
+        }
+        Console.WriteLine("Log");
+        return result;
     }
 
     public IQueryable<DataTier.Entities.JobPost> TotalJobPosts(int? areaId = null)
