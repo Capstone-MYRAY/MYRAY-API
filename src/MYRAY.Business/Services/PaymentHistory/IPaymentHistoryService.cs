@@ -10,4 +10,6 @@ public interface IPaymentHistoryService
         SearchPaymentHistory searchPaymentHistory,
         PagingDto pagingDto,
         SortingDto<PaymentHistoryEnum.PaymentHistorySortCriteria> sortingDto, int accountId);
+
+    Task<PaymentHistoryDetail> GetPaymentHistoryById(int id);
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
+using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.PaymentHistory;
 using MYRAY.Business.Enums;
@@ -39,7 +40,7 @@ public class PaymentHistoryController : ControllerBase
     [HttpGet("{accountId}")]
     [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<PaymentHistoryDetail>),StatusCodes.Status200OK)]
-    public Task<IActionResult> GetGuidepost(
+    public Task<IActionResult> GetPaymentHistorys(
         [FromQuery] SearchPaymentHistory searchPaymentHistory,
         [FromQuery] SortingDto<PaymentHistoryEnum.PaymentHistorySortCriteria> sortingDto,
         [FromQuery] PagingDto pagingDto,
@@ -54,4 +55,24 @@ public class PaymentHistoryController : ControllerBase
         return Task.FromResult<IActionResult>(Ok(result));
     }
     
+    /// <summary>
+    /// [Landowner] Endpoint fo get payment history by id
+    /// </summary>
+    /// <param name="id">Id of payment history</param>
+    /// <returns>Payment history detail</returns>
+    [HttpGet("id/{id}")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(PaymentHistoryDetail),StatusCodes.Status200OK)]
+
+    public async Task<IActionResult> GetPaymentHistoryById(int id)
+    {
+        var result = await _paymentHistoryService.GetPaymentHistoryById(id);
+        if (result == null)
+        {
+            return NoContent();
+        }
+
+        return Ok(result);
+    }
+
 }

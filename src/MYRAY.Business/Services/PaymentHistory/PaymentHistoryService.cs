@@ -41,4 +41,11 @@ public class PaymentHistoryService : IPaymentHistoryService
 
         return result;
     }
+
+    public async Task<PaymentHistoryDetail> GetPaymentHistoryById(int id)
+    {
+        PaymentHistory? paymentHistory = await _paymentHistoryRepository.GetPaymentHistoryById(id);
+        PaymentHistoryDetail result = _mapper.Map<PaymentHistoryDetail>(paymentHistory);
+        return result;
+    }
 }
