@@ -23,6 +23,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<Attendance> Attendances { get; set; } = null!;
         public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
+        public virtual DbSet<Config> Configs { get; set; } = null!;
         public virtual DbSet<ExtendTaskJob> ExtendTaskJobs { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<Garden> Gardens { get; set; } = null!;
@@ -326,6 +327,26 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.GuidepostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Comment_Guidepost");
+            });
+
+            modelBuilder.Entity<Config>(entity =>
+            {
+                entity.ToTable("Config");
+
+                entity.HasIndex(e => e.Key, "Config_key_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Key)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("key");
+
+                entity.Property(e => e.Value)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("value");
             });
 
             modelBuilder.Entity<ExtendTaskJob>(entity =>

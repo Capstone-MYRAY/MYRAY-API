@@ -1,5 +1,7 @@
+using System.Configuration;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 
 namespace MYRAY.Api.Constants;
 
@@ -23,4 +25,6 @@ public static class AppSetting
             Credential = GoogleCredential.FromFile(jsonFirebasePath)
         });
     }
+    
+
 }

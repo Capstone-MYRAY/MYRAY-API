@@ -11,6 +11,10 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
 builder.Services.AddCors(o =>
 {
     o.AddPolicy("CorsPolicy", corsPolicyBuilder => corsPolicyBuilder

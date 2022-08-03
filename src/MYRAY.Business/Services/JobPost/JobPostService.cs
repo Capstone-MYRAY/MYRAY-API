@@ -7,9 +7,11 @@ using MYRAY.Business.Enums;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
+using MYRAY.Business.Repositories.Config;
 using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.TreeJob;
+using MYRAY.Business.Services.Config;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Services.JobPost;
@@ -22,12 +24,14 @@ public class JobPostService : IJobPostService
     private readonly IPostTypeRepository _postTypeRepository;
     private readonly ITreeJobRepository _treeJobRepository;
     private readonly IConfiguration _configuration;
+    private readonly IConfigRepository _configRepository;
 
     public JobPostService(IMapper mapper,
         IJobPostRepository jobPostRepository,
         IAccountRepository accountRepository,
         IPostTypeRepository postTypeRepository,
         ITreeJobRepository treeJobRepository,
+        IConfigRepository configRepository,
         IConfiguration configuration)
     {
         _mapper = mapper;
@@ -36,6 +40,7 @@ public class JobPostService : IJobPostService
         _accountRepository = accountRepository;
         _postTypeRepository = postTypeRepository;
         _treeJobRepository = treeJobRepository;
+        _configRepository = configRepository;
     }
 
     public ResponseDto.CollectiveResponse<JobPostDetail> GetJobPosts(
@@ -115,10 +120,10 @@ public class JobPostService : IJobPostService
 
 
         //--Get Setting From Json File
-        float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
-        float pricePoint = float.Parse(_configuration.GetSection("Money").GetSection("Point").Value);
-        float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
-
+        float priceJobPost = float.Parse((_configRepository.GetConfigByKey("JobPost"))!);
+        float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
+        float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
+        
         //--Get more information to calculate
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
         float aPricePinPost = 0;
@@ -222,10 +227,10 @@ public class JobPostService : IJobPostService
         //-- Add Payment
 
         //--Get Setting From Json File
-        float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
-        float pricePoint = float.Parse(_configuration.GetSection("Money").GetSection("Point").Value);
-        float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
-
+        float priceJobPost = float.Parse((_configRepository.GetConfigByKey("JobPost"))!);
+        float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
+        float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
+        
         //--Get more information to calculate
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
 
@@ -360,9 +365,9 @@ public class JobPostService : IJobPostService
         
         
         //--Get Setting From Json File
-        float priceJobPost = float.Parse(_configuration.GetSection("Money").GetSection("JobPost").Value);
-        float pricePoint = float.Parse(_configuration.GetSection("Money").GetSection("Point").Value);
-        float earnPoint = float.Parse(_configuration.GetSection("Money").GetSection("EarnPoint").Value);
+        float priceJobPost = float.Parse((_configRepository.GetConfigByKey("JobPost"))!);
+        float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
+        float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
         
         //--Calculate Price
         float aPriceJobPost = (float)(priceJobPost * (dayExtend));
