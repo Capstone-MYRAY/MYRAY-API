@@ -12,6 +12,7 @@ using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.TreeJob;
 using MYRAY.Business.Services.Config;
+using MYRAY.Business.Services.Notification;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Services.JobPost;
@@ -322,6 +323,14 @@ public class JobPostService : IJobPostService
     {
         var jobPost = await _jobPostRepository.ApproveJobPost(jobPostId, approvedBy);
         var result = _mapper.Map<JobPostDetail>(jobPost);
+        // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "jobPost"},
+            {"jobPostId", jobPostId.ToString()}
+        };
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString(), $"Bài đăng đã được duyệt", $"Bài đăng {jobPost.Title} đã được duyệt", data);
+
         return result;
     }
 
@@ -329,6 +338,16 @@ public class JobPostService : IJobPostService
     {
         var jobPost = await _jobPostRepository.RejectJobPost(rejectJobPost, approvedBy);
         var result = _mapper.Map<JobPostDetail>(jobPost);
+        
+        // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "jobPost"},
+            {"jobPostId", jobPost.Id.ToString()}
+        };
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString(), $"Bài đăng của bạn đã bị từ chối", $"Bài đăng {jobPost.Title} không được duyệt", data);
+
+        
         return result;
     }
 

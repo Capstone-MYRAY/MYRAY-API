@@ -5,6 +5,7 @@ using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.AreaAccount;
 using MYRAY.Business.Repositories.Interface;
+using MYRAY.Business.Services.Notification;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.Account;
@@ -198,6 +199,14 @@ public class AccountRepository : IAccountRepository
         await _paymentHistoryRepository.InsertAsync(newPayment);
         
         await _dbContextFactory.SaveAllAsync();
+
+        // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "topUp"},
+            {"paymentHistoryId", newPayment.Id.ToString()}
+        };
+        await PushNotification.SendMessage(id.ToString(), "Nạp tiền thành công", $"Bạn đã nạp thành công {topUp}VND", data);
 
         return account;
     }

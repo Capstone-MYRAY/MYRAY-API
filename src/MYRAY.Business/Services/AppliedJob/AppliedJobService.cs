@@ -4,6 +4,7 @@ using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.AppliedJob;
+using MYRAY.Business.Services.Notification;
 
 namespace MYRAY.Business.Services.AppliedJob;
 
@@ -70,6 +71,14 @@ public class AppliedJobService : IAppliedJobService
     public async Task<DataTier.Entities.AppliedJob> ApplyJob(int jobId, int appliedBy)
     {
         var result = await _appliedJobRepository.ApplyJob(jobId, appliedBy);
+        // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "appliedFarmer"}
+        };
+        await PushNotification.SendMessage(result.JobPost.PublishedBy.ToString()
+            , $"Yêu cầu ứng tuyển", $"{result.AppliedByNavigation.Fullname} đã ứng tuyển vào công việc {result.JobPost.Title}", data);
+        
         return result;
     }
 
@@ -82,12 +91,30 @@ public class AppliedJobService : IAppliedJobService
     public async Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId)
     {
         var result = await _appliedJobRepository.ApproveJob(appliedJobId);
+        // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "appliedFarmer"}
+        };
+        await PushNotification.SendMessage(result.AppliedBy.ToString()
+            , $"Ứng tuyển thành công", $"{result.AppliedByNavigation.Fullname} đã được nhận vào công việc {result.JobPost.Title}", data);
+
+
         return result;
     }
 
     public async Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId)
     {
         var result = await _appliedJobRepository.RejectJob(appliedJobId);
+        
+        // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "appliedFarmer"}
+        };
+        await PushNotification.SendMessage(result.AppliedBy.ToString()
+            , $"Ứng tuyển không thành công", $"{result.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {result.JobPost.Title}", data);
+
         return result;
     }
 
