@@ -90,6 +90,7 @@ public class AppliedJobService : IAppliedJobService
 
     public async Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId)
     {
+        
         var result = await _appliedJobRepository.ApproveJob(appliedJobId);
         try
         {
@@ -115,7 +116,7 @@ public class AppliedJobService : IAppliedJobService
     {
         var result = await _appliedJobRepository.RejectJob(appliedJobId);
         
-        // Sent noti
+        // // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
             {"type", "appliedFarmer"}
