@@ -1,11 +1,16 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs;
+using MYRAY.Business.DTOs.Account;
 using MYRAY.Business.DTOs.ExtendTaskJob;
+using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.ExtendTaskJob;
+using MYRAY.Business.Services.Account;
+using MYRAY.Business.Services.JobPost;
+using MYRAY.Business.Services.Notification;
 
 namespace MYRAY.Business.Services.ExtendTaskJob;
 
@@ -13,10 +18,16 @@ public class ExtendTaskJobService : IExtendTaskJobService
 {
     private readonly IMapper _mapper;
     private readonly IExtendTaskJobRepository _extendTaskJobRepository;
-
-    public ExtendTaskJobService(IMapper mapper, IExtendTaskJobRepository extendTaskJobRepository)
+    private readonly IJobPostService _jobPostService;
+    private readonly IAccountService _accountService;
+    public ExtendTaskJobService(IMapper mapper, 
+        IExtendTaskJobRepository extendTaskJobRepository,
+        IAccountService accountService,
+        IJobPostService jobPostService)
     {
         _mapper = mapper;
+        _accountService = accountService;
+        _jobPostService = jobPostService;
         _extendTaskJobRepository = extendTaskJobRepository;
     }
 
@@ -52,6 +63,17 @@ public class ExtendTaskJobService : IExtendTaskJobService
         extendTaskJob.Status = (int?)ExtendTaskJobEnum.ExtendTaskJobStatus.Pending;
         extendTaskJob = await _extendTaskJobRepository.CreateExtendTaskJob(extendTaskJob);
         ExtendTaskJobDetail result = _mapper.Map<ExtendTaskJobDetail>(extendTaskJob);
+        JobPostDetail jobPost = await _jobPostService.GetJobPostById(((int)extendTaskJob.JobPostId));
+        GetAccountDetail accountDetail = await _accountService.GetAccountByIdAsync(extendTaskJob.RequestBy);
+        // // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "extendRequest"}
+        };
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString()
+            , $"Yêu cầu gia hạn", $"{accountDetail.Fullname} đã yêu cầu gia hạn công việc {jobPost.Title}", data);
+
+        
         return result;
     }
 
@@ -61,6 +83,17 @@ public class ExtendTaskJobService : IExtendTaskJobService
         extendTaskJob.RequestBy = requestBy;
         extendTaskJob = await _extendTaskJobRepository.UpdateExtendTaskJob(extendTaskJob);
         ExtendTaskJobDetail result = _mapper.Map<ExtendTaskJobDetail>(extendTaskJob);
+        JobPostDetail jobPost = await _jobPostService.GetJobPostById(((int)extendTaskJob.JobPostId));
+        GetAccountDetail accountDetail = await _accountService.GetAccountByIdAsync(extendTaskJob.RequestBy);
+        // // Sent noti
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            {"type", "extendRequest"}
+        };
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString()
+            , $"Thay đổi yêu cầu gia hạn", $"{accountDetail.Fullname} đã thay đổi yêu cầu gia hạn công việc {jobPost.Title}", data);
+
+        
         return result;
     }
 
