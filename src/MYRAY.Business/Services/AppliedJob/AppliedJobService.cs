@@ -91,14 +91,22 @@ public class AppliedJobService : IAppliedJobService
     public async Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId)
     {
         var result = await _appliedJobRepository.ApproveJob(appliedJobId);
-        // Sent noti
-        Dictionary<string, string> data = new Dictionary<string, string>()
+        try
         {
-            {"type", "appliedFarmer"}
-        };
-        await PushNotification.SendMessage(result.AppliedBy.ToString()
-            , $"Ứng tuyển thành công", $"{result.AppliedByNavigation.Fullname} đã được nhận vào công việc {result.JobPost.Title}", data);
-
+            // Sent noti
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+                {"type", "appliedFarmer"}
+            };
+            await PushNotification.SendMessage(result.AppliedBy.ToString()
+                , $"Ứng tuyển thành công", $"{result.AppliedByNavigation.Fullname} đã được nhận vào công việc {result.JobPost.Title}", data);
+        
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
 
         return result;
     }

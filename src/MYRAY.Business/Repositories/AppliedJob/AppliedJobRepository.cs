@@ -98,7 +98,8 @@ public class AppliedJobRepository : IAppliedJobRepository
 
    public async Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId)
    {
-      DataTier.Entities.AppliedJob? appliedJob = await _appliedJobRepository.GetByIdAsync(appliedJobId);
+      Expression<Func<DataTier.Entities.AppliedJob, object>> expApplied = job => job.AppliedByNavigation; 
+      DataTier.Entities.AppliedJob? appliedJob = await _appliedJobRepository.GetFirstOrDefaultAsync(a=>a.Id == appliedJobId, new []{expApplied});
       
       if (appliedJob == null)
       {
@@ -126,8 +127,9 @@ public class AppliedJobRepository : IAppliedJobRepository
 
    public async Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId)
    {
-      DataTier.Entities.AppliedJob? appliedJob = await _appliedJobRepository.GetByIdAsync(appliedJobId);
-      
+      Expression<Func<DataTier.Entities.AppliedJob, object>> expApplied = job => job.AppliedByNavigation; 
+      DataTier.Entities.AppliedJob? appliedJob = await _appliedJobRepository.GetFirstOrDefaultAsync(a=>a.Id == appliedJobId, new []{expApplied});
+
       if (appliedJob == null)
       {
          throw new MException(StatusCodes.Status400BadRequest, "Applied Job is not existed.");
