@@ -67,7 +67,7 @@ public class AccountController : ControllerBase
     /// <response code="204">Returns if list of account is empty.</response>
     /// <response code="401">Returns if token is access denied.</response>
     [HttpGet("GetModeratorNoManage")]
-    // [Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(IEnumerable<GetAccountDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetModeratorNoManage()
@@ -153,7 +153,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// [Moderator] Endpoint for create account
+    /// [Admin,Moderator] Endpoint for create account
     /// </summary>
     /// <param name="accountDto">Object contains account dto</param>
     /// <returns>IActionResult</returns>
@@ -163,7 +163,7 @@ public class AccountController : ControllerBase
     /// <response code="400">Returns if account input is empty or create error</response>
     /// <response code="401">Returns if token is access denied</response>
     [HttpPost]
-    [Authorize(Roles = UserRole.MODERATOR)]
+    [Authorize(Roles = UserRole.MODERATOR + "," + UserRole.ADMIN)]
     [ProducesResponseType(typeof(GetAccountDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAccountAsync(
         [FromBody] InsertAccountDto accountDto)
