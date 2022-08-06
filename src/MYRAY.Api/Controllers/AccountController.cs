@@ -273,7 +273,7 @@ public class AccountController : ControllerBase
     /// </summary>
     /// <param name="accountId">Id of  account</param>
     /// <returns>Async function</returns>
-    /// <response code="204">Returns the account top up success</response>
+    /// <response code="204">Returns the account ban success</response>
     /// <response code="400">Returns if account is not existed or invalid id.</response>
     [HttpDelete("ban/{accountId}")]
     [Authorize(Roles = UserRole.MODERATOR)]
@@ -284,6 +284,31 @@ public class AccountController : ControllerBase
             if (accountId == null) return BadRequest("Id is not empty");
 
             await _accountService.BanAccountByIdAsync(accountId);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    /// <summary>
+    /// [Moderator] Endpoint for unban account.
+    /// </summary>
+    /// <param name="accountId">Id of account</param>
+    /// <returns>Async function</returns>
+    /// <response code="204">Returns the account unban success</response>
+    /// <response code="400">Returns if account is not existed or invalid id.</response>
+    [HttpPatch("unban/{accountId}")]
+    [Authorize(Roles = UserRole.MODERATOR)]
+    public async Task<IActionResult> UnbanAccount(int? accountId)
+    {
+        try
+        {
+            if (accountId == null) return BadRequest("Id is not empty");
+
+            await _accountService.UnbanAccountByIdAsync(accountId);
             return NoContent();
         }
         catch (Exception e)

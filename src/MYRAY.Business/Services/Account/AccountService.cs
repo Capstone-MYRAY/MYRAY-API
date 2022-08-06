@@ -211,6 +211,25 @@ public class AccountService : IAccountService
         }
     }
 
+    public async Task<bool> UnbanAccountByIdAsync(int? id)
+    {
+        try
+        {
+            if (id == null)
+            {
+                throw new MException(StatusCodes.Status400BadRequest, "Id is null");
+            }
+
+            DataTier.Entities.Account unbanAccount = await _accountRepository.UnbanAccountByIdAsync((int)id);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, e.Message);
+        }
+    }
+
     /// <inheritdoc cref="IAccountService.TopUpAccountByIdAsync"/>
     public async Task<GetAccountDetail> TopUpAccountByIdAsync(int? id, float topUp, int createBy)
     {

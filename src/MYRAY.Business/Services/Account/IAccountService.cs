@@ -76,8 +76,13 @@ public interface IAccountService
     /// Ban an existed account.
     /// </summary>
     /// <param name="id">Id of account</param>
-    /// <returns></returns>
     public Task<bool> BanAccountByIdAsync(int? id);
+
+    /// <summary>
+    /// Unban existed account.
+    /// </summary>
+    /// <param name="id">Id of account.</param>
+    public Task<bool> UnbanAccountByIdAsync(int? id);
 
     /// <summary>
     /// Top up balance an existed account.

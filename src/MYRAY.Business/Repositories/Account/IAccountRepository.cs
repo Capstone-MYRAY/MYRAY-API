@@ -53,12 +53,19 @@ public interface IAccountRepository
     Task<DataTier.Entities.Account> DeleteAccountAsync(int id);
     
     /// <summary>
-    /// Ban an existed account account.
+    /// Ban an existed account.
     /// </summary>
     /// <param name="id">Id of account</param>
     /// <returns>An account</returns>
     Task<DataTier.Entities.Account> BanAccountByIdAsync(int id);
 
+    /// <summary>
+    /// Unban an existed account .
+    /// </summary>
+    /// <param name="id">Id of account</param>
+    /// <returns>An account.</returns>
+    Task<MYRAY.DataTier.Entities.Account> UnbanAccountByIdAsync(int id);
+    
     /// <summary>
     /// Top up balance for account
     /// </summary>

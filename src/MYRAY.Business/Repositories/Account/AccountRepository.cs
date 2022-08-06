@@ -146,6 +146,22 @@ public class AccountRepository : IAccountRepository
         return account;
     }
 
+    public async Task<DataTier.Entities.Account> UnbanAccountByIdAsync(int id)
+    {
+        DataTier.Entities.Account account = _accountRepository.GetById(id);
+        if (account == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Account is not existed", nameof(id));
+        }
+
+        account.Status = (int)AccountEnum.AccountStatus.Active;
+        _accountRepository?.Update(account);
+
+        await _dbContextFactory.SaveAllAsync();
+
+        return account;
+    }
+
     public async Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy)
     {
         DataTier.Entities.Account account = await _accountRepository.GetByIdAsync(id);
