@@ -1,5 +1,6 @@
 using AutoMapper;
 using MYRAY.Business.DTOs.Account;
+using MYRAY.Business.DTOs.Area;
 using MYRAY.Business.DTOs.Authentication;
 using MYRAY.DataTier.Entities;
 
@@ -16,7 +17,7 @@ public static class AccountProfiles
         configuration.CreateMap<InsertAccountDto, SignupRequest>().ReverseMap();
 
         configuration.CreateMap<AreaAccount, AreaAccountDetail>()
-            .ForMember(des => des.Address, otp => otp.MapFrom(src => 
+            .ForMember(des => des.Address, otp => otp.MapFrom(src =>
                 $"{src.Area.Commune} - {src.Area.District} - {src.Area.District}"));
     }
 }

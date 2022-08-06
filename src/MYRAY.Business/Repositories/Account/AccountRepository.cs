@@ -35,9 +35,10 @@ public class AccountRepository : IAccountRepository
     public async Task<DataTier.Entities.Account> GetAccountByIdAsync(int id)
     {
         Expression<Func<DataTier.Entities.Account, object>> expression = account => account.Role;
+        Expression<Func<DataTier.Entities.Account, object>> expressionArea = account => account.AreaAccounts;
         DataTier.Entities.Account queryAccount = 
             await _accountRepository.GetFirstOrDefaultAsync(a => a.Id == id && a.Status == (int?)AccountEnum.AccountStatus.Active, 
-                new []{expression});
+                new []{expression, expressionArea});
         if (queryAccount == null)
         {
             return null;

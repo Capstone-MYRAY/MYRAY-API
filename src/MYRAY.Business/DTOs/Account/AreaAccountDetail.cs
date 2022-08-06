@@ -1,3 +1,5 @@
+using MYRAY.Business.DTOs.Area;
+
 namespace MYRAY.Business.DTOs.Account;
 
 public class AreaAccountDetail

@@ -1,3 +1,5 @@
+using MYRAY.DataTier.Entities;
+
 namespace MYRAY.Business.DTOs.Account;
 
 public class GetAccountDetail
