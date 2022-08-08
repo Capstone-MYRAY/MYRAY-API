@@ -16,7 +16,7 @@ public interface IAccountRepository
     /// </summary>
     /// <param name="phoneNumber">Phone Number of Account</param>
     /// <returns>An account or null if not existed.</returns>
-    Task<DataTier.Entities.Account> GetAccountByPhoneAsync(string phoneNumber);
+    Task<DataTier.Entities.Account?> GetAccountByPhoneAsync(string phoneNumber);
 
     /// <summary>
     /// Get async account by Role Id

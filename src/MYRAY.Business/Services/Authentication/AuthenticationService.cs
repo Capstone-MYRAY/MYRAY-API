@@ -199,8 +199,13 @@ public class AuthenticationService : IAuthenticationService
                 throw new MException(StatusCodes.Status401Unauthorized, "Invalid Phone Number", phoneNumber);
             }
             
-            DataTier.Entities.Account account = await _accountRepository.GetAccountByPhoneAsync(
+            DataTier.Entities.Account? account = await _accountRepository.GetAccountByPhoneAsync(
                 phoneNumber);
+            if (account == null)
+            {
+                throw new MException(StatusCodes.Status400BadRequest, "Account not in system");
+            }
+            
             account.Password = CreatePassword(6);
             
             account = await _accountRepository.UpdateAccountAsync(account, null);

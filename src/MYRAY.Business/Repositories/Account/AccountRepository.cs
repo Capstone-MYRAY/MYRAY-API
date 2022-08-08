@@ -47,7 +47,7 @@ public class AccountRepository : IAccountRepository
         return queryAccount;
     }
 
-    public async Task<DataTier.Entities.Account> GetAccountByPhoneAsync(string phoneNumber)
+    public async Task<DataTier.Entities.Account?> GetAccountByPhoneAsync(string phoneNumber)
     {
         DataTier.Entities.Account queryAccount =
             await _accountRepository.GetFirstOrDefaultAsync(a =>
