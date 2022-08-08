@@ -202,7 +202,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost]
     [Route("resetpassword")]
     [ProducesResponseType(typeof(MessagingSenderId), StatusCodes.Status200OK)]
-    public async Task<IActionResult> SendSms([FromQuery]string phoneNumber)
+    public async Task<IActionResult> SendSms([FromBody]string phoneNumber)
     {
         try
         {
