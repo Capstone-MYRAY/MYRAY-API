@@ -206,7 +206,7 @@ public class AuthenticationController : ControllerBase
     {
         try
         {
-            var result = await _authentication.ResetPassword(phoneNumber);
+            var result = await _authentication.ResetPassword(phoneNumber.ConvertVNPhoneNumber());
             return Ok(result);
         }
         catch (Exception e)
