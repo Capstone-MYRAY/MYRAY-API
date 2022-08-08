@@ -23,56 +23,59 @@ public class RoleController: IClassFixture<ServerFixture<Program>>
 
     }
     
-    public class Version1
-    {
-        public class Get : RoleController
-        {
-            public Get(ServerFixture<Program> factory) : base(factory)
-            {
-            }
+    // public class Version1
+    // {
+    //     public class Get : RoleController
+    //     {
+    //         public Get(ServerFixture<Program> factory) : base(factory)
+    //         {
+    //         }
+    //
+    //         [Fact]
+    //         public async Task ShouldReturn200OK_WhenRequestedWithNoParams()
+    //         {
+    //             JToken httpMethod = _testData[GetType().Name]!;
+    //             JToken function = httpMethod[UtilText.CurrentMethod()]!;
+    //             // Arrange
+    //             var data = new Support.TestData(_baseRequestUrl, function);
+    //             
+    //             // Act
+    //             var responseObj = await _client.GetObjectFromApiAsync<IList<GetRoleDetail>>(data.RequestUrl);
+    //             string responseString = await responseObj.ResponseMessage.Content.ReadAsStringAsync();
+    //             var actualResponseBody = JToken.Parse(responseString);
+    //             
+    //             // Assert
+    //             Assert.Equal(data.ExpectedResponseCode, (int)responseObj.ResponseMessage.StatusCode);
+    //             Assert.NotNull(responseObj.Object);
+    //             
+    //             //--compare total records of return response
+    //             Assert.Equal((int)NumberOfItems.Role, (responseObj.Object as IList<GetRoleDetail>)!.Count);
+    //             
+    //             //--compare total attributes of return response
+    //             Assert.Contains(actualResponseBody.First, data.ExpectedResponseBody);
+    //
+    //         }
+    //         
+    //         [Fact]
+    //         public async Task ShouldReturn200OK_WhenRequestWithRoleIdExists()
+    //         {
+    //             // Arrange
+    //             JToken httpMethod = _testData[GetType().Name]!;
+    //             JToken function = httpMethod[UtilText.CurrentMethod()]!;
+    //             var data = new Support.TestData(_baseRequestUrl, function);
+    //           
+    //             // Act
+    //             HttpResponseMessage actualResponse = await _client.GetAsync(data.RequestUrl);
+    //             string responseString = await actualResponse.Content.ReadAsStringAsync();
+    //             JToken actualResponseBody = JToken.Parse(responseString);
+    //           
+    //             // Assert
+    //             Assert.Equal(data.ExpectedResponseCode, (int)actualResponse.StatusCode);
+    //             Assert.Equal(data.ExpectedResponseBody, actualResponseBody);
+    //         }
+    //     }
+    // }
+    //
+    //
     
-            [Fact]
-            public async Task ShouldReturn200OK_WhenRequestedWithNoParams()
-            {
-                JToken httpMethod = _testData[GetType().Name]!;
-                JToken function = httpMethod[UtilText.CurrentMethod()]!;
-                // Arrange
-                var data = new Support.TestData(_baseRequestUrl, function);
-                
-                // Act
-                var responseObj = await _client.GetObjectFromApiAsync<IList<GetRoleDetail>>(data.RequestUrl);
-                string responseString = await responseObj.ResponseMessage.Content.ReadAsStringAsync();
-                var actualResponseBody = JToken.Parse(responseString);
-                
-                // Assert
-                Assert.Equal(data.ExpectedResponseCode, (int)responseObj.ResponseMessage.StatusCode);
-                Assert.NotNull(responseObj.Object);
-                
-                //--compare total records of return response
-                Assert.Equal((int)NumberOfItems.Role, (responseObj.Object as IList<GetRoleDetail>)!.Count);
-                
-                //--compare total attributes of return response
-                Assert.Contains(actualResponseBody.First, data.ExpectedResponseBody);
-    
-            }
-            
-            [Fact]
-            public async Task ShouldReturn200OK_WhenRequestWithRoleIdExists()
-            {
-                // Arrange
-                JToken httpMethod = _testData[GetType().Name]!;
-                JToken function = httpMethod[UtilText.CurrentMethod()]!;
-                var data = new Support.TestData(_baseRequestUrl, function);
-              
-                // Act
-                HttpResponseMessage actualResponse = await _client.GetAsync(data.RequestUrl);
-                string responseString = await actualResponse.Content.ReadAsStringAsync();
-                JToken actualResponseBody = JToken.Parse(responseString);
-              
-                // Assert
-                Assert.Equal(data.ExpectedResponseCode, (int)actualResponse.StatusCode);
-                Assert.Equal(data.ExpectedResponseBody, actualResponseBody);
-            }
-        }
-    }
 }
