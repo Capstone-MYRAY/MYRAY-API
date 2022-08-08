@@ -28,7 +28,7 @@ public class ServerFixture<TP> : WebApplicationFactory<TP> where TP : class
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         base.ConfigureWebHost(builder);
-        Directory.CreateDirectory("upload");
+        Directory.CreateDirectory("upload");//
         builder.ConfigureServices(services =>
         {
             // Use InMemoryDb
