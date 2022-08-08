@@ -1,5 +1,5 @@
 {
-    "BaseRequestUrl": "/api/v1/position",
+    "BaseRequestUrl": "/api/v1/role",
     "Get": {
         "ShouldReturn200OK_WhenRequestedWithNoParams": {
             "RequestParams": {},

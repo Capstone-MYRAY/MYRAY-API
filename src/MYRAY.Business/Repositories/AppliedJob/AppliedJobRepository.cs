@@ -5,6 +5,7 @@ using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
+using static MYRAY.Business.Services.Notification.PushNotification;
 
 namespace MYRAY.Business.Repositories.AppliedJob;
 
@@ -105,6 +106,12 @@ public class AppliedJobRepository : IAppliedJobRepository
       {
          throw new MException(StatusCodes.Status400BadRequest, "Applied Job is not existed.");
       }
+
+      if (appliedJob.Status != (int?)AppliedJobEnum.AppliedJobStatus.Pending)
+      {
+         throw new MException(StatusCodes.Status400BadRequest, "Applied job is not pending");
+      }
+      
       appliedJob.Status = (int)AppliedJobEnum.AppliedJobStatus.Approve;
       appliedJob.ApprovedDate = DateTime.Now;
       _appliedJobRepository.Modify(appliedJob);
@@ -113,12 +120,41 @@ public class AppliedJobRepository : IAppliedJobRepository
       {
          IQueryable<DataTier.Entities.AppliedJob> rejectList = _appliedJobRepository.Get(a =>
             a.JobPostId == appliedJob.JobPostId
-            && a.AppliedBy != appliedJob.AppliedBy);
+            && a.AppliedBy != appliedJob.AppliedBy, new []{expApplied});
          List<DataTier.Entities.AppliedJob> listAppliedJob = await rejectList.ToListAsync();
-         listAppliedJob.ForEach(la =>
+         listAppliedJob.ForEach(async la =>
          {
             la.Status = (int)AppliedJobEnum.AppliedJobStatus.Reject;
+            // // Sent noti
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+               {"type", "appliedFarmer"}
+            };
+           await SendMessage(la.AppliedBy.ToString()
+               , $"Ứng tuyển không thành công", $"{la.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {la.JobPost.Title}", data);
          });
+         
+         
+      }
+
+      if (jobPost!.Type.Equals("PayPerHourJob"))
+      {
+         IQueryable<DataTier.Entities.AppliedJob> rejectList = _appliedJobRepository.Get(a =>
+            a.JobPost.Type.Equals("PayPerHourJob")
+            && a.AppliedBy == appliedJob.AppliedBy, new []{expApplied});
+         List<DataTier.Entities.AppliedJob> listAppliedJob = await rejectList.ToListAsync();
+         listAppliedJob.ForEach(async la =>
+         {
+            la.Status = (int)AppliedJobEnum.AppliedJobStatus.Reject;
+            // // Sent noti
+            Dictionary<string, string> data = new Dictionary<string, string>()
+            {
+               {"type", "appliedFarmer"}
+            };
+            await SendMessage(la.AppliedBy.ToString()
+               , $"Ứng tuyển không thành công", $"{la.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {la.JobPost.Title}", data);
+         });
+
       }
       await _contextFactory.SaveAllAsync();
 

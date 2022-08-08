@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MYRAY.Api.IntegrationTest.Helper;
+using MYRAY.Business.Repositories;
+using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Api.IntegrationTest;
@@ -46,7 +48,8 @@ public class ServerFixture<TP> : WebApplicationFactory<TP> where TP : class
             {
                 IServiceProvider scopedService = scope.ServiceProvider;
                 MYRAYContext db = scopedService.GetRequiredService<MYRAYContext>();
-                
+                DbContextFactory dbContextFactory = scopedService.GetRequiredService<DbContextFactory>();
+                    // dbContextFactory.Configuration.
                 try
                 {
                     db.Database.EnsureDeleted();
