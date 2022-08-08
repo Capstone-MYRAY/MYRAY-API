@@ -223,7 +223,7 @@ public class AccountController : ControllerBase
     /// <returns>Async function</returns>
     /// <response code="204">Returns the account deleted</response>
     /// <response code="404">Returns if account is not existed.</response>
-    [Authorize(Roles = UserRole.MODERATOR)]
+    [Authorize(Roles = UserRole.MODERATOR + ","+ UserRole.ADMIN)]
     [HttpDelete("{accountId}")]
     public async Task<IActionResult> DeleteAccountAsync(int? accountId)
     {
