@@ -217,7 +217,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// [Moderator] Endpoint for delete account.
+    /// [Admin, Moderator] Endpoint for delete account.
     /// </summary>
     /// <param name="accountId">Id of  account</param>
     /// <returns>Async function</returns>
@@ -269,14 +269,14 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// [Moderator] Endpoint for ban account.
+    /// [Admin, Moderator] Endpoint for ban account.
     /// </summary>
     /// <param name="accountId">Id of  account</param>
     /// <returns>Async function</returns>
     /// <response code="204">Returns the account ban success</response>
     /// <response code="400">Returns if account is not existed or invalid id.</response>
     [HttpDelete("ban/{accountId}")]
-    [Authorize(Roles = UserRole.MODERATOR)]
+    [Authorize(Roles = UserRole.MODERATOR + "," + UserRole.ADMIN)]
     public async Task<IActionResult> BanAccount(int? accountId)
     {
         try
