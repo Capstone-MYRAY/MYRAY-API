@@ -361,7 +361,7 @@ public class JobPostController : ControllerBase
     }
 
     /// <summary>
-    /// [Landowner] Endpoint for get all account apply to job post
+    /// [Authenticated User] Endpoint for get all account apply to job post
     /// </summary>
     /// <param name="status">Status of applied</param>
     /// <param name="jobPostId">Id of job post</param>
@@ -372,7 +372,7 @@ public class JobPostController : ControllerBase
     /// <response code="204">Returns if list of account is empty.</response>
     /// <response code="401">Returns if token is access denied.</response>
     [HttpGet("applied")]
-    [Authorize(Roles = UserRole.LANDOWNER)]
+    [Authorize(Roles = UserRole.LANDOWNER + "," + UserRole.FARMER)]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAppliedLandowner(
