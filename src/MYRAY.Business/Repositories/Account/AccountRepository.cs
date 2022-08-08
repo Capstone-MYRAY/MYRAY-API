@@ -223,7 +223,7 @@ public class AccountRepository : IAccountRepository
             {"type", "topUp"},
             {"paymentHistoryId", newPayment.Id.ToString()}
         };
-        await PushNotification.SendMessage(id.ToString(), "Nạp tiền thành công", $"Bạn đã nạp thành công {topUp}VND", data);
+        await PushNotification.SendMessage(id.ToString(), "Nạp tiền thành công", $"Bạn đã nạp thành công {topUp}đ", data);
 
         return account;
     }
