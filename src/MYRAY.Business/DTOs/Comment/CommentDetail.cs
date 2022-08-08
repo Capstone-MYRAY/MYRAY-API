@@ -7,4 +7,6 @@ public class CommentDetail
     public int CommentBy { get; set; }
     public string? Content { get; set; }
     public DateTime CreateDate { get; set; }
+    public string Avatar { get; set; }
+    public string Fullname { get; set; }
 }

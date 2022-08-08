@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Report;
 using MYRAY.Business.Enums;
@@ -20,7 +21,8 @@ public class ReportService : IReportService
     }
 
 
-    public ResponseDto.CollectiveResponse<ReportDetail> GetReport(SearchReport searchReport, PagingDto pagingDto, SortingDto<ReportEnum.ReportSortCriterial> sortingDto)
+    public ResponseDto.CollectiveResponse<ReportDetail> GetReport(SearchReport searchReport, PagingDto pagingDto,
+        SortingDto<ReportEnum.ReportSortCriterial> sortingDto)
     {
         IQueryable<DataTier.Entities.Report> query = _reportRepository.GetReports();
 
@@ -30,6 +32,13 @@ public class ReportService : IReportService
 
         var result = query.GetWithPaging<ReportDetail, DataTier.Entities.Report>(pagingDto, _mapper);
 
+        return result;
+    }
+
+    public async Task<List<ReportDetail>?> GetReportByReportedId(int reported)
+    {
+        IQueryable<DataTier.Entities.Report> listReport = _reportRepository.GetReportsByReportedId(reported);
+        List<ReportDetail> result = await _mapper.ProjectTo<ReportDetail>(listReport).ToListAsync();
         return result;
     }
 
@@ -81,8 +90,8 @@ public class ReportService : IReportService
 
     public async Task<ReportDetail> DeleteReport(int id)
     {
-         DataTier.Entities.Report report = await _reportRepository.DeleteReport(id);
-         ReportDetail result = _mapper.Map<ReportDetail>(report);
-         return result;
+        DataTier.Entities.Report report = await _reportRepository.DeleteReport(id);
+        ReportDetail result = _mapper.Map<ReportDetail>(report);
+        return result;
     }
 }

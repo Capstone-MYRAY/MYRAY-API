@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
 using MYRAY.DataTier.Entities;
@@ -18,9 +19,10 @@ public class CommentRepository : ICommentRepository
 
     public IQueryable<DataTier.Entities.Comment> GetCommentByGuidePost(int id)
     {
+        Expression<Func<DataTier.Entities.Comment, object>> expAccount = comment => comment.CommentByNavigation;
         IQueryable<DataTier.Entities.Comment> query =
             _commentRepository.Get(c => c.GuidepostId == id && c.Status 
-                == (int?)CommentEnum.CommentStatus.Active);
+                == (int?)CommentEnum.CommentStatus.Active, new []{expAccount});
         return query;
     }
 

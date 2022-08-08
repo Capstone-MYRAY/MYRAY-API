@@ -54,6 +54,29 @@ public class ReportController : ControllerBase
         return Ok(result);
     }
 
+    
+    /// <summary>
+    /// [Authenticated user] Endpoint for get all report with reported id.
+    /// </summary>
+    /// <param name="reportId">Id of account has been reported.</param>
+    /// <returns>List of report.</returns>
+    /// <response code="200">Returns the list of report.</response>
+    /// <response code="204">Returns if list of report is empty.</response>
+    /// <response code="403">Returns if token is access denied.</response>
+    [HttpGet("reported/{reportId}")]
+    [Authorize]
+    [ProducesResponseType(typeof(List<ReportDetail>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetReportByReportedId(int reportId)
+    {
+        var result = await _reportService.GetReportByReportedId(reportId);
+        if (result != null && !result.Any())
+        {
+            return NoContent();
+        }
+
+        return Ok(result);
+    }
+
     /// <summary>
     /// [Authenticated user] Endpoint for get report information by Identifier.
     /// </summary>

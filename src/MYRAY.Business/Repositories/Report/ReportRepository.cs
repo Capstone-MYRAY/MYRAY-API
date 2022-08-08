@@ -23,6 +23,15 @@ public class ReportRepository : IReportRepository
         return query;
     }
 
+    public IQueryable<DataTier.Entities.Report> GetReportsByReportedId(int reportedId)
+    {
+        IQueryable<DataTier.Entities.Report> query =
+            _reportRepository.Get(r => r.Status != (int?)ReportEnum.ReportStatus.Deleted 
+                                       && r.ReportedId == reportedId);
+
+        return query;
+    }
+
     public async Task<DataTier.Entities.Report> GetReportById(int id)
     {
         DataTier.Entities.Report report =

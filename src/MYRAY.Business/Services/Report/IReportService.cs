@@ -10,7 +10,8 @@ public interface IReportService
         SearchReport searchReport,
         PagingDto pagingDto,
         SortingDto<ReportEnum.ReportSortCriterial> sortingDto);
-    
+
+    Task<List<ReportDetail>?> GetReportByReportedId(int reported);
     Task<ReportDetail> GetReportById(int id);
     Task<ReportDetail> GetOneReportById(int jobPostId, int reportedId, int createById);
     Task<ReportDetail> CreateReport(CreateReport report, int createBy);
