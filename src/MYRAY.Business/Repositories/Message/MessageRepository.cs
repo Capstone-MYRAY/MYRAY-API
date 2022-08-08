@@ -117,7 +117,7 @@ public class MessageRepository : IMessageRepository
         IEnumerable<DataTier.Entities.JobPost> listConventions = _messageRepository
             .Get(includeProperties: new []{expPublish})
             .AsNoTracking()
-            .Where(m => m.ConventionId.EndsWith(farmerIdS))
+            .Where(m => m.ConventionId.EndsWith(farmerIdS) && (m.ToId == farmerId || m.FromId == farmerId))
             .AsEnumerable()
             .DistinctBy(m => m.ConventionId)
             .Select(m => m.JobPost);
