@@ -18,6 +18,8 @@ public static class AreaProfiles
         configuration.CreateMap<AreaAccount, AccountManagerArea>()
             .ForMember(des => des.Fullname,
                 opt => opt.MapFrom(src => src.Account.Fullname))
+            .ForMember(des => des.PhoneNumber,
+                opt => opt.MapFrom(src => src.Account.PhoneNumber))
             .ReverseMap();
     }
 }

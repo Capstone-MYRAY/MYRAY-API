@@ -1,24 +1,43 @@
 {
-    "BaseRequestUrl": "/api/v1/role",
-    "Get": {
-        "ShouldReturn200OK_WhenRequestedWithNoParams": {
-            "RequestParams": {},
-            "RequestBody": [],
-            "ResponseBody": [
-                {
-                    "ids": "1",
-                    "position_name": "Team lead"
-                },
-                {
-                    "id": "2",
-                    "position_name": "Architecture"
-                },
-                {
-                    "id": "3",
-                    "position_name": "Web Developer"
-                }
-            ],
-            "ResponseCode": 200
+  "BaseRequestUrl": "/api/v1/role",
+  "Get": {
+    "ShouldReturn200OK_WhenRequestedWithNoParams": {
+      "RequestParams": {},
+      "RequestBody": [],
+      "ResponseBody": [
+        {
+          "id": 1,
+          "name": "Admin",
+          "description": "Admin"
+        },
+        {
+          "id": 2,
+          "name": "Moderator",
+          "description": "Moderator"
+        },
+        {
+          "id": 3,
+          "name": "Landowner",
+          "description": "Landowner"
+        },
+        {
+          "id": 4,
+          "name": "Farmer",
+          "description": "Farmer"
         }
+      ],
+      "ResponseCode": 200
+    },
+    "ShouldReturn200OK_WhenRequestWithRoleIdExists": {
+      "RequestPathParam": "/1",
+      "RequestParams": {},
+      "RequestBody": [],
+      "ResponseBody": {
+        "id": 1,
+        "name": "Admin",
+        "description": "Admin"
+      },
+      "ResponseCode": 200
     }
+  }
 }

@@ -31,16 +31,19 @@ public class ServerFixture<TP> : WebApplicationFactory<TP> where TP : class
         builder.ConfigureServices(services =>
         {
             // Use InMemoryDb
-            var descriptor = services.SingleOrDefault(
-                d => d.ServiceType ==
-                     typeof(DbContextOptions<MYRAYContext>));
-
-            services.Remove(descriptor!);
+            // var descriptor = services.SingleOrDefault(
+            //     d => d.ServiceType ==
+            //          typeof(DbContextOptions<MYRAYContext>));
+            // var dbContextFactory = services.SingleOrDefault(
+            //     d => d.ServiceType == typeof(DbContextFactory));
+            // services.Remove(descriptor!);
+            // services.Remove(dbContextFactory!);
                 
             services.AddDbContext<MYRAYContext>(option =>
             {
-                option.UseInMemoryDatabase("InMemoryDbForTesting");
+                 option.UseInMemoryDatabase("InMemoryDbForTesting");
             });
+            services.AddScoped<IDbContextFactory, DbContextFactoryFake>();
             
             
             ServiceProvider sp = services.BuildServiceProvider();
@@ -48,8 +51,7 @@ public class ServerFixture<TP> : WebApplicationFactory<TP> where TP : class
             {
                 IServiceProvider scopedService = scope.ServiceProvider;
                 MYRAYContext db = scopedService.GetRequiredService<MYRAYContext>();
-                DbContextFactory dbContextFactory = scopedService.GetRequiredService<DbContextFactory>();
-                    // dbContextFactory.Configuration.
+                // dbContextFactory.Configuration.
                 try
                 {
                     db.Database.EnsureDeleted();

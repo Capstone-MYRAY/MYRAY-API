@@ -33,10 +33,10 @@ public static class Utilities
     {
         List<Role> listRole = new List<Role>()
         {
-            new() { Id = 1, Name = "Admin", Status = 1 },
-            new() { Id = 2, Name = "Moderator", Status = 1 },
-            new() { Id = 3, Name = "Landowner", Status = 1 },
-            new() { Id = 4, Name = "Farmer", Status = 1 },
+            new() { Id = 1, Name = "Admin", Description = "Admin", Status = 1 },
+            new() { Id = 2, Name = "Moderator",Description = "Moderator", Status = 1 },
+            new() { Id = 3, Name = "Landowner",Description = "Landowner", Status = 1 },
+            new() { Id = 4, Name = "Farmer",Description = "Farmer", Status = 1 },
         };
         db.Roles.AddRange(listRole);
     }
