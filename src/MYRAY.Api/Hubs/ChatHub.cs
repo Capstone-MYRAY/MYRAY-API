@@ -88,6 +88,10 @@ public class ChatHub : Hub
         }
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="farmerId"></param>
     public async Task GetListMessageForFarmer(int farmerId)
     {
         ObjectInfo? info = _connectionService.GetConnectionById(farmerId);

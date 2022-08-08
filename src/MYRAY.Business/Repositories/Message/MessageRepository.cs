@@ -57,7 +57,7 @@ public class MessageRepository : IMessageRepository
             .Where(m => m.JobPost.PublishedBy == landownerId)
             .Select(m => m.JobPost).Distinct();
         List<DataTier.Entities.JobPost> listJobPost = await queryJobPost.ToListAsync();
-        if (queryJobPost.Any())
+        if (listJobPost.Any())
             result = new List<MessageJobPost>();
 
         if(listJobPost.Any())
@@ -70,7 +70,7 @@ public class MessageRepository : IMessageRepository
                     .Get(includeProperties: new []{expFrom, expTo})
                     .AsNoTracking()
                     .OrderByDescending(m => m.CreatedDate)
-                    .Where(m => m.ConventionId.Contains(conventionId))
+                    .Where(m => m.ConventionId.Contains(conventionId) && (m.ToId == landownerId || m.FromId == landownerId))
                     .AsEnumerable()
                     .DistinctBy(m => m.ConventionId);
                 List<DataTier.Entities.Message> messageToFarmer = listFarmer.ToList();
