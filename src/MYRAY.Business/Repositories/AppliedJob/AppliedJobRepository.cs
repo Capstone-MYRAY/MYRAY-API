@@ -140,7 +140,7 @@ public class AppliedJobRepository : IAppliedJobRepository
       if (jobPost!.Type.Equals("PayPerHourJob"))
       {
          IQueryable<DataTier.Entities.AppliedJob> rejectList = _appliedJobRepository.Get(a =>
-            a.JobPost.Type.Equals("PayPerHourJob")
+            a.JobPost.Type.Equals("PayPerHourJob") &&  a.Id != appliedJob.Id
             && a.AppliedBy == appliedJob.AppliedBy, new []{expApplied});
          List<DataTier.Entities.AppliedJob> listAppliedJob = await rejectList.ToListAsync();
          listAppliedJob.ForEach(async la =>
