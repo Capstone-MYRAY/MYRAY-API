@@ -16,7 +16,8 @@ public interface IJobPostRepository
     IQueryable<MYRAY.DataTier.Entities.JobPost> GetInProgressJobPost();
     Task<DataTier.Entities.JobPost> GetJobPostById(int id);
 
-    Task<PayPerHourJob> GetPayPerHourJob(int jobPostId);
+    Task<PayPerHourJob?> GetPayPerHourJob(int jobPostId);
+    Task<PayPerTaskJob?> GetPayPerTaskJob(int jobPostId);
 
     Task<DataTier.Entities.JobPost> CreateJobPost(
         DataTier.Entities.JobPost jobPost, 

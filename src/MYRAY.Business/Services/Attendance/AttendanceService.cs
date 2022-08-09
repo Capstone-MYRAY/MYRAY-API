@@ -38,7 +38,12 @@ public class AttendanceService : IAttendanceService
             throw new Exception("Job post is not approved");
         }
 
-        PayPerHourJob payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
+        if (jobPost.Type.Equals("PayPerHourJob"))
+        {
+            
+        }
+        PayPerHourJob? payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
+        PayPerTaskJob? payPerTaskJob = await _jobPostRepository.GetPayPerTaskJob(jobPost.Id);
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, attendance.AccountId);
         DataTier.Entities.Attendance? existedAttendance =
@@ -49,14 +54,15 @@ public class AttendanceService : IAttendanceService
             throw new Exception("You have been attended");
         }
 
+        bool isHourJob = jobPost.Type.Equals("PayPerHourJob");
         int point = (attendance.Status == AttendanceEnum.AttendanceStatus.Present
                      || attendance.Status == AttendanceEnum.AttendanceStatus.End)
             ? 1
             : 0;
-        double salary = (attendance.Status == AttendanceEnum.AttendanceStatus.Present
-                         || attendance.Status == AttendanceEnum.AttendanceStatus.End)
-            ? payPerHourJob.Salary
-            : 0;
+        double salary = (double)((attendance.Status == AttendanceEnum.AttendanceStatus.Present
+                                  || attendance.Status == AttendanceEnum.AttendanceStatus.End)
+            ? (isHourJob ? payPerHourJob.Salary : payPerTaskJob.Salary)
+            : 0);
         DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = attendance.DateAttendance,
