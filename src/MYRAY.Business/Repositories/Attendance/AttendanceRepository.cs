@@ -58,9 +58,10 @@ public class AttendanceRepository : IAttendanceRepository
 
     public async Task<double?> GetTotalExpense(int jobPostId)
     {
+        
         IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a =>
             a.AppliedJob.JobPostId == jobPostId
-            && a.Date.Value <= DateTime.Today);
+            && a.Date.Value.Date <= DateTime.Today);
         double? totalExpense = await query.SumAsync(a => a.Salary);
         return totalExpense;
     }
