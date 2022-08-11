@@ -9,12 +9,12 @@ public class UpdateJobPost
     public int Id { get; set; }
     [Required]
     public int GardenId { get; set; }
-    public ICollection<CreateTreeJob> TreeJobs { get; set; }
+    public ICollection<CreateTreeJob>? TreeJobs { get; set; }
     [Required]
     public string Title { get; set; }
     public DateTime? StartJobDate { get; set; }
     public DateTime? EndJobDate { get; set; }
-    public int? NumPublishDay { get; set; }
+    public int? WorkTypeId { get; set; }
     public int PublishedBy { get; set; }
     public DateTime? PublishedDate { get; set; }
     public string? Description { get; set; }

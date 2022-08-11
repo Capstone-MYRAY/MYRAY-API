@@ -39,6 +39,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<TreeJob> TreeJobs { get; set; } = null!;
         public virtual DbSet<TreeType> TreeTypes { get; set; } = null!;
+        public virtual DbSet<WorkType> WorkTypes { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -551,15 +552,9 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.GardenId).HasColumnName("garden_id");
 
-                entity.Property(e => e.NumPublishDay).HasColumnName("num_publish_day");
-
                 entity.Property(e => e.PostTypeId).HasColumnName("post_type_id");
 
                 entity.Property(e => e.PublishedBy).HasColumnName("published_by");
-
-                entity.Property(e => e.PublishedDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("published_date");
 
                 entity.Property(e => e.ReasonReject).HasColumnName("reason_reject");
 
@@ -595,6 +590,8 @@ namespace MYRAY.DataTier.Entities
                     .HasColumnType("datetime")
                     .HasColumnName("updated_date");
 
+                entity.Property(e => e.WorkTypeId).HasColumnName("work_type_id");
+
                 entity.HasOne(d => d.ApprovedByNavigation)
                     .WithMany(p => p.JobPostApprovedByNavigations)
                     .HasForeignKey(d => d.ApprovedBy)
@@ -615,6 +612,11 @@ namespace MYRAY.DataTier.Entities
                     .WithMany(p => p.JobPostPublishedByNavigations)
                     .HasForeignKey(d => d.PublishedBy)
                     .HasConstraintName("FK_JobPost_Account1");
+
+                entity.HasOne(d => d.WorkType)
+                    .WithMany(p => p.JobPosts)
+                    .HasForeignKey(d => d.WorkTypeId)
+                    .HasConstraintName("FK_JobPost__WorkType");
             });
 
             modelBuilder.Entity<Message>(entity =>
@@ -745,13 +747,9 @@ namespace MYRAY.DataTier.Entities
 
                 entity.Property(e => e.JobPostId).HasColumnName("job_post_id");
 
-                entity.Property(e => e.JobPostPrice).HasColumnName("job_post_price");
-
                 entity.Property(e => e.Message)
                     .HasMaxLength(100)
                     .HasColumnName("message");
-
-                entity.Property(e => e.NumberPublishedDay).HasColumnName("number_published_day");
 
                 entity.Property(e => e.PointPrice).HasColumnName("point_price");
 
@@ -950,6 +948,19 @@ namespace MYRAY.DataTier.Entities
                 entity.Property(e => e.Type)
                     .HasMaxLength(50)
                     .HasColumnName("type");
+            });
+
+            modelBuilder.Entity<WorkType>(entity =>
+            {
+                entity.ToTable("WorkType");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Name).HasColumnName("name");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((1))");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -20,6 +20,7 @@ using MYRAY.Business.Services.Report;
 using MYRAY.Business.Services.Role;
 using MYRAY.Business.Services.Statistic;
 using MYRAY.Business.Services.TreeType;
+using MYRAY.Business.Services.WorkType;
 
 namespace MYRAY.Business.Services;
 
@@ -53,6 +54,7 @@ public static class ModuleRegister
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IExtendTaskJobService, ExtendTaskJobService>();
         services.AddScoped<IStatisticService, StatisticService>();
+        services.AddScoped<IWorkTypeService, WorkTypeService>();
         
         services.AddSingleton<IConnectionService, ConnectionService>();
     }

@@ -21,6 +21,7 @@ using MYRAY.Business.Repositories.Role;
 using MYRAY.Business.Repositories.Statistic;
 using MYRAY.Business.Repositories.TreeJob;
 using MYRAY.Business.Repositories.TreeType;
+using MYRAY.Business.Repositories.WorkType;
 
 
 namespace MYRAY.Business.Repositories;
@@ -56,6 +57,7 @@ public static class ModuleRegister
         services.AddTransient<IExtendTaskJobRepository, ExtendTaskJobRepository>();
         services.AddTransient<IStatisticRepository, StatisticRepository>();
         services.AddTransient<IConfigRepository, ConfigRepository>();
+        services.AddTransient<IWorkTypeRepository, WorkTypeRepository>();
         
         return services;
     }

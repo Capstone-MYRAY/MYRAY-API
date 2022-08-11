@@ -9,12 +9,13 @@ public class CreateJobPost
 {
     [Required]
     public int GardenId { get; set; }
-    public virtual ICollection<CreateTreeJob> TreeJobs { get; set; }
+    public virtual ICollection<CreateTreeJob>? TreeJobs { get; set; }
     [Required]
     public string Title { get; set; }
     public DateTime? StartJobDate { get; set; }
     public DateTime? EndJobDate { get; set; }
-    public int? NumPublishDay { get; set; }
+    
+    public int? WorkTypeId { get; set; }
     public string? Description { get; set; }
     public DateTime? PublishedDate { get; set; }
 

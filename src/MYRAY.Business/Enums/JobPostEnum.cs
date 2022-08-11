@@ -52,7 +52,6 @@ public class JobPostEnum
     
     public enum JobPostSortCriteria
     {
-        PublishedDate,
         CreatedDate,
         ApprovedDate
     }

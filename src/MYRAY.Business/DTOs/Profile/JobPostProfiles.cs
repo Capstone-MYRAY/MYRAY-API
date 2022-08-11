@@ -12,8 +12,10 @@ public static class JobPostProfiles
     public static void ConfigJobPost(this IMapperConfigurationExpression configuration)
     {
         configuration.CreateMap<DataTier.Entities.JobPost, JobPostDetail>()
-            .ForMember(des => des.PublishedName,
-                expression => expression.MapFrom(src => src.PublishedByNavigation!.Fullname))
+            .ForMember(des => des.GardenLat,
+                expression => expression.MapFrom(src => src.Garden.Latitudes))
+            .ForMember(des => des.GardenLon,
+                expression => expression.MapFrom(src => src.Garden.Longitudes))
             .ForMember(des => des.GardenName,
                 otp => otp.MapFrom(src => src.Garden.Name))
             .ForMember(des => des.Address,

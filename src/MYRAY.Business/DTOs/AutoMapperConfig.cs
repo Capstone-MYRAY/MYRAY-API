@@ -35,6 +35,7 @@ public static class AutoMapperConfig
             md.ConfigTreeJob();
             md.ConfigMessageModule();
             md.ConfigExtendTaskModule();
+            md.ConfigWorkType();
         });
         IMapper mapper = mappingConfig.CreateMapper();
         services.AddSingleton(mapper);

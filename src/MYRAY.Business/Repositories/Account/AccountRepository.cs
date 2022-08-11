@@ -208,7 +208,6 @@ public class AccountRepository : IAccountRepository
             UsedPoint = 0,
             BelongedId = account.Id,
             Message =  (topUp > 0 ? "Nạp " : "Rút " ) + "tiền vào tài khoản",
-            JobPostPrice = 0,
             PointPrice = 0
         };
         //-- End Add Payment

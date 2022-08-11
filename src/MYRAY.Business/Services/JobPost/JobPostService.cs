@@ -65,6 +65,7 @@ public class JobPostService : IJobPostService
         {
             query = query.Where(j => j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Done);
         }
+
         if (isFarmer)
         {
             listPin = _jobPostRepository.GetPinPost().ToList();
@@ -73,8 +74,9 @@ public class JobPostService : IJobPostService
         }
 
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
-
+      
         var result = query.GetWithPaging<JobPostDetail, DataTier.Entities.JobPost>(pagingDto, _mapper);
+         
         if (isFarmer)
         {
             var listP = _mapper.ProjectTo<JobPostDetail>(_jobPostRepository.GetPinPost());
@@ -83,7 +85,7 @@ public class JobPostService : IJobPostService
 
         return result;
     }
-    
+
     public async Task<JobPostDetail> GetJobPostById(int id)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(id);
@@ -93,6 +95,7 @@ public class JobPostService : IJobPostService
 
     public async Task<JobPostDetail> CreateJobPost(CreateJobPost jobPost, int publishedBy)
     {
+        // Create pin date
         ICollection<PinDate> listPin = null!;
         if (jobPost.PinDate != null && jobPost.NumberPinDay != null)
         {
@@ -120,11 +123,10 @@ public class JobPostService : IJobPostService
         newJobPost.Status = (int?)JobPostEnum.JobPostStatus.Pending;
 
 
-        //--Get Setting From Json File
-        float priceJobPost = float.Parse((_configRepository.GetConfigByKey("JobPost"))!);
-        float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
-        float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
-        
+        //--Get Setting From Db Config
+        float pricePoint = float.Parse(_configRepository.GetConfigByKey("Point")!);
+        float earnPoint = float.Parse(_configRepository.GetConfigByKey("EarnPoint")!);
+
         //--Get more information to calculate
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
         float aPricePinPost = 0;
@@ -144,8 +146,8 @@ public class JobPostService : IJobPostService
         }
 
         //--Calculate Price
-        float aPriceJobPost = (float)(priceJobPost * newJobPost.NumPublishDay);
         float aPriceUsePoint = 0;
+
         //-- Check use point
         if (jobPost.UsePoint != null || jobPost.UsePoint != 0)
         {
@@ -159,17 +161,15 @@ public class JobPostService : IJobPostService
             CreatedBy = publishedBy,
             Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Pending,
             CreatedDate = DateTime.Now,
-            ActualPrice = aPriceJobPost + aPricePinPost,
-            BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
-            Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
-            EarnedPoint = (int?)Math.Round((aPriceJobPost + aPricePinPost - aPriceUsePoint) / earnPoint),
+            ActualPrice = aPricePinPost,
+            BalanceFluctuation = -(aPricePinPost - aPriceUsePoint),
+            Balance = accountPost.Balance - (aPricePinPost - aPriceUsePoint),
+            EarnedPoint = (int?)Math.Round((aPricePinPost - aPriceUsePoint) / earnPoint),
             UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + newJobPost.Id,
             TotalPinDay = jobPost.NumberPinDay,
-            NumberPublishedDay = jobPost.NumPublishDay,
             PostTypePrice = (int?)postTypePrice,
-            JobPostPrice = priceJobPost,
             PointPrice = (int?)pricePoint
         };
         if (newPayment.Balance < 0)
@@ -197,7 +197,8 @@ public class JobPostService : IJobPostService
         ICollection<PinDate> list = queryPin.ToList();
         _jobPostRepository.DeletePinDate(list);
         _treeJobRepository.DeleteTreeJob(jobPost.Id);
-        _treeJobRepository.InsertTreeJob(jobPost.TreeJobs, jobPost.Id);
+        if (jobPost.TreeJobs != null)
+            _treeJobRepository.InsertTreeJob(jobPost.TreeJobs, jobPost.Id);
         //-- Insert PinDate Again
         ICollection<PinDate> listPin = null!;
         if (jobPost.PinDate != null && jobPost.NumberPinDay != null)
@@ -228,10 +229,9 @@ public class JobPostService : IJobPostService
         //-- Add Payment
 
         //--Get Setting From Json File
-        float priceJobPost = float.Parse((_configRepository.GetConfigByKey("JobPost"))!);
         float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
         float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
-        
+
         //--Get more information to calculate
         DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync(publishedBy);
 
@@ -252,7 +252,6 @@ public class JobPostService : IJobPostService
         }
 
         //--Calculate Price
-        float aPriceJobPost = (float)(priceJobPost * updateJobPost.NumPublishDay);
         float aPriceUsePoint = 0;
         //-- Check use point
         if (jobPost.UsePoint != null || jobPost.UsePoint != 0)
@@ -267,17 +266,16 @@ public class JobPostService : IJobPostService
             CreatedBy = publishedBy,
             Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Pending,
             CreatedDate = DateTime.Now,
-            ActualPrice = aPriceJobPost + aPricePinPost,
-            BalanceFluctuation = -(aPricePinPost + aPriceJobPost - aPriceUsePoint),
-            Balance = accountPost.Balance - (aPricePinPost + aPriceJobPost - aPriceUsePoint),
-            EarnedPoint = (int?)((aPriceJobPost + aPricePinPost) / earnPoint),
+            ActualPrice = aPricePinPost,
+            BalanceFluctuation = -(aPricePinPost - aPriceUsePoint),
+            Balance = accountPost.Balance - (aPricePinPost - aPriceUsePoint),
+            EarnedPoint = (int?)((aPricePinPost - aPriceUsePoint) / earnPoint),
             UsedPoint = jobPost.UsePoint ?? 0,
             BelongedId = publishedBy,
             Message = "Tạo bài đăng mới #" + updateJobPost.Id,
             TotalPinDay = jobPost.NumberPinDay,
-            NumberPublishedDay = jobPost.NumPublishDay,
-            PostTypePrice = (int?)postTypePrice, 
-            JobPostPrice = priceJobPost,
+            // NumberPublishedDay = jobPost.NumPublishDay,
+            PostTypePrice = (int?)postTypePrice,
             PointPrice = (int?)pricePoint
         };
         //-- End Add Payment
@@ -297,7 +295,7 @@ public class JobPostService : IJobPostService
         var result = _mapper.Map<JobPostDetail>(updateJobPost);
         return result;
     }
-    
+
     public async Task<JobPostDetail> DeleteJobPost(int jobPostId)
     {
         DataTier.Entities.JobPost deleteGuidepost = await _jobPostRepository.DeleteJobPost(jobPostId);
@@ -326,10 +324,11 @@ public class JobPostService : IJobPostService
         // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
-            {"type", "jobPost"},
-            {"jobPostId", jobPostId.ToString()}
+            { "type", "jobPost" },
+            { "jobPostId", jobPostId.ToString() }
         };
-        await PushNotification.SendMessage(jobPost.PublishedBy.ToString(), $"Bài đăng đã được duyệt", $"Bài đăng {jobPost.Title} đã được duyệt", data);
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString(), $"Bài đăng đã được duyệt",
+            $"Bài đăng {jobPost.Title} đã được duyệt", data);
 
         return result;
     }
@@ -338,16 +337,17 @@ public class JobPostService : IJobPostService
     {
         var jobPost = await _jobPostRepository.RejectJobPost(rejectJobPost, approvedBy);
         var result = _mapper.Map<JobPostDetail>(jobPost);
-        
+
         // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
-            {"type", "jobPost"},
-            {"jobPostId", jobPost.Id.ToString()}
+            { "type", "jobPost" },
+            { "jobPostId", jobPost.Id.ToString() }
         };
-        await PushNotification.SendMessage(jobPost.PublishedBy.ToString(), $"Bài đăng của bạn đã bị từ chối", $"Bài đăng {jobPost.Title} không được duyệt", data);
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString(), $"Bài đăng của bạn đã bị từ chối",
+            $"Bài đăng {jobPost.Title} không được duyệt", data);
 
-        
+
         return result;
     }
 
@@ -360,82 +360,82 @@ public class JobPostService : IJobPostService
 
     public async Task<JobPostDetail> ExtendJobPostForLandowner(int jobPostId, DateTime dateTimeExtend, int usePoint = 0)
     {
-        var jobPost = await _jobPostRepository.GetJobPostById(jobPostId);
-        if (jobPost == null)
-        {
-            throw new Exception("Job Post is not existed");
-        }
+        // var jobPost = await _jobPostRepository.GetJobPostById(jobPostId);
+        // if (jobPost == null)
+        // {
+        //     throw new Exception("Job Post is not existed");
+        // }
+        //
+        // if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.Posted)
+        // {
+        //     throw new Exception("Job post is not posted");
+        // }
 
-        if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.Posted)
-        {
-            throw new Exception("Job post is not posted");
-        }
-        
-        DateTime dateExpired = jobPost.PublishedDate.Value.AddDays((double)jobPost.NumPublishDay - 1);
+        // DateTime dateExpired = jobPost.PublishedDate.Value.AddDays((double)jobPost.NumPublishDay - 1);
 
-        if (dateExpired >= dateTimeExtend)
-        {
-            throw new Exception("Datetime extend not less than current end date");
-        }
+        // if (dateExpired >= dateTimeExtend)
+        // {
+        //     throw new Exception("Datetime extend not less than current end date");
+        // }
 
-        int? numberOfDayBefore = jobPost.NumPublishDay;
-        int? dayExtend = dateTimeExtend.DayOfYear - dateExpired.DayOfYear;
-        jobPost.NumPublishDay = numberOfDayBefore + dayExtend;
-        
-        
+        // int? numberOfDayBefore = jobPost.NumPublishDay;
+        // int? dayExtend = dateTimeExtend.DayOfYear - dateExpired.DayOfYear;
+        // jobPost.NumPublishDay = numberOfDayBefore + dayExtend;
+
+
         //--Get Setting From Json File
-        float priceJobPost = float.Parse((_configRepository.GetConfigByKey("JobPost"))!);
-        float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
-        float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
-        
+        // float pricePoint = float.Parse((_configRepository.GetConfigByKey("Point"))!);
+        // float earnPoint = float.Parse((_configRepository.GetConfigByKey("EarnPoint"))!);
+
         //--Calculate Price
-        float aPriceJobPost = (float)(priceJobPost * (dayExtend));
-        float aPriceUsePoint = usePoint * pricePoint;
-        
+        // float aPriceJobPost = (float)(priceJobPost * (dayExtend));
+        // float aPriceUsePoint = usePoint * pricePoint;
+
         //--Get more information to calculate
-        DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync((int)jobPost.PublishedBy);
-        
-        PaymentHistory newPayment = new PaymentHistory
-        {
-            JobPostId = jobPost.Id,
-            CreatedBy = jobPost.PublishedBy,
-            Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid,
-            CreatedDate = DateTime.Now,
-            ActualPrice = aPriceJobPost,
-            BalanceFluctuation = -(aPriceJobPost - aPriceUsePoint),
-            Balance = accountPost.Balance - (aPriceJobPost - aPriceUsePoint),
-            EarnedPoint = (int?)(aPriceJobPost / earnPoint),
-            UsedPoint = usePoint,
-            BelongedId = (int)jobPost.PublishedBy,
-            Message = $"Gia hạn bài đăng #{jobPost.Id} thêm {dayExtend} ngày",
-            JobPostPrice = priceJobPost,
-            PointPrice = (int?)pricePoint,
-            NumberPublishedDay = dayExtend 
-        };
-        
-        if (newPayment.Balance < 0)
-        {
-            throw new Exception("You not enough money to post job");
-        }
+        // DataTier.Entities.Account accountPost = await _accountRepository.GetAccountByIdAsync((int)jobPost.PublishedBy);
 
-        if (accountPost.Point < newPayment.UsedPoint)
-        {
-            throw new Exception("You not enough point to post job");
-        }
+        // PaymentHistory newPayment = new PaymentHistory
+        // {
+        // JobPostId = jobPost.Id,
+        // CreatedBy = jobPost.PublishedBy,
+        // Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid,
+        // CreatedDate = DateTime.Now,
+        // ActualPrice = aPriceJobPost,
+        // BalanceFluctuation = -(aPriceJobPost - aPriceUsePoint),
+        // Balance = accountPost.Balance - (aPriceJobPost - aPriceUsePoint),
+        // EarnedPoint = (int?)(aPriceJobPost / earnPoint),
+        // UsedPoint = usePoint,
+        // BelongedId = (int)jobPost.PublishedBy,
+        // Message = $"Gia hạn bài đăng #{jobPost.Id} thêm {dayExtend} ngày",
+        // PointPrice = (int?)pricePoint,
+        // NumberPublishedDay = dayExtend 
+        // };
 
-        accountPost.Balance -= (aPriceJobPost - aPriceUsePoint);
-        accountPost.Point += (newPayment.EarnedPoint - usePoint);
-        
-        await _jobPostRepository.ExtendJobPostForLandowner(jobPost, newPayment, accountPost);
-            
-        var result = _mapper.Map<JobPostDetail>(jobPost);
-        return result;
+        // if (newPayment.Balance < 0)
+        // {
+        //     throw new Exception("You not enough money to post job");
+        // }
+        //
+        // if (accountPost.Point < newPayment.UsedPoint)
+        // {
+        //     throw new Exception("You not enough point to post job");
+        // }
+
+        // accountPost.Balance -= (aPriceJobPost - aPriceUsePoint);
+        // accountPost.Point += (newPayment.EarnedPoint - usePoint);
+
+        // await _jobPostRepository.ExtendJobPostForLandowner(jobPost, newPayment, accountPost);
+        //     
+        // var result = _mapper.Map<JobPostDetail>(jobPost);
+        // return result;
+        return null;
     }
 
-    public async Task<IEnumerable<DateTime>> ListDateNoPin(DateTime publishedDate, int numberOfDayPublish, int postTypeId)
+    public async Task<IEnumerable<DateTime>> ListDateNoPin(DateTime publishedDate, int numberOfDayPublish,
+        int postTypeId)
     {
         if (numberOfDayPublish <= 0) throw new Exception("Number of Publish is incorrect");
-        
+
         ICollection<DateTime> result = new List<DateTime>();
         DateTime endPublishedDate = publishedDate.Date.AddDays(numberOfDayPublish);
         DateTime startDate = publishedDate;
@@ -444,6 +444,7 @@ public class JobPostService : IJobPostService
             result.Add(startDate);
             startDate = startDate.Date.AddDays(1);
         }
+
         IQueryable<PinDate> pinDates =
             _jobPostRepository.GetExistedPinDateOnRange(publishedDate, numberOfDayPublish, postTypeId);
         List<PinDate> list = await pinDates.ToListAsync();
@@ -454,10 +455,9 @@ public class JobPostService : IJobPostService
         }
 
         return result;
-        
     }
 
-    public async Task<int> MaxNumberOfPinDate(DateTime pinDate,int numberPublishDay,  int postTypeId)
+    public async Task<int> MaxNumberOfPinDate(DateTime pinDate, int numberPublishDay, int postTypeId)
     {
         IQueryable<PinDate> pinDates = _jobPostRepository.GetNearPinDateByPinDate(pinDate, postTypeId);
         PinDate? nearPinDate = await pinDates.FirstOrDefaultAsync();
