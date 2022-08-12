@@ -14,7 +14,6 @@ public class CreateJobPost
     public string Title { get; set; }
     public DateTime? StartJobDate { get; set; }
     public DateTime? EndJobDate { get; set; }
-    
     public int? WorkTypeId { get; set; }
     public string? Description { get; set; }
     public DateTime? PublishedDate { get; set; }

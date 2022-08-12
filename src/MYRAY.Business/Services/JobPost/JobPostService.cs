@@ -1,3 +1,4 @@
+using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -59,12 +60,51 @@ public class JobPostService : IJobPostService
                                         || post.Status == (int?)JobPostEnum.JobPostStatus.Expired);
         }
 
-        query = query.GetWithSearch(searchJobPost);
+        #region FilterJobPost
+        // query = query.GetWithSearch(searchJobPost);
+        if (searchJobPost.Title.Length != 0)
+        {
+            query = query.Where(j => j.Title.ToLower().Contains(searchJobPost.Title.ToLower()));
+        }
 
+        if (searchJobPost.Status != null)
+        {
+            query = query.Where(j => j.Status == searchJobPost.Status);
+        }
+
+        if (searchJobPost.StatusWork != null)
+        {
+            query = query.Where(j => j.StatusWork == searchJobPost.StatusWork);
+        }
+
+        if (searchJobPost.Type.Length != 0)
+        {
+            query = query.Where(j => j.Type.ToLower().Equals(searchJobPost.Type.ToLower()));
+        }
+
+        if (searchJobPost.GardenId != null)
+        {
+            query = query.Where(j => j.GardenId == searchJobPost.GardenId);
+        }
+        
         if (searchJobPost.IsNotEndWork is true)
         {
             query = query.Where(j => j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Done);
         }
+
+        if (searchJobPost.Province != null)
+        {
+            var utf8 = Encoding.Latin1;
+            byte[] utfByte = utf8.GetBytes("Lâm đồng");
+            string myString = utf8.GetString(utfByte, 0, utfByte.Length);
+            Console.OutputEncoding = Encoding.UTF8;
+        
+            Console.WriteLine(myString);
+            // query = query.Where(j => j.Garden.Area.Province!.ToLower().Equals(searchJobPost.Province.ToLower()));
+        }
+        
+    
+        
 
         if (isFarmer)
         {
@@ -72,11 +112,11 @@ public class JobPostService : IJobPostService
             var pinId = listPin.Select(x => x.Id);
             query = query.Where(p => !pinId.Contains(p.Id));
         }
-
+        #endregion
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
-      
+
         var result = query.GetWithPaging<JobPostDetail, DataTier.Entities.JobPost>(pagingDto, _mapper);
-         
+
         if (isFarmer)
         {
             var listP = _mapper.ProjectTo<JobPostDetail>(_jobPostRepository.GetPinPost());

@@ -36,6 +36,7 @@ namespace MYRAY.DataTier.Entities
         public int? PostTypeId { get; set; }
         public int? TotalPinDay { get; set; }
         public DateTime? StartPinDate { get; set; }
+        public DateTime? PublishedDate { get; set; }
 
         public virtual Account? ApprovedByNavigation { get; set; }
         public virtual Garden Garden { get; set; } = null!;

@@ -19,7 +19,9 @@ public class JobPostDetail
     public DateTime? StartJobDate { get; set; }
     public DateTime? EndJobDate { get; set; }
     public int? WorkTypeId { get; set; }
+    public string WorkTypeName { get; set; }
     public int PublishedBy { get; set; }
+    public DateTime? PublishedDate { get; set; }
   
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
