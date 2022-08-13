@@ -12,7 +12,7 @@
     "MYRAY.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "",
       "applicationUrl": "https://localhost:443;http://localhost:8080",
       "environmentVariables": {

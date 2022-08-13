@@ -40,11 +40,12 @@ public class JobPostRepository : IJobPostRepository
         Expression<Func<DataTier.Entities.JobPost, object>> expGarden = post => post.Garden;
         Expression<Func<DataTier.Entities.JobPost, object>> expArea = post => post.Garden.Area;
         Expression<Func<DataTier.Entities.JobPost, object>> expWork = post => post.WorkType;
+        Expression<Func<DataTier.Entities.JobPost, object>> expTreeJob = post => post.TreeJobs;
         bool flag = publishBy != null;
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(post =>
                 post.Status != (int?)JobPostEnum.JobPostStatus.Deleted &&
                 (!flag || post.PublishedBy == publishBy),
-            new[] { expHours, expTask , expGarden, expArea, expWork});
+            new[] { expHours, expTask , expGarden, expArea, expWork, expTreeJob});
         return query;
     }
 

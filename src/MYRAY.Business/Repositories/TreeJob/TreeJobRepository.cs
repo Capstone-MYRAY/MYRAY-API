@@ -22,6 +22,12 @@ public class TreeJobRepository : ITreeJobRepository
         return query;
     }
 
+    public IQueryable<DataTier.Entities.TreeJob> GetTreeJobs()
+    {
+        IQueryable<DataTier.Entities.TreeJob> query = _treeJobRepository.Get();
+        return query;
+    }
+
     public void InsertTreeJob(ICollection<CreateTreeJob> treeJobs, int jobPostId)
     {
         foreach (var tf in treeJobs)

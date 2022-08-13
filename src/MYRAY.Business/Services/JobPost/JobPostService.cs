@@ -1,18 +1,16 @@
-using System.Text;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
-using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.Config;
 using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.PostType;
 using MYRAY.Business.Repositories.TreeJob;
-using MYRAY.Business.Services.Config;
+using MYRAY.Business.Repositories.TreeType;
 using MYRAY.Business.Services.Notification;
 using MYRAY.DataTier.Entities;
 
@@ -25,6 +23,7 @@ public class JobPostService : IJobPostService
     private readonly IAccountRepository _accountRepository;
     private readonly IPostTypeRepository _postTypeRepository;
     private readonly ITreeJobRepository _treeJobRepository;
+    private readonly ITreeTypeRepository _treeTypeRepository;
     private readonly IConfiguration _configuration;
     private readonly IConfigRepository _configRepository;
 
@@ -33,6 +32,7 @@ public class JobPostService : IJobPostService
         IAccountRepository accountRepository,
         IPostTypeRepository postTypeRepository,
         ITreeJobRepository treeJobRepository,
+        ITreeTypeRepository treeTypeRepository,
         IConfigRepository configRepository,
         IConfiguration configuration)
     {
@@ -43,6 +43,7 @@ public class JobPostService : IJobPostService
         _postTypeRepository = postTypeRepository;
         _treeJobRepository = treeJobRepository;
         _configRepository = configRepository;
+        _treeTypeRepository = treeTypeRepository;
     }
 
     public ResponseDto.CollectiveResponse<JobPostDetail> GetJobPosts(
@@ -61,6 +62,7 @@ public class JobPostService : IJobPostService
         }
 
         #region FilterJobPost
+
         // query = query.GetWithSearch(searchJobPost);
         if (searchJobPost.Title.Length != 0)
         {
@@ -86,7 +88,7 @@ public class JobPostService : IJobPostService
         {
             query = query.Where(j => j.GardenId == searchJobPost.GardenId);
         }
-        
+
         if (searchJobPost.IsNotEndWork is true)
         {
             query = query.Where(j => j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Done);
@@ -94,17 +96,65 @@ public class JobPostService : IJobPostService
 
         if (searchJobPost.Province != null)
         {
-            var utf8 = Encoding.Latin1;
-            byte[] utfByte = utf8.GetBytes("Lâm đồng");
-            string myString = utf8.GetString(utfByte, 0, utfByte.Length);
-            Console.OutputEncoding = Encoding.UTF8;
-        
-            Console.WriteLine(myString);
-            // query = query.Where(j => j.Garden.Area.Province!.ToLower().Equals(searchJobPost.Province.ToLower()));
+            query = query.Where(j => j.Garden.Area.Province!.ToLower().Contains(searchJobPost.Province.ToLower()));
         }
-        
-    
-        
+
+        if (searchJobPost.District != null)
+        {
+            query = query.Where(j => j.Garden.Area.District!.ToLower().Contains(searchJobPost.District.ToLower()));
+        }
+
+        if (searchJobPost.Commune != null)
+        {
+            query = query.Where(j => j.Garden.Area.Commune!.ToLower().Contains(searchJobPost.Commune.ToLower()));
+        }
+
+        if (searchJobPost.WorkTypeId != null)
+        {
+            query = query.Where(j => j.WorkTypeId == searchJobPost.WorkTypeId);
+        }
+
+        if (searchJobPost.StartDateFrom != null)
+        {
+            query = query.Where(j =>
+                j.StartJobDate == null || j.StartJobDate.Value.Date >= searchJobPost.StartDateFrom.Value.Date);
+        }
+
+        if (searchJobPost.StartDateTo != null)
+        {
+            query = query.Where(j => j.StartJobDate == null || j.StartJobDate.Value.Date <= searchJobPost.StartDateTo);
+        }
+
+        if (searchJobPost.SalaryFrom != null)
+        {
+            query = query.Where(j =>
+                j.PayPerHourJob.Salary >= searchJobPost.SalaryFrom
+                || j.PayPerTaskJob.Salary >= searchJobPost.SalaryFrom);
+        }
+
+        if (searchJobPost.SalaryTo != null)
+        {
+            query = query.Where(j =>
+                j.PayPerHourJob.Salary <= searchJobPost.SalaryTo
+                || j.PayPerTaskJob.Salary <= searchJobPost.SalaryTo);
+        }
+
+
+        if (searchJobPost.TreeType != null)
+        {
+            string[] treeTypeList = searchJobPost.TreeType.Trim().Split(",");
+            int[] treeTypeId = treeTypeList.Select(int.Parse).ToArray();
+            var jobPostId =
+                _treeJobRepository
+                    .GetTreeJobs()
+                    .Where(tt => treeTypeId.Contains(tt.TreeTypeId))
+                    .Select(tj => tj.JobPostId)
+                    .ToList();
+            query = query.Where(j => jobPostId.Contains(j.Id));
+        }
+
+
+        List<DataTier.Entities.JobPost> test = query.ToList();
 
         if (isFarmer)
         {
@@ -112,7 +162,9 @@ public class JobPostService : IJobPostService
             var pinId = listPin.Select(x => x.Id);
             query = query.Where(p => !pinId.Contains(p.Id));
         }
+
         #endregion
+
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
 
         var result = query.GetWithPaging<JobPostDetail, DataTier.Entities.JobPost>(pagingDto, _mapper);
