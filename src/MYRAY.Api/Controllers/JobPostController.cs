@@ -676,4 +676,24 @@ public class JobPostController : ControllerBase
             return BadRequest(e);
         }
     }
+
+    /// <summary>
+    /// [Landowner] Endpoint for switch status of job post shorthanded <-> enough.
+    /// </summary>
+    /// <param name="jobPostId">Id of job post.</param>
+    [HttpPatch("switch/{jobPostId}")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    public async Task<IActionResult> SwitchStatus([Required] int jobPostId)
+    {
+        try
+        {
+            await _jobPostService.SwitchStatusJob(jobPostId);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e);
+        }
+    }
 }

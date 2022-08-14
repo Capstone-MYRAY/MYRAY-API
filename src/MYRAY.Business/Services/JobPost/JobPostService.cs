@@ -399,7 +399,7 @@ public class JobPostService : IJobPostService
 
     public async Task SwitchStatusJob(int jobPostId)
     {
-        // _jobPostRepository
+        await _jobPostRepository.SwitchStatusJob(jobPostId);
     }
 
     public async Task<JobPostDetail> EndJobPost(int jobPostId)

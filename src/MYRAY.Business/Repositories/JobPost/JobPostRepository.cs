@@ -19,6 +19,7 @@ public class JobPostRepository : IJobPostRepository
     private readonly IBaseRepository<DataTier.Entities.PaymentHistory> _paymentHistoryRepository;
     private readonly IBaseRepository<DataTier.Entities.Account> _accountRepository;
     private readonly IBaseRepository<DataTier.Entities.TreeJob> _treeJobRepository;
+    private readonly IBaseRepository<DataTier.Entities.AppliedJob> _appliedRepository;
 
     public JobPostRepository(IDbContextFactory contextFactory)
     {
@@ -31,6 +32,7 @@ public class JobPostRepository : IJobPostRepository
         _paymentHistoryRepository = context.GetRepository<DataTier.Entities.PaymentHistory>()!;
         _accountRepository = context.GetRepository<DataTier.Entities.Account>()!;
         _treeJobRepository = context.GetRepository<DataTier.Entities.TreeJob>()!;
+        _appliedRepository = context.GetRepository<DataTier.Entities.AppliedJob>()!;
     }
 
     public IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null)
@@ -45,7 +47,7 @@ public class JobPostRepository : IJobPostRepository
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(post =>
                 post.Status != (int?)JobPostEnum.JobPostStatus.Deleted &&
                 (!flag || post.PublishedBy == publishBy),
-            new[] { expHours, expTask , expGarden, expArea, expWork, expTreeJob});
+            new[] { expHours, expTask, expGarden, expArea, expWork, expTreeJob });
         return query;
     }
 
@@ -108,10 +110,10 @@ public class JobPostRepository : IJobPostRepository
         Expression<Func<DataTier.Entities.JobPost, object>> expGarden = post => post.Garden;
         Expression<Func<DataTier.Entities.JobPost, object>> expTree = post => post.TreeJobs;
         Expression<Func<DataTier.Entities.JobPost, object>> expWorkType = post => post.WorkType;
-        
+
         DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetFirstOrDefaultAsync(
             j => j.Id == id && j.Status != (int?)JobPostEnum.JobPostStatus.Deleted,
-            new[] { expHours, expTask, expGarden, expTree ,expWorkType}))!;
+            new[] { expHours, expTask, expGarden, expTree, expWorkType }))!;
         return jobPost;
     }
 
@@ -119,7 +121,7 @@ public class JobPostRepository : IJobPostRepository
     {
         return await _payPerHourRepository.GetFirstOrDefaultAsync(pph => pph.Id == jobPostId);
     }
-    
+
     public async Task<PayPerTaskJob?> GetPayPerTaskJob(int jobPostId)
     {
         return await _payPerTaskRepository.GetFirstOrDefaultAsync(pph => pph.Id == jobPostId);
@@ -228,10 +230,41 @@ public class JobPostRepository : IJobPostRepository
             throw new MException(StatusCodes.Status400BadRequest, "Job post is not existed");
         }
 
+        if (jobPost.Status != (int?)JobPostEnum.JobPostStatus.ShortHandled
+            && jobPost.Status != (int?)JobPostEnum.JobPostStatus.Enough)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Invalid Job Post Status");
+        }
+
         if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.ShortHandled)
         {
-            
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.Enough;
         }
+        else
+        {
+            int totalApplied = _appliedRepository.Get(a =>
+                a.JobPostId == jobPost.Id && a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve).Count();
+
+            if (jobPost.Type.Equals("PayPerHourJob"))
+            {
+                PayPerHourJob perHourJob = (await _payPerHourRepository.GetByIdAsync(jobPost.Id))!;
+                if (perHourJob.MaxFarmer == totalApplied)
+                {
+                    throw new MException(StatusCodes.Status400BadRequest, "Job post is full farmer");
+                }
+            }
+            else
+            {
+                if (totalApplied == 1)
+                {
+                    throw new MException(StatusCodes.Status400BadRequest, "Job post is full farmer");
+                }
+            }
+
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.ShortHandled;
+        }
+
+        await _contextFactory.SaveAllAsync();
     }
 
     public async Task<DataTier.Entities.JobPost> EndJobPost(int id)
@@ -242,6 +275,7 @@ public class JobPostRepository : IJobPostRepository
         {
             throw new Exception("Job post has been end");
         }
+
         jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Done;
         await _contextFactory.SaveAllAsync();
         return jobPost;
@@ -386,7 +420,7 @@ public class JobPostRepository : IJobPostRepository
 
         ICollection<PinDate> list = queryPin.ToList();
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Approved;
-       
+
 
         jobPost.ApprovedDate = DateTime.Now;
         jobPost.ApprovedBy = approvedBy;
@@ -457,7 +491,7 @@ public class JobPostRepository : IJobPostRepository
         {
             throw new MException(StatusCodes.Status400BadRequest, "Max farmer must lager than old max farmer");
         }
-        
+
         payPerHour.MaxFarmer = maxFarmer;
         _jobPost.Status = (int?)JobPostEnum.JobPostStatus.ShortHandled;
         await _contextFactory.SaveAllAsync();
@@ -526,7 +560,7 @@ public class JobPostRepository : IJobPostRepository
     public async Task StartJob()
     {
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
-            (j.Status == (int?)JobPostEnum.JobPostStatus.Posted || j.Status ==(int?) JobPostEnum.JobPostStatus.Expired)
+            (j.Status == (int?)JobPostEnum.JobPostStatus.Posted || j.Status == (int?)JobPostEnum.JobPostStatus.Expired)
             && j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Started
             && j.StartJobDate.Value.Date == DateTime.Today);
 
