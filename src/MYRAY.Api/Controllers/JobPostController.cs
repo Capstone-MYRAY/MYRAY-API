@@ -437,7 +437,7 @@ public class JobPostController : ControllerBase
     public async Task<IActionResult> CheckAppliedJob(int jobPostId)
     {
         var accountId = int.Parse(User.FindFirst("id")?.Value!);
-        AppliedJob? appliedJob = await _appliedJobService.CheckApplied(jobPostId, accountId);
+        AppliedJobDetail? appliedJob = await _appliedJobService.CheckApplied(jobPostId, accountId);
         if (appliedJob == null)
         {
             return Ok();

@@ -279,8 +279,8 @@ public class JobPostService : IJobPostService
         newJobPost = await _jobPostRepository.CreateJobPost(newJobPost, newJobPost.PayPerHourJob,
             newJobPost.PayPerTaskJob, listPin, newPayment);
         //-- Done Insert Job Post
-
-        var result = _mapper.Map<JobPostDetail>(newJobPost);
+        DataTier.Entities.JobPost cjp = await _jobPostRepository.GetJobPostById(newJobPost.Id);
+        var result = _mapper.Map<JobPostDetail>(cjp);
         return result;
     }
 
