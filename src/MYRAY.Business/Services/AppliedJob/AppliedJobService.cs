@@ -3,7 +3,10 @@ using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Helpers.Paging;
+using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.AppliedJob;
+using MYRAY.Business.Repositories.JobPost;
+using MYRAY.Business.Services.JobPost;
 using MYRAY.Business.Services.Notification;
 
 namespace MYRAY.Business.Services.AppliedJob;
@@ -12,11 +15,18 @@ public class AppliedJobService : IAppliedJobService
 {
     private readonly IMapper _mapper;
     private readonly IAppliedJobRepository _appliedJobRepository;
+    private readonly IJobPostRepository _jobPostRepository;
+    private readonly IAccountRepository _accountRepository;
 
-    public AppliedJobService(IMapper mapper, IAppliedJobRepository appliedJobRepository)
+    public AppliedJobService(IMapper mapper, 
+        IAppliedJobRepository appliedJobRepository,
+        IAccountRepository accountRepository,
+        IJobPostRepository jobPostRepository)
     {
         _mapper = mapper;
         _appliedJobRepository = appliedJobRepository;
+        _jobPostRepository = jobPostRepository;
+        _accountRepository = accountRepository;
     }
 
 
@@ -68,17 +78,19 @@ public class AppliedJobService : IAppliedJobService
         return result;
     }
 
-    public async Task<DataTier.Entities.AppliedJob> ApplyJob(int jobId, int appliedBy)
+    public async Task<AppliedJobDetail> ApplyJob(int jobId, int appliedBy)
     {
-        var result = await _appliedJobRepository.ApplyJob(jobId, appliedBy);
+        var applied = await _appliedJobRepository.ApplyJob(jobId, appliedBy);
         // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
             {"type", "appliedFarmer"}
         };
-        await PushNotification.SendMessage(result.JobPost.PublishedBy.ToString()
-            , $"Yêu cầu ứng tuyển", $"{result.AppliedByNavigation.Fullname} đã ứng tuyển vào công việc {result.JobPost.Title}", data);
-        
+        DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(applied.JobPostId);
+        DataTier.Entities.Account applyBy = await _accountRepository.GetAccountByIdAsync(applied.AppliedBy);
+        await PushNotification.SendMessage(jobPost.PublishedBy.ToString()!
+            , $"Yêu cầu ứng tuyển", $"{applyBy.Fullname} đã ứng tuyển vào công việc {jobPost.Title}", data);
+        var result = _mapper.Map<AppliedJobDetail>(applied);
         return result;
     }
 

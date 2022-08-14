@@ -24,7 +24,7 @@ public interface IAppliedJobService
         int farmerId, 
         AppliedJobEnum.AppliedJobStatus? status = null, int? startWork = null);
 
-    public Task<DataTier.Entities.AppliedJob> ApplyJob(int jobId, int appliedBy);
+    public Task<AppliedJobDetail> ApplyJob(int jobId, int appliedBy);
     public Task<DataTier.Entities.AppliedJob> CancelApply(int jobId, int appliedBy);
     public Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId);
     public Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId);
