@@ -29,6 +29,8 @@ public interface IJobPostService
 
     Task<JobPostDetail> StartJobPost(int jobPostId);
 
+    Task ExtendMaxFarmer(int jobPostId, int maxFarmer);
+    
     Task<JobPostDetail> ExtendJobPostForLandowner(int jobPostId, DateTime dateTimeExtend, int usePoint = 0);
 
     Task<IEnumerable<DateTime>> ListDateNoPin(DateTime publishedDate, int numberOfDayPublish, int postTypeId);

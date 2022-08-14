@@ -11,6 +11,7 @@ using MYRAY.Business.Services.JobPost;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Api.Controllers;
+
 /// <summary>
 /// Handle request related to jobpost
 /// </summary>
@@ -48,14 +49,14 @@ public class JobPostController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<JobPostDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<JobPostDetail>), StatusCodes.Status200OK)]
     public Task<IActionResult> GetJobPost(
         [FromQuery] SearchJobPost searchJobPost,
         [FromQuery] SortingDto<JobPostEnum.JobPostSortCriteria> sortingDto,
         [FromQuery] PagingDto pagingDto, int? publishBy = null)
     {
         var isFarmer = User.IsInRole(UserRole.FARMER);
-        var result =  _jobPostService.GetJobPosts(searchJobPost, pagingDto, sortingDto, publishBy, isFarmer);
+        var result = _jobPostService.GetJobPosts(searchJobPost, pagingDto, sortingDto, publishBy, isFarmer);
         if (result == null)
         {
             return Task.FromResult<IActionResult>(NoContent());
@@ -63,7 +64,7 @@ public class JobPostController : ControllerBase
 
         return Task.FromResult<IActionResult>(Ok(result));
     }
-    
+
     /// <summary>
     /// [Authenticated user] Endpoint for get job post information by Identifier.
     /// </summary>
@@ -74,14 +75,13 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if not authorize</response>
     [HttpGet("{jobPostId}")]
     [Authorize]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetJobPostById(int jobPostId)
     {
         try
         {
-            
             var result = await _jobPostService.GetJobPostById(jobPostId);
-            
+
             return Ok(result);
         }
         catch (Exception e)
@@ -89,7 +89,7 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for create job post
     /// </summary>
@@ -102,7 +102,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPost]
     [Authorize]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateJobPost(CreateJobPost createJobPost)
     {
         try
@@ -119,7 +119,7 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for update job post
     /// </summary>
@@ -130,7 +130,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpPut]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateJobPost(UpdateJobPost updateJobPost)
     {
         try
@@ -138,7 +138,7 @@ public class JobPostController : ControllerBase
             var accountId = int.Parse(User.FindFirst("id")?.Value!);
             //var accountId = 3;
             var result = await _jobPostService.UpdateJobPost(updateJobPost, accountId);
-            
+
             return await GetJobPostById(result.Id);
         }
         catch (Exception e)
@@ -147,7 +147,7 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for delete job post.
     /// </summary>
@@ -158,7 +158,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize.</response>
     [HttpDelete("{jobPostId}")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     public async Task<IActionResult> DeleteJobPost(int jobPostId)
     {
         try
@@ -226,7 +226,7 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for End job post
     /// </summary>
@@ -253,7 +253,7 @@ public class JobPostController : ControllerBase
         }
     }
 
-    
+
     /// <summary>
     /// [Farmer] Endpoint for Cancel apply job post
     /// </summary>
@@ -280,7 +280,7 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for Approve apply job post
     /// </summary>
@@ -305,7 +305,7 @@ public class JobPostController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-    
+
     /// <summary>
     /// [Landowner] Endpoint for Reject apply job post
     /// </summary>
@@ -343,12 +343,12 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if token is access denied.</response>
     [HttpGet("allApplied")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAllAppliedLandowner(
-        [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
-        [FromQuery]PagingDto pagingDto,
-        [FromQuery]SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto)
+        [FromQuery] AppliedJobEnum.AppliedJobStatus? status,
+        [FromQuery] PagingDto pagingDto,
+        [FromQuery] SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto)
     {
         var accountId = int.Parse(User.FindFirst("id")?.Value!);
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
@@ -357,6 +357,7 @@ public class JobPostController : ControllerBase
         {
             return Task.FromResult<IActionResult>(NoContent());
         }
+
         return Task.FromResult<IActionResult>(Ok(result));
     }
 
@@ -373,13 +374,13 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if token is access denied.</response>
     [HttpGet("applied")]
     [Authorize(Roles = UserRole.LANDOWNER + "," + UserRole.FARMER)]
-    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public Task<IActionResult> GetAppliedLandowner(
-        [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
+        [FromQuery] AppliedJobEnum.AppliedJobStatus? status,
         [Required] int jobPostId,
-        [FromQuery]PagingDto pagingDto,
-        [FromQuery]SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto)
+        [FromQuery] PagingDto pagingDto,
+        [FromQuery] SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto)
     {
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
             _appliedJobService.GetAccountsApplied(pagingDto, sortingDto, jobPostId, status);
@@ -387,6 +388,7 @@ public class JobPostController : ControllerBase
         {
             return Task.FromResult<IActionResult>(NoContent());
         }
+
         return Task.FromResult<IActionResult>(Ok(result));
     }
 
@@ -403,24 +405,25 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if token is access denied.</response>
     [HttpGet("appliedFarmer")]
     [Authorize(Roles = UserRole.FARMER)]
-    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<AppliedJobDetail>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetAccounts(
-        [FromQuery]AppliedJobEnum.AppliedJobStatus? status,
-        [FromQuery]PagingDto pagingDto,
-        [FromQuery]SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
-        [FromQuery] int? startWork = null) 
+        [FromQuery] AppliedJobEnum.AppliedJobStatus? status,
+        [FromQuery] PagingDto pagingDto,
+        [FromQuery] SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
+        [FromQuery] int? startWork = null)
     {
         var accountId = int.Parse(User.FindFirst("id")?.Value!);
         ResponseDto.CollectiveResponse<AppliedJobDetail> result =
-            _appliedJobService.GetAccountsAppliedFarmer(pagingDto,sortingDto, accountId, status, startWork);
+            _appliedJobService.GetAccountsAppliedFarmer(pagingDto, sortingDto, accountId, status, startWork);
         if (result == null)
         {
             return NoContent();
         }
+
         return Ok(result);
     }
-    
+
     /// <summary>
     /// [Farmer] Endpoint for check farmer apply to specific job post
     /// </summary>
@@ -439,15 +442,16 @@ public class JobPostController : ControllerBase
         {
             return Ok();
         }
+
         return Created(String.Empty, null);
     }
-    
+
     /// <summary>
     /// [Farmer] Endpoint for check farmer apply to hour job post
     /// </summary>
     /// <returns>True if has applied hour job</returns>
     /// <response code="200">Returns result farmer applied hour job.</response>
-     /// <response code="401">Returns if token is access denied.</response>
+    /// <response code="401">Returns if token is access denied.</response>
     [HttpGet("checkAppliedHourJob")]
     [Authorize(Roles = UserRole.FARMER)]
     public async Task<IActionResult> CheckAppliedHourJob()
@@ -467,7 +471,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("approveJob/{jobPostId}")]
     [Authorize(Roles = UserRole.MODERATOR)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ApproveJobPost(int jobPostId)
     {
@@ -496,7 +500,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("rejectJob")]
     [Authorize(Roles = UserRole.MODERATOR)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> RejectJobPost(RejectJobPost rejectJobPost)
     {
@@ -524,7 +528,7 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("startJob/{jobPostId}")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> StartJobPost(int jobPostId)
     {
@@ -553,9 +557,10 @@ public class JobPostController : ControllerBase
     /// <response code="401">Returns if invalid authorize</response>
     [HttpPatch("extendJob/{jobPostId}")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(JobPostDetail),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobPostDetail), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ExtendJobPost([Required]int jobPostId, [Required]DateTime extendDate, int usePoint = 0)
+    public async Task<IActionResult> ExtendJobPost([Required] int jobPostId, [Required] DateTime extendDate,
+        int usePoint = 0)
     {
         try
         {
@@ -580,15 +585,15 @@ public class JobPostController : ControllerBase
     /// <returns>List of datetime available</returns>
     [HttpGet("checkPinDate")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(IEnumerable<DateTime>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<DateTime>), StatusCodes.Status200OK)]
     public async Task<IActionResult> CheckPinDateAvailable(
-        [Required]DateTime publishedDate,
-        [Required]int numberOfDayPublish,
-        [Required]int postTypeId)
+        [Required] DateTime publishedDate,
+        [Required] int numberOfDayPublish,
+        [Required] int postTypeId)
     {
         try
         {
-            var result  = await _jobPostService.ListDateNoPin(publishedDate, numberOfDayPublish, postTypeId);
+            var result = await _jobPostService.ListDateNoPin(publishedDate, numberOfDayPublish, postTypeId);
 
             return Ok(result);
         }
@@ -599,7 +604,7 @@ public class JobPostController : ControllerBase
         }
     }
 
-    
+
     /// <summary>
     /// [Landowner] Endpoint to get max pin day
     /// </summary>
@@ -609,7 +614,7 @@ public class JobPostController : ControllerBase
     /// <returns>Number of max pin date</returns>
     [HttpGet("getMaxPinDay")]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(int),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     public async Task<IActionResult> CheckNumberOfPinDate(
         DateTime pinDate,
         int numberPublishDay,
@@ -634,7 +639,7 @@ public class JobPostController : ControllerBase
     /// <returns>Number pin day of job post</returns>
     [HttpGet("totalPinDay/{jobPostId}")]
     [Authorize]
-    [ProducesResponseType(typeof(int),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
     public async Task<IActionResult> TotalPinDay([Required] int jobPostId)
     {
         try
@@ -646,6 +651,29 @@ public class JobPostController : ControllerBase
         {
             Console.WriteLine(e);
             return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// [Landowner] Endpoint for extend max farmer for hour job
+    /// </summary>
+    /// <param name="jobPostId">Id Of job post.</param>
+    /// <param name="maxFarmer">Max farmer.</param>
+    [HttpPatch("extendFarmer")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    public async Task<IActionResult> ExtendMaxFarmer(
+        [Required] int jobPostId,
+        [Required] int maxFarmer)
+    {
+        try
+        {
+            await _jobPostService.ExtendMaxFarmer(jobPostId, maxFarmer);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return BadRequest(e);
         }
     }
 }

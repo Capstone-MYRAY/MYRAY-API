@@ -1,9 +1,11 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
+using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.Config;
@@ -448,6 +450,27 @@ public class JobPostService : IJobPostService
         var jobPost = await _jobPostRepository.StartJob(jobPostId);
         var result = _mapper.Map<JobPostDetail>(jobPost);
         return result;
+    }
+
+    public async Task ExtendMaxFarmer(int jobPostId, int maxFarmer)
+    {
+        DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(jobPostId);
+
+        if (!jobPost.Type.Equals("PayPerHourJob"))
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job is not Hour Job");
+        }
+
+        try
+        {
+            await _jobPostRepository.ExtendMaxFarmer(jobPostId, maxFarmer);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
     }
 
     public async Task<JobPostDetail> ExtendJobPostForLandowner(int jobPostId, DateTime dateTimeExtend, int usePoint = 0)

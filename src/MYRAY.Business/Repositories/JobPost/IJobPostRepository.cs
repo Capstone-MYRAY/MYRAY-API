@@ -45,6 +45,7 @@ public interface IJobPostRepository
 
     Task<DataTier.Entities.JobPost> StartJob(int jobPostId);
 
+    Task ExtendMaxFarmer(int jobPostId, int maxFarmer);
     Task<DataTier.Entities.JobPost> ExtendJobPostForLandowner(
         DataTier.Entities.JobPost jobPost, 
         DataTier.Entities.PaymentHistory newPayment,

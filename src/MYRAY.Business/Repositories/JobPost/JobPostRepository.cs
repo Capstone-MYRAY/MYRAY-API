@@ -434,6 +434,21 @@ public class JobPostRepository : IJobPostRepository
         return jobPost;
     }
 
+    public async Task ExtendMaxFarmer(int jobPostId, int maxFarmer)
+    {
+        DataTier.Entities.JobPost _jobPost = (await _jobPostRepository.GetByIdAsync(jobPostId))!;
+
+        PayPerHourJob payPerHour = (await _payPerHourRepository.GetByIdAsync(jobPostId))!;
+        if (payPerHour.MaxFarmer >= maxFarmer)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Max farmer must lager than old max farmer");
+        }
+        
+        payPerHour.MaxFarmer = maxFarmer;
+        _jobPost.Status = (int?)JobPostEnum.JobPostStatus.ShortHandled;
+        await _contextFactory.SaveAllAsync();
+    }
+
     public async Task<DataTier.Entities.JobPost> ExtendJobPostForLandowner(
         DataTier.Entities.JobPost jobPost,
         DataTier.Entities.PaymentHistory newPayment,
