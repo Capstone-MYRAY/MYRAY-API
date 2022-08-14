@@ -397,6 +397,11 @@ public class JobPostService : IJobPostService
         return result;
     }
 
+    public async Task SwitchStatusJob(int jobPostId)
+    {
+        // _jobPostRepository
+    }
+
     public async Task<JobPostDetail> EndJobPost(int jobPostId)
     {
         DataTier.Entities.JobPost deleteGuidepost = await _jobPostRepository.EndJobPost(jobPostId);

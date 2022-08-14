@@ -25,11 +25,11 @@ public interface IAppliedJobService
         AppliedJobEnum.AppliedJobStatus? status = null, int? startWork = null);
 
     public Task<AppliedJobDetail> ApplyJob(int jobId, int appliedBy);
-    public Task<DataTier.Entities.AppliedJob> CancelApply(int jobId, int appliedBy);
-    public Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId);
-    public Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId);
+    public Task<AppliedJobDetail> CancelApply(int jobId, int appliedBy);
+    public Task<AppliedJobDetail> ApproveJob(int appliedJobId);
+    public Task<AppliedJobDetail> RejectJob(int appliedJobId);
 
-    public Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedId);
+    public Task<AppliedJobDetail?> CheckApplied(int jobPostId, int appliedId);
 
     public Task<bool> CheckAppliedHourJob(int farmerId);
 

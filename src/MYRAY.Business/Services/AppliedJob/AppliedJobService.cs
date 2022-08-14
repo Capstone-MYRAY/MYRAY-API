@@ -1,7 +1,9 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
+using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.AppliedJob;
@@ -80,13 +82,17 @@ public class AppliedJobService : IAppliedJobService
 
     public async Task<AppliedJobDetail> ApplyJob(int jobId, int appliedBy)
     {
+        DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(jobId);
+        if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.Enough)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job post enough farmer");
+        }
         var applied = await _appliedJobRepository.ApplyJob(jobId, appliedBy);
         // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
             {"type", "appliedFarmer"}
         };
-        DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(applied.JobPostId);
         DataTier.Entities.Account applyBy = await _accountRepository.GetAccountByIdAsync(applied.AppliedBy);
         await PushNotification.SendMessage(jobPost.PublishedBy.ToString()!
             , $"Yêu cầu ứng tuyển", $"{applyBy.Fullname} đã ứng tuyển vào công việc {jobPost.Title}", data);
@@ -94,13 +100,14 @@ public class AppliedJobService : IAppliedJobService
         return result;
     }
 
-    public async Task<DataTier.Entities.AppliedJob> CancelApply(int jobId, int appliedBy)
+    public async Task<AppliedJobDetail> CancelApply(int jobId, int appliedBy)
     {
-        var result = await _appliedJobRepository.CancelApply(jobId, appliedBy);
+        var result1 = await _appliedJobRepository.CancelApply(jobId, appliedBy);
+        var result = _mapper.Map<AppliedJobDetail>(result1);
         return result;
     }
 
-    public async Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId)
+    public async Task<AppliedJobDetail> ApproveJob(int appliedJobId)
     {
         
         var result = await _appliedJobRepository.ApproveJob(appliedJobId);
@@ -120,11 +127,11 @@ public class AppliedJobService : IAppliedJobService
             Console.WriteLine(e);
             throw;
         }
-
-        return result;
+        var result1 = _mapper.Map<AppliedJobDetail>(result);
+        return result1;
     }
 
-    public async Task<DataTier.Entities.AppliedJob> RejectJob(int appliedJobId)
+    public async Task<AppliedJobDetail> RejectJob(int appliedJobId)
     {
         var result = await _appliedJobRepository.RejectJob(appliedJobId);
         
@@ -136,12 +143,15 @@ public class AppliedJobService : IAppliedJobService
         await PushNotification.SendMessage(result.AppliedBy.ToString()
             , $"Ứng tuyển không thành công", $"{result.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {result.JobPost.Title}", data);
 
-        return result;
+        var result1 = _mapper.Map<AppliedJobDetail>(result);
+        return result1;
     }
 
-    public async Task<DataTier.Entities.AppliedJob?> CheckApplied(int jobPostId, int appliedId)
+    public async Task<AppliedJobDetail?> CheckApplied(int jobPostId, int appliedId)
     {
-        return await _appliedJobRepository.CheckApplied(jobPostId, appliedId);
+        var applied = await _appliedJobRepository.CheckApplied(jobPostId, appliedId);
+        var result = _mapper.Map<AppliedJobDetail>(applied);
+        return result;
     }
 
     public async Task<bool> CheckAppliedHourJob(int farmerId)

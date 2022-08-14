@@ -21,6 +21,8 @@ public interface IJobPostService
     Task<JobPostDetail> UpdateJobPost(UpdateJobPost jobPost, int publishedBy);
 
     Task<JobPostDetail> DeleteJobPost(int jobPostId);
+
+    Task SwitchStatusJob(int jobPostId);
     Task<JobPostDetail> EndJobPost(int jobPostId);
     Task<JobPostDetail> CancelJobPost(int jobPostId);
 

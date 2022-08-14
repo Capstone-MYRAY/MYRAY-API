@@ -220,6 +220,20 @@ public class JobPostRepository : IJobPostRepository
         return jobPostAfterUpdate;
     }
 
+    public async Task SwitchStatusJob(int jobPostId)
+    {
+        DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(jobPostId);
+        if (jobPost == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job post is not existed");
+        }
+
+        if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.ShortHandled)
+        {
+            
+        }
+    }
+
     public async Task<DataTier.Entities.JobPost> EndJobPost(int id)
     {
         DataTier.Entities.JobPost? jobPost = await _jobPostRepository.GetByIdAsync(id);
