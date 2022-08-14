@@ -107,9 +107,11 @@ public class JobPostRepository : IJobPostRepository
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
         Expression<Func<DataTier.Entities.JobPost, object>> expGarden = post => post.Garden;
         Expression<Func<DataTier.Entities.JobPost, object>> expTree = post => post.TreeJobs;
+        Expression<Func<DataTier.Entities.JobPost, object>> expWorkType = post => post.WorkType;
+        
         DataTier.Entities.JobPost jobPost = (await _jobPostRepository.GetFirstOrDefaultAsync(
             j => j.Id == id && j.Status != (int?)JobPostEnum.JobPostStatus.Deleted,
-            new[] { expHours, expTask, expGarden, expTree }))!;
+            new[] { expHours, expTask, expGarden, expTree ,expWorkType}))!;
         return jobPost;
     }
 
@@ -164,7 +166,8 @@ public class JobPostRepository : IJobPostRepository
         newPayment.Message = "Tạo bài đăng mới #" + ++id;
         await _paymentHistoryRepository.InsertAsync(newPayment);
         await _contextFactory.SaveAllAsync();
-
+        DataTier.Entities.JobPost jobPostAfterUpdate = await GetJobPostById(jobPost.Id);
+        return jobPostAfterUpdate;
 
         return jobPost;
     }
@@ -213,10 +216,7 @@ public class JobPostRepository : IJobPostRepository
         await _paymentHistoryRepository.InsertAsync(newPayment);
 
         await _contextFactory.SaveAllAsync();
-        DataTier.Entities.JobPost jobPostAfterUpdate = await _jobPostRepository.Get(j => j.Id == jobPost.Id)
-            .Include(ji => ji.TreeJobs)
-            .ThenInclude(jt => jt.TreeType)
-            .FirstAsync();
+        DataTier.Entities.JobPost jobPostAfterUpdate = await GetJobPostById(jobPost.Id);
         return jobPostAfterUpdate;
     }
 
