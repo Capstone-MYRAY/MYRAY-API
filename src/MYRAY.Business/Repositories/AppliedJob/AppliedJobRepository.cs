@@ -212,10 +212,11 @@ public class AppliedJobRepository : IAppliedJobRepository
                 isEnough = true;
             }
 
-            if (isEnough)
-            {
-                jobPost.Status = (int?)JobPostEnum.JobPostStatus.Enough;
-            }
+            
+        }
+        if (isEnough)
+        {
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.Enough;
         }
 
         await _contextFactory.SaveAllAsync();
