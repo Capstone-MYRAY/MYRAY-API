@@ -696,4 +696,33 @@ public class JobPostController : ControllerBase
             return BadRequest(e);
         }
     }
+
+    /// <summary>
+    /// [Farmer] Endpoint for count applied pending or approve.
+    /// </summary>
+    /// <returns>Number of request applied</returns>
+    [HttpGet("countApplied")]
+    [Authorize(Roles = UserRole.FARMER)]
+    public async Task<IActionResult> CountApplied()
+    {
+        var accountId = int.Parse(User.FindFirst("id")?.Value!);
+        var isFarmer = User.IsInRole(UserRole.FARMER);
+        if (!isFarmer)
+        {
+            return BadRequest("Available Farmer Only");
+        }
+        try
+        {
+           
+            int result = await _appliedJobService.AlreadyApplied(accountId);
+            return Ok(result);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            BadRequest(e);
+        }
+
+        return Ok(0);
+    }
 }

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
@@ -20,7 +21,7 @@ public class AppliedJobService : IAppliedJobService
     private readonly IJobPostRepository _jobPostRepository;
     private readonly IAccountRepository _accountRepository;
 
-    public AppliedJobService(IMapper mapper, 
+    public AppliedJobService(IMapper mapper,
         IAppliedJobRepository appliedJobRepository,
         IAccountRepository accountRepository,
         IJobPostRepository jobPostRepository)
@@ -33,38 +34,38 @@ public class AppliedJobService : IAppliedJobService
 
 
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsApplied(
-        PagingDto pagingDto, 
+        PagingDto pagingDto,
         SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
         int jobPostId, AppliedJobEnum.AppliedJobStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAppliedJobs(jobPostId, status);
 
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
-        
+
         var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
 
         return result;
     }
 
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAllAccountsApplied(
-        PagingDto pagingDto, 
+        PagingDto pagingDto,
         SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
-        int landownerId, 
+        int landownerId,
         AppliedJobEnum.AppliedJobStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAllAppliedJobs(landownerId, status);
 
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
-        
+
         var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
 
         return result;
     }
 
     public ResponseDto.CollectiveResponse<AppliedJobDetail> GetAccountsAppliedFarmer(
-        PagingDto pagingDto, 
+        PagingDto pagingDto,
         SortingDto<AppliedJobEnum.SortCriteriaAppliedJob> sortingDto,
-        int farmerId, 
+        int farmerId,
         AppliedJobEnum.AppliedJobStatus? status = null,
         int? statusWork = null)
     {
@@ -73,8 +74,9 @@ public class AppliedJobService : IAppliedJobService
         {
             query = query.Where(a => a.JobPost.StatusWork == statusWork);
         }
+
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
-        
+
         var result = query.GetWithPaging<AppliedJobDetail, DataTier.Entities.AppliedJob>(pagingDto, _mapper);
 
         return result;
@@ -87,11 +89,12 @@ public class AppliedJobService : IAppliedJobService
         {
             throw new MException(StatusCodes.Status400BadRequest, "Job post enough farmer");
         }
+
         var applied = await _appliedJobRepository.ApplyJob(jobId, appliedBy);
         // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
-            {"type", "appliedFarmer"}
+            { "type", "appliedFarmer" }
         };
         DataTier.Entities.Account applyBy = await _accountRepository.GetAccountByIdAsync(applied.AppliedBy);
         await PushNotification.SendMessage(jobPost.PublishedBy.ToString()!
@@ -109,24 +112,24 @@ public class AppliedJobService : IAppliedJobService
 
     public async Task<AppliedJobDetail> ApproveJob(int appliedJobId)
     {
-        
         var result = await _appliedJobRepository.ApproveJob(appliedJobId);
         try
         {
             // Sent noti
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
-                {"type", "appliedFarmer"}
+                { "type", "appliedFarmer" }
             };
             await PushNotification.SendMessage(result.AppliedBy.ToString()
-                , $"Ứng tuyển thành công", $"{result.AppliedByNavigation.Fullname} đã được nhận vào công việc {result.JobPost.Title}", data);
-        
+                , $"Ứng tuyển thành công",
+                $"{result.AppliedByNavigation.Fullname} đã được nhận vào công việc {result.JobPost.Title}", data);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+
         var result1 = _mapper.Map<AppliedJobDetail>(result);
         return result1;
     }
@@ -134,17 +137,30 @@ public class AppliedJobService : IAppliedJobService
     public async Task<AppliedJobDetail> RejectJob(int appliedJobId)
     {
         var result = await _appliedJobRepository.RejectJob(appliedJobId);
-        
+
         // // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
-            {"type", "appliedFarmer"}
+            { "type", "appliedFarmer" }
         };
         await PushNotification.SendMessage(result.AppliedBy.ToString()
-            , $"Ứng tuyển không thành công", $"{result.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {result.JobPost.Title}", data);
+            , $"Ứng tuyển không thành công",
+            $"{result.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {result.JobPost.Title}", data);
 
         var result1 = _mapper.Map<AppliedJobDetail>(result);
         return result1;
+    }
+
+    public async Task<int> AlreadyApplied(int accountId)
+    {
+        IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAppliedJobsFarmer(accountId)
+            .Where(aj =>
+                aj.Status == (int?)AppliedJobEnum.AppliedJobStatus.Pending
+                || aj.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve);
+
+        var result = await query.CountAsync();
+
+        return result;
     }
 
     public async Task<AppliedJobDetail?> CheckApplied(int jobPostId, int appliedId)

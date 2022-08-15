@@ -155,9 +155,6 @@ public class JobPostService : IJobPostService
             query = query.Where(j => jobPostId.Contains(j.Id));
         }
 
-
-        List<DataTier.Entities.JobPost> test = query.ToList();
-
         if (isFarmer)
         {
             listPin = _jobPostRepository.GetPinPost().ToList();

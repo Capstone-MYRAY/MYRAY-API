@@ -29,6 +29,7 @@ public interface IAppliedJobService
     public Task<AppliedJobDetail> ApproveJob(int appliedJobId);
     public Task<AppliedJobDetail> RejectJob(int appliedJobId);
 
+    public Task<int> AlreadyApplied(int accountId);
     public Task<AppliedJobDetail?> CheckApplied(int jobPostId, int appliedId);
 
     public Task<bool> CheckAppliedHourJob(int farmerId);
