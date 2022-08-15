@@ -7,7 +7,7 @@ namespace MYRAY.DataTier.Entities
     {
         public AppliedJob()
         {
-            Attendances = new HashSet<Attendance>();
+            SalaryTrackings = new HashSet<SalaryTracking>();
         }
 
         public int Id { get; set; }
@@ -21,6 +21,6 @@ namespace MYRAY.DataTier.Entities
 
         public virtual Account AppliedByNavigation { get; set; } = null!;
         public virtual JobPost JobPost { get; set; } = null!;
-        public virtual ICollection<Attendance> Attendances { get; set; }
+        public virtual ICollection<SalaryTracking> SalaryTrackings { get; set; }
     }
 }

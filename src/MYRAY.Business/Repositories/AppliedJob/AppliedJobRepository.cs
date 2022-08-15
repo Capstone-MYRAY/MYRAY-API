@@ -112,6 +112,7 @@ public class AppliedJobRepository : IAppliedJobRepository
     public async Task<DataTier.Entities.AppliedJob> ApproveJob(int appliedJobId)
     {
         Expression<Func<DataTier.Entities.AppliedJob, object>> expApplied = job => job.AppliedByNavigation;
+        Expression<Func<DataTier.Entities.AppliedJob, object>> expJob= job => job.JobPost;
         DataTier.Entities.AppliedJob? appliedJob =
             await _appliedJobRepository.GetFirstOrDefaultAsync(a => a.Id == appliedJobId, new[] { expApplied });
         if (appliedJob == null)

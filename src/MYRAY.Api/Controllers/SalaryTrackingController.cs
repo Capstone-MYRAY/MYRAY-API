@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using MYRAY.Api.Constants;
 using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs.Attendance;
+using MYRAY.Business.DTOs.SalaryTracking;
+using MYRAY.Business.DTOs.SalaryTracking;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
-using MYRAY.Business.Services.Attendance;
+using MYRAY.Business.Services.SalaryTracking;
 
 namespace MYRAY.Api.Controllers;
 /// <summary>
@@ -17,13 +19,13 @@ namespace MYRAY.Api.Controllers;
 [Route("api/v{version:apiVersion}/[controller]")]
 [Consumes(MediaType.ApplicationJson)]
 [Produces(MediaType.ApplicationJson)]
-public class AttendanceController : ControllerBase
+public class SalaryTrackingController : ControllerBase
 {
-    private readonly IAttendanceService _attendanceService;
+    private readonly ISalaryTrackingService _salaryTrackingService;
 
-    public AttendanceController(IAttendanceService attendanceService)
+    public SalaryTrackingController(ISalaryTrackingService salaryTrackingService)
     {
-        _attendanceService = attendanceService;
+        _salaryTrackingService = salaryTrackingService;
     }
     
     /// <summary>
@@ -35,15 +37,15 @@ public class AttendanceController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("day")]
     [Authorize]
-    [ProducesResponseType(typeof(List<AttendanceByJob>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SalaryTrackingByJob>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetAttendancesOfDay(
+    public async Task<IActionResult> GetSalaryTrackingsOfDay(
         [Required]int jobPostId,
         [Required]DateTime dateTime, 
-        AttendanceEnum.AttendanceStatus? status = null)
+        SalaryTrackingEnum.SalaryTrackingStatus? status = null)
     {
-        List<AttendanceByJob?> result = await 
-            _attendanceService.GetAttendanceByDate(jobPostId, dateTime, status);
+        List<SalaryTrackingByJob?> result = await 
+            _salaryTrackingService.GetSalaryTrackingByDate(jobPostId, dateTime, status);
         if (result == null)
         {
             return NoContent();
@@ -61,12 +63,12 @@ public class AttendanceController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet]
     [Authorize]
-    [ProducesResponseType(typeof(List<AttendanceDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SalaryTrackingDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetAttendances([Required]int jobPostId,[Required]int accountId )
+    public async Task<IActionResult> GetSalaryTrackings([Required]int jobPostId,[Required]int accountId )
     {
-        List<AttendanceDetail> result = await 
-            _attendanceService.GetAttendances(jobPostId, accountId);
+        List<SalaryTrackingDetail> result = await 
+            _salaryTrackingService.GetSalaryTrackings(jobPostId, accountId);
         if (result == null)
         {
             return NoContent();
@@ -84,13 +86,13 @@ public class AttendanceController : ControllerBase
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("dayOff")]
     [Authorize(Roles = UserRole.FARMER)]
-    [ProducesResponseType(typeof(List<AttendanceDetail>),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<SalaryTrackingDetail>),StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> GetDayOffAttendances(int? jobPostId = null)
+    public async Task<IActionResult> GetDayOffSalaryTrackings(int? jobPostId = null)
     {
         var farmerId = int.Parse(User.FindFirst("id")?.Value!);
-        List<AttendanceDetail> result = await 
-            _attendanceService.GetListDayOffByJob(farmerId, jobPostId);
+        List<SalaryTrackingDetail> result = await 
+            _salaryTrackingService.GetListDayOffByJob(farmerId, jobPostId);
         if (!result.Any())
         {
             return NoContent();
@@ -112,7 +114,7 @@ public class AttendanceController : ControllerBase
     public async Task<IActionResult> GetTotalExpense([Required]int jobPostId)
     {
         double? result = await 
-            _attendanceService.GetTotalExpense(jobPostId);
+            _salaryTrackingService.GetTotalExpense(jobPostId);
       
         return Ok(result);
     }
@@ -120,21 +122,21 @@ public class AttendanceController : ControllerBase
     /// <summary>
     /// [Landowner] Endpoint for check attendance .
     /// </summary>
-    /// <returns>Check Attendance</returns>
+    /// <returns>Check SalaryTracking</returns>
     /// <exception cref="Exception">Error if input is empty</exception>
     /// <response code="201">Returns the attendance</response>
     /// <response code="400">Returns if attendance input is empty or create error</response>
     [HttpPost]
     [Authorize(Roles = UserRole.LANDOWNER)]
-    [ProducesResponseType(typeof(AttendanceDetail),StatusCodes.Status201Created)]
-    public async Task<IActionResult> CheckAttendance([FromBody]CheckAttendance? attendance)
+    [ProducesResponseType(typeof(SalaryTrackingDetail),StatusCodes.Status201Created)]
+    public async Task<IActionResult> CheckSalaryTracking([FromBody]CheckAttendance? attendance)
     {
         try
         {
             if (attendance == null)
-                throw new Exception("Attendance is empty data");
+                throw new Exception("SalaryTracking is empty data");
             var createBy = int.Parse(User.FindFirst("id")?.Value!);
-           var result =  await _attendanceService.CreateAttendance(attendance, createBy);
+           var result =  await _salaryTrackingService.CreateSalaryTracking(attendance, createBy);
 
             return Created(String.Empty, result);
         }
@@ -147,22 +149,22 @@ public class AttendanceController : ControllerBase
     /// <summary>
     /// [Farmer] Endpoint for request day off attendance .
     /// </summary>
-    /// <returns>Check day off Attendance</returns>
+    /// <returns>Check day off SalaryTracking</returns>
     /// <exception cref="Exception">Error if input is empty</exception>
     /// <response code="201">Returns the attendance</response>
     /// <response code="400">Returns if attendance input is empty or create error</response>
     /// <response code="500">Returns if attendance input is error</response>
     [HttpPost("dayOff")]
     [Authorize(Roles = UserRole.FARMER)]
-    [ProducesResponseType(typeof(AttendanceDetail), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(SalaryTrackingDetail), StatusCodes.Status201Created)]
     public async Task<IActionResult> CheckDayOff([FromBody]RequestDayOff? attendance)
     {
         try
         {
             if (attendance == null)
-                throw new Exception("Attendance is empty data");
+                throw new Exception("SalaryTracking is empty data");
             var createBy = int.Parse(User.FindFirst("id")?.Value!);
-           AttendanceDetail result = await _attendanceService.CreateDayOff(attendance, createBy);
+           SalaryTrackingDetail result = await _salaryTrackingService.CreateDayOff(attendance, createBy);
 
             return Created(String.Empty, result);
         }

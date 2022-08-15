@@ -277,6 +277,16 @@ public class JobPostRepository : IJobPostRepository
         }
 
         jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Done;
+        IQueryable<DataTier.Entities.AppliedJob> appliedJobs = 
+            _appliedRepository.Get(a => 
+                a.JobPostId == jobPost.Id 
+                && a.Status != (int?)AppliedJobEnum.AppliedJobStatus.Pending 
+                && a.Status != (int?)AppliedJobEnum.AppliedJobStatus.Fired);
+        if (jobPost.Type.Equals("PayPerHourJob"))
+        {
+            // TODO: Chua lam cai nay 
+        }
+        
         await _contextFactory.SaveAllAsync();
         return jobPost;
     }

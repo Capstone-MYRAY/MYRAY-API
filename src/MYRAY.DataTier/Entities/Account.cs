@@ -9,7 +9,6 @@ namespace MYRAY.DataTier.Entities
         {
             AppliedJobs = new HashSet<AppliedJob>();
             AreaAccounts = new HashSet<AreaAccount>();
-            Attendances = new HashSet<Attendance>();
             BookmarkAccounts = new HashSet<Bookmark>();
             BookmarkBookmarkNavigations = new HashSet<Bookmark>();
             Comments = new HashSet<Comment>();
@@ -28,6 +27,7 @@ namespace MYRAY.DataTier.Entities
             ReportCreatedByNavigations = new HashSet<Report>();
             ReportReporteds = new HashSet<Report>();
             ReportResolvedByNavigations = new HashSet<Report>();
+            SalaryTrackings = new HashSet<SalaryTracking>();
         }
 
         public int Id { get; set; }
@@ -51,7 +51,6 @@ namespace MYRAY.DataTier.Entities
         public virtual Role Role { get; set; } = null!;
         public virtual ICollection<AppliedJob> AppliedJobs { get; set; }
         public virtual ICollection<AreaAccount> AreaAccounts { get; set; }
-        public virtual ICollection<Attendance> Attendances { get; set; }
         public virtual ICollection<Bookmark> BookmarkAccounts { get; set; }
         public virtual ICollection<Bookmark> BookmarkBookmarkNavigations { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
@@ -70,5 +69,6 @@ namespace MYRAY.DataTier.Entities
         public virtual ICollection<Report> ReportCreatedByNavigations { get; set; }
         public virtual ICollection<Report> ReportReporteds { get; set; }
         public virtual ICollection<Report> ReportResolvedByNavigations { get; set; }
+        public virtual ICollection<SalaryTracking> SalaryTrackings { get; set; }
     }
 }

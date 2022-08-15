@@ -297,7 +297,7 @@ public class JobPostController : ControllerBase
         {
             var result = await _appliedJobService.ApproveJob(appliedId);
 
-            return Ok();
+            return Ok(result);
         }
         catch (Exception e)
         {
