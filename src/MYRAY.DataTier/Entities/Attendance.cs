@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MYRAY.DataTier.Entities
 {
-    public partial class SalaryTracking
+    public partial class Attendance
     {
         public int Id { get; set; }
         public DateTime? Date { get; set; }

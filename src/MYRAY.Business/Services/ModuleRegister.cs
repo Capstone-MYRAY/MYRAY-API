@@ -17,7 +17,7 @@ using MYRAY.Business.Services.Message;
 using MYRAY.Business.Services.PostType;
 using MYRAY.Business.Services.Report;
 using MYRAY.Business.Services.Role;
-using MYRAY.Business.Services.SalaryTracking;
+using MYRAY.Business.Services.Attendance;
 using MYRAY.Business.Services.Statistic;
 using MYRAY.Business.Services.TreeType;
 using MYRAY.Business.Services.WorkType;
@@ -49,7 +49,7 @@ public static class ModuleRegister
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddScoped<IBookmarkService, BookmarkService>();
-        services.AddScoped<ISalaryTrackingService, SalaryTrackingService>();
+        services.AddScoped<IAttendanceService, AttendanceService>();
         services.AddScoped<IConfigService, ConfigService>();
         services.AddScoped<IMessageService, MessageService>();
         services.AddScoped<IExtendTaskJobService, ExtendTaskJobService>();

@@ -1,23 +1,23 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs.Attendance;
-using MYRAY.Business.DTOs.SalaryTracking;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.AppliedJob;
 using MYRAY.Business.Repositories.JobPost;
-using MYRAY.Business.Repositories.SalaryTracking;
+using MYRAY.Business.Repositories.Attendance;
+using MYRAY.Business.Services.Notification;
 using MYRAY.DataTier.Entities;
 
-namespace MYRAY.Business.Services.SalaryTracking;
+namespace MYRAY.Business.Services.Attendance;
 
-public class SalaryTrackingService : ISalaryTrackingService
+public class AttendanceService : IAttendanceService
 {
     private readonly IMapper _mapper;
-    private readonly ISalaryTrackingRepository _salaryTrackingRepository;
+    private readonly IAttendanceRepository _salaryTrackingRepository;
     private readonly IJobPostRepository _jobPostRepository;
     private readonly IAppliedJobRepository _appliedJobRepository;
 
-    public SalaryTrackingService(IMapper mapper, ISalaryTrackingRepository salaryTrackingRepository,
+    public AttendanceService(IMapper mapper, IAttendanceRepository salaryTrackingRepository,
         IJobPostRepository jobPostRepository, IAppliedJobRepository appliedJobRepository)
     {
         _mapper = mapper;
@@ -26,7 +26,7 @@ public class SalaryTrackingService : ISalaryTrackingService
         _appliedJobRepository = appliedJobRepository;
     }
 
-    public async Task<SalaryTrackingDetail> CreateSalaryTracking(CheckAttendance attendance, int checkBy)
+    public async Task<AttendanceDetail> CreateAttendance(CheckAttendance attendance, int checkBy)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(attendance.JobPostId);
         if (jobPost == null)
@@ -47,24 +47,24 @@ public class SalaryTrackingService : ISalaryTrackingService
         PayPerTaskJob? payPerTaskJob = await _jobPostRepository.GetPayPerTaskJob(jobPost.Id);
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, attendance.AccountId);
-        DataTier.Entities.SalaryTracking? existedSalaryTracking =
-            await _salaryTrackingRepository.GetSalaryTracking(appliedJob.Id, appliedJob.AppliedBy,
+        DataTier.Entities.Attendance? existedAttendance =
+            await _salaryTrackingRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy,
                 attendance.DateAttendance.Date);
-        if (existedSalaryTracking != null)
+        if (existedAttendance != null)
         {
             throw new Exception("You have been attended");
         }
 
         bool isHourJob = jobPost.Type.Equals("PayPerHourJob");
-        int point = (attendance.Status == SalaryTrackingEnum.SalaryTrackingStatus.Paid
-                     || attendance.Status == SalaryTrackingEnum.SalaryTrackingStatus.End)
+        int point = (attendance.Status == AttendanceEnum.AttendanceStatus.Paid
+                     || attendance.Status == AttendanceEnum.AttendanceStatus.End)
             ? 1
             : 0;
-        double salary = (double)((attendance.Status == SalaryTrackingEnum.SalaryTrackingStatus.Paid
-                                  || attendance.Status == SalaryTrackingEnum.SalaryTrackingStatus.End)
+        double salary = (double)((attendance.Status == AttendanceEnum.AttendanceStatus.Paid
+                                  || attendance.Status == AttendanceEnum.AttendanceStatus.End)
             ? (isHourJob ? payPerHourJob.Salary : payPerTaskJob.Salary)
             : 0);
-        DataTier.Entities.SalaryTracking newSalaryTracking = new DataTier.Entities.SalaryTracking()
+        DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = attendance.DateAttendance,
             Salary = salary,
@@ -77,12 +77,21 @@ public class SalaryTrackingService : ISalaryTrackingService
             CreatedDate = DateTime.Now
         };
 
-        newSalaryTracking = await _salaryTrackingRepository.CreateSalaryTracking(newSalaryTracking);
-        SalaryTrackingDetail result = _mapper.Map<SalaryTrackingDetail>(newSalaryTracking);
+        newAttendance = await _salaryTrackingRepository.CreateAttendance(newAttendance);
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            { "type", "present" },
+            {"jobPostId" , newAttendance.AppliedJob.JobPostId.ToString()}
+        };
+        await PushNotification.SendMessage(newAttendance.AccountId.ToString()
+            , $"Bạn đã được điểm danh",
+            $"Bạn đã được điểm danh cho công việc {jobPost.Title}", data);
+
+        AttendanceDetail result = _mapper.Map<AttendanceDetail>(newAttendance);
         return result;
     }
 
-    public async Task<SalaryTrackingDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId)
+    public async Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(requestDayOff.JobPostId);
         if (jobPost == null)
@@ -108,18 +117,18 @@ public class SalaryTrackingService : ISalaryTrackingService
 
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPost.Id, accountId);
-        DataTier.Entities.SalaryTracking existedSalaryTracking =
-            await _salaryTrackingRepository.GetSalaryTrackingByDate(appliedJob.Id, appliedJob.AppliedBy, requestDayOff.DayOff);
-        if (existedSalaryTracking != null)
+        DataTier.Entities.Attendance existedAttendance =
+            await _salaryTrackingRepository.GetAttendanceByDate(appliedJob.Id, appliedJob.AppliedBy, requestDayOff.DayOff);
+        if (existedAttendance != null)
         {
             throw new Exception("You have been request day off");
         }
 
-        DataTier.Entities.SalaryTracking newSalaryTracking = new DataTier.Entities.SalaryTracking()
+        DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = requestDayOff.DayOff.Date,
             Salary = 0,
-            Status = (int?)SalaryTrackingEnum.SalaryTrackingStatus.DayOff,
+            Status = (int?)AttendanceEnum.AttendanceStatus.DayOff,
             AppliedJobId = appliedJob.Id,
             AccountId = accountId,
             BonusPoint = 0,
@@ -127,27 +136,27 @@ public class SalaryTrackingService : ISalaryTrackingService
             CreatedDate = DateTime.Now
         };
 
-        await _salaryTrackingRepository.CreateSalaryTracking(newSalaryTracking);
+        await _salaryTrackingRepository.CreateAttendance(newAttendance);
 
-        SalaryTrackingDetail salaryTrackingDetail = _mapper.Map<SalaryTrackingDetail>(newSalaryTracking);
+        AttendanceDetail salaryTrackingDetail = _mapper.Map<AttendanceDetail>(newAttendance);
         return salaryTrackingDetail;
     }
 
-    public async Task<List<SalaryTrackingDetail>> GetListDayOffByJob(int farmerId, int? jobPostId)
+    public async Task<List<AttendanceDetail>> GetListDayOffByJob(int farmerId, int? jobPostId)
     {
-        IQueryable<DataTier.Entities.SalaryTracking> attendances =
+        IQueryable<DataTier.Entities.Attendance> attendances =
             _salaryTrackingRepository.GetListDayOffByJob(farmerId, jobPostId);
-        IQueryable<SalaryTrackingDetail> result = _mapper.ProjectTo<SalaryTrackingDetail>(attendances);
+        IQueryable<AttendanceDetail> result = _mapper.ProjectTo<AttendanceDetail>(attendances);
         var list = await result.ToListAsync();
         return list;
     }
 
-    public async Task<List<SalaryTrackingDetail>> GetSalaryTrackings(int jobPostId, int accountId)
+    public async Task<List<AttendanceDetail>> GetAttendances(int jobPostId, int accountId)
     {
         DataTier.Entities.AppliedJob appliedJob = await
             _appliedJobRepository.GetByJobAndAccount(jobPostId, accountId);
-        IQueryable<DataTier.Entities.SalaryTracking> attendances = _salaryTrackingRepository.GetListSalaryTrackings(appliedJob.Id);
-        IQueryable<SalaryTrackingDetail> result = _mapper.ProjectTo<SalaryTrackingDetail>(attendances);
+        IQueryable<DataTier.Entities.Attendance> attendances = _salaryTrackingRepository.GetListAttendances(appliedJob.Id);
+        IQueryable<AttendanceDetail> result = _mapper.ProjectTo<AttendanceDetail>(attendances);
         var list = await result.ToListAsync();
         return list;
     }
@@ -158,13 +167,13 @@ public class SalaryTrackingService : ISalaryTrackingService
         return result;
     }
 
-    public async Task<List<SalaryTrackingByJob?>> GetSalaryTrackingByDate(int jobPostId, DateTime dateTime,
-        SalaryTrackingEnum.SalaryTrackingStatus? status = null)
+    public async Task<List<AttendanceByJob?>> GetAttendanceByDate(int jobPostId, DateTime dateTime,
+        AttendanceEnum.AttendanceStatus? status = null)
     {
         IQueryable<DataTier.Entities.AppliedJob> query =
             _appliedJobRepository.GetAppliedJobsExceptPending(jobPostId);
-        IQueryable<SalaryTrackingByJob> map = _mapper.ProjectTo<SalaryTrackingByJob>(query);
-        List<SalaryTrackingByJob> result = await map.ToListAsync();
+        IQueryable<AttendanceByJob> map = _mapper.ProjectTo<AttendanceByJob>(query);
+        List<AttendanceByJob> result = await map.ToListAsync();
         foreach (var attendanceByJob in result)
         {
             attendanceByJob.Attendances =
@@ -175,10 +184,10 @@ public class SalaryTrackingService : ISalaryTrackingService
         {
             result = result.Where(abj =>
             {
-                SalaryTrackingDetail? attendance = abj.Attendances.FirstOrDefault();
+                AttendanceDetail? attendance = abj.Attendances.FirstOrDefault();
                 if (attendance == null)
                 {
-                    return status == SalaryTrackingEnum.SalaryTrackingStatus.Unpaid;
+                    return status == AttendanceEnum.AttendanceStatus.Unpaid;
                 }
 
                 return attendance.Status == (int?)status;

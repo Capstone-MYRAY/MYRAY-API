@@ -20,6 +20,7 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<AppliedJob> AppliedJobs { get; set; } = null!;
         public virtual DbSet<Area> Areas { get; set; } = null!;
         public virtual DbSet<AreaAccount> AreaAccounts { get; set; } = null!;
+        public virtual DbSet<Attendance> Attendances { get; set; } = null!;
         public virtual DbSet<Bookmark> Bookmarks { get; set; } = null!;
         public virtual DbSet<Comment> Comments { get; set; } = null!;
         public virtual DbSet<Config> Configs { get; set; } = null!;
@@ -36,7 +37,6 @@ namespace MYRAY.DataTier.Entities
         public virtual DbSet<PostType> PostTypes { get; set; } = null!;
         public virtual DbSet<Report> Reports { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
-        public virtual DbSet<SalaryTracking> SalaryTrackings { get; set; } = null!;
         public virtual DbSet<TreeJob> TreeJobs { get; set; } = null!;
         public virtual DbSet<TreeType> TreeTypes { get; set; } = null!;
         public virtual DbSet<WorkType> WorkTypes { get; set; } = null!;
@@ -45,7 +45,8 @@ namespace MYRAY.DataTier.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-                
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Data Source=20.212.196.50,1433;Initial Catalog=MYRAY;User ID=sa;Password=29327Cab@456789");
             }
         }
 
@@ -217,6 +218,52 @@ namespace MYRAY.DataTier.Entities
                     .HasForeignKey(d => d.AreaId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_AreaAccount_Area");
+            });
+
+            modelBuilder.Entity<Attendance>(entity =>
+            {
+                entity.ToTable("Attendance");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.AccountId).HasColumnName("account_id");
+
+                entity.Property(e => e.AppliedJobId).HasColumnName("applied_job_id");
+
+                entity.Property(e => e.BonusPoint)
+                    .HasColumnName("bonus_point")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasColumnType("datetime")
+                    .HasColumnName("created_date")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Date)
+                    .HasColumnType("datetime")
+                    .HasColumnName("date");
+
+                entity.Property(e => e.Reason).HasColumnName("reason");
+
+                entity.Property(e => e.Salary).HasColumnName("salary");
+
+                entity.Property(e => e.Signature).HasColumnName("signature");
+
+                entity.Property(e => e.Status)
+                    .HasColumnName("status")
+                    .HasDefaultValueSql("((0))");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Attendances)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Attendance_Account");
+
+                entity.HasOne(d => d.AppliedJob)
+                    .WithMany(p => p.Attendances)
+                    .HasForeignKey(d => d.AppliedJobId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Attendance_AppliedJob");
             });
 
             modelBuilder.Entity<Bookmark>(entity =>
@@ -862,52 +909,6 @@ namespace MYRAY.DataTier.Entities
                 entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasDefaultValueSql("((1))");
-            });
-
-            modelBuilder.Entity<SalaryTracking>(entity =>
-            {
-                entity.ToTable("SalaryTracking");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.Property(e => e.AccountId).HasColumnName("account_id");
-
-                entity.Property(e => e.AppliedJobId).HasColumnName("applied_job_id");
-
-                entity.Property(e => e.BonusPoint)
-                    .HasColumnName("bonus_point")
-                    .HasDefaultValueSql("((1))");
-
-                entity.Property(e => e.CreatedDate)
-                    .HasColumnType("datetime")
-                    .HasColumnName("created_date")
-                    .HasDefaultValueSql("(getdate())");
-
-                entity.Property(e => e.Date)
-                    .HasColumnType("datetime")
-                    .HasColumnName("date");
-
-                entity.Property(e => e.Reason).HasColumnName("reason");
-
-                entity.Property(e => e.Salary).HasColumnName("salary");
-
-                entity.Property(e => e.Signature).HasColumnName("signature");
-
-                entity.Property(e => e.Status)
-                    .HasColumnName("status")
-                    .HasDefaultValueSql("((0))");
-
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.SalaryTrackings)
-                    .HasForeignKey(d => d.AccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Attendance_Account");
-
-                entity.HasOne(d => d.AppliedJob)
-                    .WithMany(p => p.SalaryTrackings)
-                    .HasForeignKey(d => d.AppliedJobId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Attendance_AppliedJob");
             });
 
             modelBuilder.Entity<TreeJob>(entity =>

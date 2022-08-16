@@ -1,6 +1,6 @@
-namespace MYRAY.Business.DTOs.SalaryTracking;
+namespace MYRAY.Business.DTOs.Attendance;
 
-public class SalaryTrackingDetail
+public class AttendanceDetail
 {
     public int Id { get; set; }
     public DateTime? Date { get; set; }

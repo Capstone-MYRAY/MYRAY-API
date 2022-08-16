@@ -1,8 +1,8 @@
 namespace MYRAY.Business.Enums;
 
-public class SalaryTrackingEnum
+public class AttendanceEnum
 {
-    public enum SalaryTrackingStatus
+    public enum AttendanceStatus
     {
         /// <summary>
         /// Có mặt
