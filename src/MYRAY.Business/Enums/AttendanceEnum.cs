@@ -7,12 +7,12 @@ public class AttendanceEnum
         /// <summary>
         /// Có mặt
         /// </summary>
-        Paid = 1,
+        Present = 1,
         
         /// <summary>
         /// Chưa đến ngày điểm danh
         /// </summary>
-        Unpaid = 2,
+        Future = 2,
         
         /// <summary>
         /// Vắng mặt không phép
@@ -33,7 +33,5 @@ public class AttendanceEnum
         /// Sa thải
         /// </summary>
         Dismissed = 5,
-        
-        
     }
 }

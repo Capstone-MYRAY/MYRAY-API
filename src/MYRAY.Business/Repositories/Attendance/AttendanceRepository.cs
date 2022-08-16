@@ -28,20 +28,24 @@ public class AttendanceRepository : IAttendanceRepository
     public async Task<DataTier.Entities.Attendance> CreateAttendance(DataTier.Entities.Attendance attendance)
     {
         // attendance.Date = DateTime.Today;
-        await _attendanceRepository.InsertAsync(attendance);
+        bool isInsert = true;
         DataTier.Entities.Account? account = await _accountRepository.GetByIdAsync(attendance.AccountId);
         account!.Point += attendance.BonusPoint;
         DataTier.Entities.AppliedJob? appliedJob = await _appliedRepository.GetFirstOrDefaultAsync(a => a.Id == attendance.AppliedJobId);
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.Dismissed)
         {
-            appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.Fired;
+            appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
             appliedJob.EndDate = DateTime.Today;
+            isInsert = false;
         }
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.End)
         {
             appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
             appliedJob.EndDate = DateTime.Today;
+            isInsert = false;
         }
+        if(isInsert)
+            await _attendanceRepository.InsertAsync(attendance);
         
         await _contextFactory.SaveAllAsync();
         return attendance;

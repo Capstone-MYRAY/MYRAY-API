@@ -56,11 +56,11 @@ public class AttendanceService : IAttendanceService
         }
 
         bool isHourJob = jobPost.Type.Equals("PayPerHourJob");
-        int point = (attendance.Status == AttendanceEnum.AttendanceStatus.Paid
+        int point = (attendance.Status == AttendanceEnum.AttendanceStatus.Present
                      || attendance.Status == AttendanceEnum.AttendanceStatus.End)
             ? 1
             : 0;
-        double salary = (double)((attendance.Status == AttendanceEnum.AttendanceStatus.Paid
+        double salary = (double)((attendance.Status == AttendanceEnum.AttendanceStatus.Present
                                   || attendance.Status == AttendanceEnum.AttendanceStatus.End)
             ? (isHourJob ? payPerHourJob.Salary : payPerTaskJob.Salary)
             : 0);
@@ -187,7 +187,7 @@ public class AttendanceService : IAttendanceService
                 AttendanceDetail? attendance = abj.Attendances.FirstOrDefault();
                 if (attendance == null)
                 {
-                    return status == AttendanceEnum.AttendanceStatus.Unpaid;
+                    return status == AttendanceEnum.AttendanceStatus.Future;
                 }
 
                 return attendance.Status == (int?)status;
