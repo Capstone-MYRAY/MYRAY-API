@@ -55,10 +55,15 @@ public class JobPostRepository : IJobPostRepository
     {
         Expression<Func<DataTier.Entities.JobPost, object>> expHours = post => post.PayPerHourJob;
         Expression<Func<DataTier.Entities.JobPost, object>> expTask = post => post.PayPerTaskJob;
+        Expression<Func<DataTier.Entities.JobPost, object>> expGarden = post => post.Garden;
+        Expression<Func<DataTier.Entities.JobPost, object>> expArea = post => post.Garden.Area;
+        Expression<Func<DataTier.Entities.JobPost, object>> expWork = post => post.WorkType;
+        Expression<Func<DataTier.Entities.JobPost, object>> expTreeJob = post => post.TreeJobs;
         IQueryable<PinDate> pinDates =
             _pinDateRepository.Get(p => p.PinDate1.Date.Equals(DateTime.Today) && p.Status == 1);
         var postId = pinDates.Select(p => p.JobPostId);
-        IQueryable<DataTier.Entities.JobPost> jobPosts = _jobPostRepository.Get(null, new[] { expHours, expTask });
+        IQueryable<DataTier.Entities.JobPost> jobPosts = _jobPostRepository.Get(null, 
+            new[] { expHours, expTask , expGarden, expArea, expWork, expTreeJob});
         jobPosts = jobPosts.Where(p => postId.Contains(p.Id));
         return jobPosts;
     }

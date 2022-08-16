@@ -8,7 +8,6 @@ using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Services.AppliedJob;
 using MYRAY.Business.Services.JobPost;
-using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Api.Controllers;
 

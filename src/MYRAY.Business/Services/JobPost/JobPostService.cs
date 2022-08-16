@@ -57,6 +57,7 @@ public class JobPostService : IJobPostService
     {
         List<DataTier.Entities.JobPost> listPin = null;
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.GetJobPosts(publishId);
+        IQueryable<DataTier.Entities.JobPost> queryPinPost = _jobPostRepository.GetPinPost();
         if (isFarmer)
         {
             query = query.Where(post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted
@@ -69,62 +70,75 @@ public class JobPostService : IJobPostService
         if (searchJobPost.Title.Length != 0)
         {
             query = query.Where(j => j.Title.ToLower().Contains(searchJobPost.Title.ToLower()));
+            queryPinPost = queryPinPost.Where(j => j.Title.ToLower().Contains(searchJobPost.Title.ToLower()));
         }
 
         if (searchJobPost.Status != null)
         {
             query = query.Where(j => j.Status == searchJobPost.Status);
+            queryPinPost = queryPinPost.Where(j => j.Status == searchJobPost.Status);
         }
 
         if (searchJobPost.StatusWork != null)
         {
             query = query.Where(j => j.StatusWork == searchJobPost.StatusWork);
+            queryPinPost = queryPinPost.Where(j => j.StatusWork == searchJobPost.StatusWork);
         }
 
         if (searchJobPost.Type.Length != 0)
         {
             query = query.Where(j => j.Type.ToLower().Equals(searchJobPost.Type.ToLower()));
+            queryPinPost = queryPinPost.Where(j => j.Type.ToLower().Equals(searchJobPost.Type.ToLower()));
         }
 
         if (searchJobPost.GardenId != null)
         {
             query = query.Where(j => j.GardenId == searchJobPost.GardenId);
+            queryPinPost = queryPinPost.Where(j => j.GardenId == searchJobPost.GardenId);
         }
 
         if (searchJobPost.IsNotEndWork is true)
         {
             query = query.Where(j => j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Done);
+            queryPinPost = queryPinPost.Where(j => j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Done);
         }
 
         if (searchJobPost.Province != null)
         {
             query = query.Where(j => j.Garden.Area.Province!.ToLower().Contains(searchJobPost.Province.ToLower()));
+            queryPinPost = queryPinPost.Where(j => j.Garden.Area.Province!.ToLower().Contains(searchJobPost.Province.ToLower()));
         }
 
         if (searchJobPost.District != null)
         {
             query = query.Where(j => j.Garden.Area.District!.ToLower().Contains(searchJobPost.District.ToLower()));
+            queryPinPost = queryPinPost.Where(j => j.Garden.Area.District!.ToLower().Contains(searchJobPost.District.ToLower()));
         }
 
         if (searchJobPost.Commune != null)
         {
             query = query.Where(j => j.Garden.Area.Commune!.ToLower().Contains(searchJobPost.Commune.ToLower()));
+            queryPinPost = queryPinPost.Where(j => j.Garden.Area.Commune!.ToLower().Contains(searchJobPost.Commune.ToLower()));
         }
 
         if (searchJobPost.WorkTypeId != null)
         {
             query = query.Where(j => j.WorkTypeId == searchJobPost.WorkTypeId);
+            queryPinPost = queryPinPost.Where(j => j.WorkTypeId == searchJobPost.WorkTypeId);
         }
 
         if (searchJobPost.StartDateFrom != null)
         {
             query = query.Where(j =>
                 j.StartJobDate == null || j.StartJobDate.Value.Date >= searchJobPost.StartDateFrom.Value.Date);
+            queryPinPost = queryPinPost.Where(j =>
+                j.StartJobDate == null || j.StartJobDate.Value.Date >= searchJobPost.StartDateFrom.Value.Date);
         }
 
         if (searchJobPost.StartDateTo != null)
         {
             query = query.Where(j => j.StartJobDate == null || j.StartJobDate.Value.Date <= searchJobPost.StartDateTo);
+            queryPinPost = queryPinPost.Where(j => j.StartJobDate == null || j.StartJobDate.Value.Date <= searchJobPost.StartDateTo);
         }
 
         if (searchJobPost.SalaryFrom != null)
@@ -132,11 +146,19 @@ public class JobPostService : IJobPostService
             query = query.Where(j =>
                 j.PayPerHourJob.Salary >= searchJobPost.SalaryFrom
                 || j.PayPerTaskJob.Salary >= searchJobPost.SalaryFrom);
+            
+            queryPinPost = queryPinPost.Where(j =>
+                j.PayPerHourJob.Salary >= searchJobPost.SalaryFrom
+                || j.PayPerTaskJob.Salary >= searchJobPost.SalaryFrom);
         }
 
         if (searchJobPost.SalaryTo != null)
         {
             query = query.Where(j =>
+                j.PayPerHourJob.Salary <= searchJobPost.SalaryTo
+                || j.PayPerTaskJob.Salary <= searchJobPost.SalaryTo);
+            
+            queryPinPost = queryPinPost.Where(j =>
                 j.PayPerHourJob.Salary <= searchJobPost.SalaryTo
                 || j.PayPerTaskJob.Salary <= searchJobPost.SalaryTo);
         }
@@ -153,6 +175,7 @@ public class JobPostService : IJobPostService
                     .Select(tj => tj.JobPostId)
                     .ToList();
             query = query.Where(j => jobPostId.Contains(j.Id));
+            queryPinPost = queryPinPost.Where(j => jobPostId.Contains(j.Id));
         }
 
         if (isFarmer)
@@ -170,7 +193,7 @@ public class JobPostService : IJobPostService
 
         if (isFarmer)
         {
-            var listP = _mapper.ProjectTo<JobPostDetail>(_jobPostRepository.GetPinPost());
+            var listP = _mapper.ProjectTo<JobPostDetail>(queryPinPost);
             result.SecondObject = listP.ToList();
         }
 
