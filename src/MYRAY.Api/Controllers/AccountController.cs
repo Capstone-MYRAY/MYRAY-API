@@ -248,7 +248,7 @@ public class AccountController : ControllerBase
     /// <response code="200">Returns the account top up success</response>
     /// <response code="400">Returns if account is not existed or invalid information.</response>
     [HttpPost]
-    [Authorize(Roles = UserRole.MODERATOR)]
+    [Authorize]
     [Route("topup")]
     public async Task<IActionResult> TopUpAccount(int? accountId, float topUp)
     {

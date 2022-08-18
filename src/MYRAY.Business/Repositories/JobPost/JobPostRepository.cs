@@ -5,6 +5,7 @@ using MYRAY.Business.DTOs.JobPost;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.Interface;
+using MYRAY.Business.Services.Notification;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.JobPost;
@@ -20,6 +21,7 @@ public class JobPostRepository : IJobPostRepository
     private readonly IBaseRepository<DataTier.Entities.Account> _accountRepository;
     private readonly IBaseRepository<DataTier.Entities.TreeJob> _treeJobRepository;
     private readonly IBaseRepository<DataTier.Entities.AppliedJob> _appliedRepository;
+    private readonly IBaseRepository<DataTier.Entities.Attendance> _attendanceRepository;
 
     public JobPostRepository(IDbContextFactory contextFactory)
     {
@@ -33,6 +35,7 @@ public class JobPostRepository : IJobPostRepository
         _accountRepository = context.GetRepository<DataTier.Entities.Account>()!;
         _treeJobRepository = context.GetRepository<DataTier.Entities.TreeJob>()!;
         _appliedRepository = context.GetRepository<DataTier.Entities.AppliedJob>()!;
+        _attendanceRepository = context.GetRepository<DataTier.Entities.Attendance>()!;
     }
 
     public IQueryable<DataTier.Entities.JobPost> GetJobPosts(int? publishBy = null)
@@ -282,14 +285,75 @@ public class JobPostRepository : IJobPostRepository
         }
 
         jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Done;
+        Expression<Func<DataTier.Entities.AppliedJob, object>> expAppliedJob = job => job.AppliedByNavigation; 
         IQueryable<DataTier.Entities.AppliedJob> appliedJobs = 
             _appliedRepository.Get(a => 
                 a.JobPostId == jobPost.Id 
-                && a.Status != (int?)AppliedJobEnum.AppliedJobStatus.Pending 
-                && a.Status != (int?)AppliedJobEnum.AppliedJobStatus.Fired);
+                && (a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Pending 
+                || a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve), new []{expAppliedJob});
+
+        List<DataTier.Entities.AppliedJob> appliedJobsList = await appliedJobs.ToListAsync();
         if (jobPost.Type.Equals("PayPerHourJob"))
         {
-            // TODO: Chua lam cai nay 
+            foreach (var appliedJob in appliedJobsList)
+            {
+                if (appliedJob.Status == (int?)AppliedJobEnum.AppliedJobStatus.Pending)
+                {
+                    appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.Reject;
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "appliedFarmer" }
+                    };
+                    await PushNotification.SendMessage(appliedJob.AppliedBy.ToString()
+                        , $"Ứng tuyển không thành công",
+                        $"{appliedJob.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {jobPost.Title}", data);
+
+                }
+
+                if (appliedJob.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve)
+                {
+                    appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
+                }
+            }
+        }
+        else
+        {
+            PayPerTaskJob payPerTaskJob = (await _payPerTaskRepository.GetByIdAsync(jobPost.Id))!;
+            foreach (var appliedJob in appliedJobsList)
+            {
+                if (appliedJob.Status == (int?)AppliedJobEnum.AppliedJobStatus.Pending)
+                {
+                    appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.Reject;
+                    Dictionary<string, string> data = new Dictionary<string, string>()
+                    {
+                        { "type", "appliedFarmer" }
+                    };
+                    await PushNotification.SendMessage(appliedJob.AppliedBy.ToString()
+                        , $"Ứng tuyển không thành công",
+                        $"{appliedJob.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {jobPost.Title}", data);
+
+                }
+
+                if (appliedJob.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve)
+                {
+                    appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
+                    // TODO: them attendance
+                    DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
+                    {
+                        Date = DateTime.Today,
+                        Salary = payPerTaskJob.Salary,
+                        Status = (int?)AttendanceEnum.AttendanceStatus.Present,
+                        AccountId = appliedJob.AppliedBy,
+                        AppliedJob = appliedJob,
+                        CreatedDate = DateTime.Now,
+                        AppliedJobId = appliedJob.Id,
+                        BonusPoint = 1
+                    };
+                    
+                   await _attendanceRepository.InsertAsync(newAttendance);
+
+                }
+            }
         }
         
         await _contextFactory.SaveAllAsync();
