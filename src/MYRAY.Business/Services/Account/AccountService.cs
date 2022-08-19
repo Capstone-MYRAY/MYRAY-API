@@ -239,7 +239,7 @@ public class AccountService : IAccountService
             {
                 throw new MException(StatusCodes.Status400BadRequest, "Id is null");
             }
-
+            
             DataTier.Entities.Account topUpAccount =
                 await _accountRepository.TopUpAccountByIdAsync((int)id, topUp, createBy);
             GetAccountDetail result = _mapper.Map<GetAccountDetail>(topUpAccount);

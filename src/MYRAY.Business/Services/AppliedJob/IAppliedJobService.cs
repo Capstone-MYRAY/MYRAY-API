@@ -33,5 +33,6 @@ public interface IAppliedJobService
     public Task<AppliedJobDetail?> CheckApplied(int jobPostId, int appliedId);
 
     public Task<bool> CheckAppliedHourJob(int farmerId);
-
+    
+    public Task<int> CountAppliedJob();
 }

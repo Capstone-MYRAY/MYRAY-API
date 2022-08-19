@@ -9,7 +9,6 @@ using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
 using MYRAY.Business.Repositories.AppliedJob;
 using MYRAY.Business.Repositories.JobPost;
-using MYRAY.Business.Services.JobPost;
 using MYRAY.Business.Services.Notification;
 
 namespace MYRAY.Business.Services.AppliedJob;
@@ -173,5 +172,14 @@ public class AppliedJobService : IAppliedJobService
     public async Task<bool> CheckAppliedHourJob(int farmerId)
     {
         return await _appliedJobRepository.CheckAppliedHourJob(farmerId);
+    }
+
+    public async Task<int> CountAppliedJob()
+    {
+        IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAppliedJobsAll()
+            .Where(a => a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve 
+                        || a.Status == (int?)AppliedJobEnum.AppliedJobStatus.End);
+        var result = await query.CountAsync();
+        return result;
     }
 }

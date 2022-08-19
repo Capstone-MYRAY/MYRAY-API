@@ -240,7 +240,7 @@ public class AccountController : ControllerBase
     }
 
     /// <summary>
-    /// [Moderator] Endpoint for top up account.
+    /// [Authenticated user] Endpoint for top up account.
     /// </summary>
     /// <param name="accountId">Id of  account</param>
     /// <param name="topUp">Money to top up</param>
@@ -256,7 +256,7 @@ public class AccountController : ControllerBase
         {
             if (accountId == null)
                 return BadRequest("Invalid account ID");
-           var createBy  = int.Parse(User.FindFirst("id")?.Value!);
+            var createBy = int.Parse(User.FindFirst("id")?.Value!);
            GetAccountDetail result = await _accountService.TopUpAccountByIdAsync(accountId, topUp, createBy);
            return Ok(result);
            

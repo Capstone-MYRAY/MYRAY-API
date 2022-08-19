@@ -25,6 +25,11 @@ public class AppliedJobRepository : IAppliedJobRepository
         _payPerHourJob = _contextFactory.GetContext<MYRAYContext>().GetRepository<PayPerHourJob>()!;
     }
 
+    public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobsAll()
+    {
+       return _appliedJobRepository.Get();
+    }
+
     public IQueryable<DataTier.Entities.AppliedJob> GetAppliedJobs(int jobId,
         AppliedJobEnum.AppliedJobStatus? status = null)
     {

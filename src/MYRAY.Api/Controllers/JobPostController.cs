@@ -724,4 +724,16 @@ public class JobPostController : ControllerBase
 
         return Ok(0);
     }
+
+    /// <summary>
+    /// [Authenticated user] Endpoint for count all applied has status approve or end
+    /// </summary>
+    /// <returns>number of applied job</returns>
+    [HttpGet("countAll")]
+    [Authorize]
+    public async Task<IActionResult> CountAllAppliedApproveAndEnd()
+    {
+        int result = await _appliedJobService.CountAppliedJob();
+        return Ok(result);
+    }
 }
