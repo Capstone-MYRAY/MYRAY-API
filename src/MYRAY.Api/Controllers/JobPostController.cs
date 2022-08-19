@@ -744,7 +744,7 @@ public class JobPostController : ControllerBase
     /// <param name="startDate">Start date</param>
     /// <returns></returns>
     [HttpPut("startDate/{jobPostId}")]
-    public async Task<IActionResult> UpdateStartDate([FromQuery]int jobPostId, [FromBody]DateTime startDate)
+    public async Task<IActionResult> UpdateStartDate(int jobPostId, [FromBody]DateTime startDate)
     {
         
         var result = await _jobPostService.UpdateStartJob(jobPostId, startDate);
