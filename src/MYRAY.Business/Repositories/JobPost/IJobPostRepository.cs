@@ -55,6 +55,8 @@ public interface IJobPostRepository
 
     Task<int> TotalPinDate(int jobPostId);
 
+    Task<DataTier.Entities.JobPost> UpdateStartDate(int jobPostId, DateTime startDate);
+
     Task PostingJob();
 
     Task ExpiredJob();

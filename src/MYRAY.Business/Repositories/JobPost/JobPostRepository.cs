@@ -602,21 +602,30 @@ public class JobPostRepository : IJobPostRepository
         return listPin.Count();
     }
 
+    public async Task<DataTier.Entities.JobPost> UpdateStartDate(int jobPostId, DateTime startDate)
+    {
+        DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetByIdAsync(jobPostId);
+        jobPost.StartJobDate = startDate;
+
+        await _contextFactory.SaveAllAsync();
+        return jobPost;
+    }
+
     public async Task PostingJob()
     {
-        // IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
-        //     j.Status == (int?)JobPostEnum.JobPostStatus.Approved && j.PublishedDate.Value.Date.Equals(DateTime.Today));
-        //
-        // List<DataTier.Entities.JobPost> listPosting = await query.ToListAsync();
-        // foreach (var jobPost in listPosting)
-        // {
-        //     jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
-        //     _jobPostRepository.Modify(jobPost);
-        //     Console.WriteLine($"Posted: #{jobPost.Id} - {DateTime.Now}",
-        //         Console.BackgroundColor == ConsoleColor.Yellow);
-        // }
-        //
-        // await _contextFactory.SaveAllAsync();
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
+            j.Status == (int?)JobPostEnum.JobPostStatus.Approved && j.PublishedDate.Value.Date.Equals(DateTime.Today));
+        
+        List<DataTier.Entities.JobPost> listPosting = await query.ToListAsync();
+        foreach (var jobPost in listPosting)
+        {
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
+            _jobPostRepository.Modify(jobPost);
+            Console.WriteLine($"Posted: #{jobPost.Id} - {DateTime.Now}",
+                Console.BackgroundColor == ConsoleColor.Yellow);
+        }
+        
+        await _contextFactory.SaveAllAsync();
     }
 
     public async Task ExpiredJob()
@@ -656,23 +665,23 @@ public class JobPostRepository : IJobPostRepository
 
     public async Task ExpiredApproveJob()
     {
-        // IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
-        //     j.Status == (int?)JobPostEnum.JobPostStatus.Pending &&
-        //     j.PublishedDate!.Value.Date < DateTime.Today);
-        //
-        // List<DataTier.Entities.JobPost> listOutOfDate = query.ToList();
-        // foreach (var jobPost in listOutOfDate)
-        // {
-        //     jobPost.Status = (int?)JobPostEnum.JobPostStatus.OutOfDate;
-        //     DataTier.Entities.PaymentHistory? paymentHistories = await
-        //         _paymentHistoryRepository.GetFirstOrDefaultAsync(p =>
-        //             p.JobPostId == jobPost.Id && p.BelongedId == jobPost.PublishedBy);
-        //     _paymentHistoryRepository.Delete(paymentHistories!);
-        //     Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
-        //         Console.BackgroundColor == ConsoleColor.Yellow);
-        // }
-        //
-        // await _contextFactory.SaveAllAsync();
+        IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
+            j.Status == (int?)JobPostEnum.JobPostStatus.Pending &&
+            j.PublishedDate!.Value.Date < DateTime.Today);
+        
+        List<DataTier.Entities.JobPost> listOutOfDate = query.ToList();
+        foreach (var jobPost in listOutOfDate)
+        {
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.OutOfDate;
+            DataTier.Entities.PaymentHistory? paymentHistories = await
+                _paymentHistoryRepository.GetFirstOrDefaultAsync(p =>
+                    p.JobPostId == jobPost.Id && p.BelongedId == jobPost.PublishedBy);
+            _paymentHistoryRepository.Delete(paymentHistories!);
+            Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
+                Console.BackgroundColor == ConsoleColor.Yellow);
+        }
+        
+        await _contextFactory.SaveAllAsync();
     }
 
     public async Task SaveChange()

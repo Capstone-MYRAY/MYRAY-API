@@ -736,4 +736,22 @@ public class JobPostController : ControllerBase
         int result = await _appliedJobService.CountAppliedJob();
         return Ok(result);
     }
+
+    /// <summary>
+    /// [Landowner] Endpoint for landowner update start date of job
+    /// </summary>
+    /// <param name="jobPostId">Id of job post</param>
+    /// <param name="startDate">Start date</param>
+    /// <returns></returns>
+    [HttpPut("startDate")]
+    public async Task<IActionResult> UpdateStartDate([FromBody]int jobPostId, [FromBody]DateTime startDate)
+    {
+        
+        var result = await _jobPostService.UpdateStartJob(jobPostId, startDate);
+        if (result == null)
+        {
+            return BadRequest();
+        }
+        return Ok(result);
+    }
 }

@@ -605,6 +605,26 @@ public class JobPostService : IJobPostService
         return nearPinDate.PinDate1.DayOfYear - pinDate.DayOfYear;
     }
 
+    public async Task<JobPostDetail> UpdateStartJob(int jobPostId, DateTime startJob)
+    {
+        if (startJob.Date <= DateTime.Today.Date)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Start date must be after today");
+        }
+        DataTier.Entities.JobPost jobPost =  await _jobPostRepository.GetJobPostById(jobPostId);
+        if (jobPost == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Job post is not existed");
+        }
+
+        jobPost.StartJobDate = startJob;
+
+        jobPost = await _jobPostRepository.UpdateStartDate(jobPostId, startJob);
+        var result = _mapper.Map<JobPostDetail>(jobPost);
+
+        return result;
+    }
+
     public async Task<int> TotalPinDate(int jobPostId)
     {
         int result = await _jobPostRepository.TotalPinDate(jobPostId);
