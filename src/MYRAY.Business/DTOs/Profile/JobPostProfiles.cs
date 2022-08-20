@@ -13,7 +13,9 @@ public static class JobPostProfiles
     {
         configuration.CreateMap<DataTier.Entities.JobPost, JobPostDetail>()
             .ForMember(des => des.GardenLat,
-                expression => expression.MapFrom(src => src.Garden.Latitudes))
+                expression => expression.MapFrom(src => src.Garden.Latitudes)) 
+            .ForMember(des => des.GardenImage,
+                expression => expression.MapFrom(src => src.Garden.ImageUrl))
             .ForMember(des => des.GardenLon,
                 expression => expression.MapFrom(src => src.Garden.Longitudes))
             .ForMember(des => des.GardenName,

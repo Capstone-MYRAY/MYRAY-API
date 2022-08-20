@@ -10,6 +10,7 @@ public class JobPostDetail
     public int Id { get; set; }
     public int GardenId { get; set; }
     public string GardenName { get; set; }
+    public string GardenImage { get; set; }
     public decimal? GardenLat { get; set; }
     public decimal? GardenLon { get; set; }
     public string Address { get; set; }
