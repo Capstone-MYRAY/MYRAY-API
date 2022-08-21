@@ -176,9 +176,9 @@ public class AppliedJobService : IAppliedJobService
 
     public async Task<int> CountAppliedJob(int jobPostId)
     {
-        IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAllAppliedJobs(jobPostId)
-            .Where(a => a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve 
-                        || a.Status == (int?)AppliedJobEnum.AppliedJobStatus.End);
+        IQueryable<DataTier.Entities.AppliedJob> query = _appliedJobRepository.GetAppliedJobsAll()
+            .Where(a => a.JobPostId == jobPostId && (a.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve 
+                        || a.Status == (int?)AppliedJobEnum.AppliedJobStatus.End));
         var result = await query.CountAsync();
         return result;
     }
