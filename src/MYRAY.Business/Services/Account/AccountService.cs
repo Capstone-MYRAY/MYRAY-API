@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
 using MYRAY.Business.DTOs.Authentication;
+using MYRAY.Business.DTOs.Momo;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
@@ -250,5 +251,10 @@ public class AccountService : IAccountService
             Console.WriteLine(e);
             throw new MException(StatusCodes.Status400BadRequest, e.Message);
         }
+    }
+
+    public async Task TopUpAccountByMomo(MomoRequest momoRequest)
+    {
+        // if(momoRequest.ResultCode == 0 || momoRequest.ResultCode == 9000)
     }
 }

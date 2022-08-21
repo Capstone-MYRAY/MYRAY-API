@@ -554,6 +554,7 @@ public class JobPostRepository : IJobPostRepository
         }
 
         jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Started;
+        // jobPost.Status = (int?)JobPostEnum.JobPostStatus.ShortHandled;
         _jobPostRepository.Modify(jobPost);
 
         await _contextFactory.SaveAllAsync();

@@ -1,6 +1,7 @@
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
 using MYRAY.Business.DTOs.Authentication;
+using MYRAY.Business.DTOs.Momo;
 using MYRAY.Business.Enums;
 
 namespace MYRAY.Business.Services.Account;
@@ -92,4 +93,14 @@ public interface IAccountService
     /// <param name="createBy">Who top up</param>
     /// <returns>An account</returns>
     public Task<GetAccountDetail> TopUpAccountByIdAsync(int? id, float topUp, int createBy);
+    
+    /// <summary>
+    /// Top up balance an existed account.
+    /// </summary>
+    /// <param name="id">Id of account</param>
+    /// <param name="topUp">Money to top up account</param>
+    /// <param name="createBy">Who top up</param>
+    /// <returns>An account</returns>
+    public Task TopUpAccountByMomo(MomoRequest momoRequest);
+
 }

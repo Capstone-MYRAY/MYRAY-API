@@ -34,5 +34,5 @@ public interface IAppliedJobService
 
     public Task<bool> CheckAppliedHourJob(int farmerId);
     
-    public Task<int> CountAppliedJob();
+    public Task<int> CountAppliedJob(int jobPostId);
 }

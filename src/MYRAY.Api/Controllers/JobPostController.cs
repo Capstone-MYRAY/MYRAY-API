@@ -729,11 +729,11 @@ public class JobPostController : ControllerBase
     /// [Authenticated user] Endpoint for count all applied has status approve or end
     /// </summary>
     /// <returns>number of applied job</returns>
-    [HttpGet("countAll")]
+    [HttpGet("countAll/{jobPostId}")]
     [Authorize]
-    public async Task<IActionResult> CountAllAppliedApproveAndEnd()
+    public async Task<IActionResult> CountAllAppliedApproveAndEnd(int jobPostId)
     {
-        int result = await _appliedJobService.CountAppliedJob();
+        int result = await _appliedJobService.CountAppliedJob(jobPostId);
         return Ok(result);
     }
 

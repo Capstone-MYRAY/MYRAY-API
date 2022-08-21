@@ -4,6 +4,7 @@ using MYRAY.Api.Constants;
 using MYRAY.Business.Constants;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Account;
+using MYRAY.Business.DTOs.Momo;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
@@ -316,5 +317,12 @@ public class AccountController : ControllerBase
             Console.WriteLine(e);
             return BadRequest(e.Message);
         }
+    }
+
+    [HttpPost("ipn")]
+    public async Task<IActionResult> TopUpMomo(MomoRequest momoRequest)
+    {
+        await _accountService.TopUpAccountByMomo(momoRequest);
+        return NoContent();
     }
 }
