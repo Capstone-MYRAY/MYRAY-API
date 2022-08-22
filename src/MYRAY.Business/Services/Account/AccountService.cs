@@ -1,3 +1,4 @@
+using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using MYRAY.Business.DTOs;
@@ -255,6 +256,17 @@ public class AccountService : IAccountService
 
     public async Task TopUpAccountByMomo(MomoRequest momoRequest)
     {
-        // if(momoRequest.ResultCode == 0 || momoRequest.ResultCode == 9000)
+        if (momoRequest.ResultCode == 0 || momoRequest.ResultCode == 9000)
+        {
+            var base64EncodedBytes = Convert.FromBase64String(momoRequest.ExtraData);
+            int accountId = int.Parse(Encoding.UTF8.GetString(base64EncodedBytes));
+            float topUp = momoRequest.Amount;
+            
+        }
+        else
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Error Payment");
+        }
+        
     }
 }

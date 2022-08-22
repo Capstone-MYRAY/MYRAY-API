@@ -499,7 +499,10 @@ public class JobPostRepository : IJobPostRepository
 
         ICollection<PinDate> list = queryPin.ToList();
         jobPost.Status = (int?)JobPostEnum.JobPostStatus.Approved;
-
+        if (jobPost.PublishedDate.Value.Date == DateTime.Today.Date)
+        {
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.ShortHandled;
+        }
 
         jobPost.ApprovedDate = DateTime.Now;
         jobPost.ApprovedBy = approvedBy;
@@ -620,7 +623,7 @@ public class JobPostRepository : IJobPostRepository
         List<DataTier.Entities.JobPost> listPosting = await query.ToListAsync();
         foreach (var jobPost in listPosting)
         {
-            jobPost.Status = (int?)JobPostEnum.JobPostStatus.Posted;
+            jobPost.Status = (int?)JobPostEnum.JobPostStatus.ShortHandled;
             _jobPostRepository.Modify(jobPost);
             Console.WriteLine($"Posted: #{jobPost.Id} - {DateTime.Now}",
                 Console.BackgroundColor == ConsoleColor.Yellow);

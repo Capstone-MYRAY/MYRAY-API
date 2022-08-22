@@ -45,8 +45,7 @@ namespace MYRAY.DataTier.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=20.212.196.50,1433;Initial Catalog=MYRAY;User ID=sa;Password=29327Cab@456789");
+                
             }
         }
 
@@ -767,6 +766,8 @@ namespace MYRAY.DataTier.Entities
                 entity.Property(e => e.TotalPinDay)
                     .HasColumnName("total_pin_day")
                     .HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.TransactionId).HasColumnName("transaction_id");
 
                 entity.Property(e => e.UsedPoint).HasColumnName("used_point");
 

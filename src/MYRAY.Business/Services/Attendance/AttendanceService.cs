@@ -81,7 +81,7 @@ public class AttendanceService : IAttendanceService
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
             { "type", "present" },
-            {"jobPostId" , newAttendance.AppliedJob.JobPostId.ToString()}
+            {"jobPostId" , jobPost.Id.ToString()}
         };
         await PushNotification.SendMessage(newAttendance.AccountId.ToString()
             , $"Bạn đã được điểm danh",
