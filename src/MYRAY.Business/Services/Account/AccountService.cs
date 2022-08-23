@@ -262,6 +262,10 @@ public class AccountService : IAccountService
             int accountId = int.Parse(Encoding.UTF8.GetString(base64EncodedBytes));
             float topUp = momoRequest.Amount;
             
+            DataTier.Entities.Account topUpAccount =
+                await _accountRepository.TopUpAccountByIdAsync((int)accountId, topUp, accountId);
+           
+            
         }
         else
         {
