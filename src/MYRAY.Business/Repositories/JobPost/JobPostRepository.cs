@@ -652,7 +652,7 @@ public class JobPostRepository : IJobPostRepository
     public async Task StartJob()
     {
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
-            (j.Status == (int?)JobPostEnum.JobPostStatus.Posted || j.Status == (int?)JobPostEnum.JobPostStatus.Expired)
+            (j.Status == (int?)JobPostEnum.JobPostStatus.ShortHandled || j.Status == (int?)JobPostEnum.JobPostStatus.Enough)
             && j.StatusWork != (int?)JobPostEnum.JobPostWorkStatus.Started
             && j.StartJobDate.Value.Date == DateTime.Today);
 
