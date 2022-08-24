@@ -68,9 +68,12 @@ public class ReportService : IReportService
 
         var gardenIdList = area.Gardens.Select(g => g.Id);
 
-        var x = _jobPostRepository.GetJobPosts()
-            .Where(j => gardenIdList.Contains(j.GardenId));
-        
+        var listJobPostId = _jobPostRepository.GetJobPosts()
+            .Where(j => gardenIdList.Contains(j.GardenId))
+            .Include(j => j.Reports)
+            .Select(j => j.Id)
+            .ToList();
+        query = query.Where(r => listJobPostId.Contains(r.Id));
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
 
         var result = query.GetWithPaging<ReportDetail, DataTier.Entities.Report>(pagingDto, _mapper);
