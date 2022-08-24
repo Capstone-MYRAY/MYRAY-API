@@ -1,10 +1,14 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs;
 using MYRAY.Business.DTOs.Report;
 using MYRAY.Business.Enums;
+using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
+using MYRAY.Business.Repositories.Area;
+using MYRAY.Business.Repositories.AreaAccount;
 using MYRAY.Business.Repositories.Report;
 
 namespace MYRAY.Business.Services.Report;
@@ -13,11 +17,18 @@ public class ReportService : IReportService
 {
     private readonly IMapper _mapper;
     private readonly IReportRepository _reportRepository;
+    private readonly IAreaRepository _areaRepository;
+    private readonly IAreaAccountRepository _areaAccountRepository;
 
-    public ReportService(IMapper mapper, IReportRepository reportRepository)
+    public ReportService(IMapper mapper, 
+        IReportRepository reportRepository,
+        IAreaAccountRepository areaAccountRepository,
+        IAreaRepository areaRepository)
     {
         _mapper = mapper;
         _reportRepository = reportRepository;
+        _areaAccountRepository = areaAccountRepository;
+        _areaRepository = areaRepository;
     }
 
 
@@ -28,6 +39,31 @@ public class ReportService : IReportService
 
         query = query.GetWithSearch(searchReport);
 
+        query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
+
+        var result = query.GetWithPaging<ReportDetail, DataTier.Entities.Report>(pagingDto, _mapper);
+
+        return result;
+    }
+
+    public ResponseDto.CollectiveResponse<ReportDetail> GetReports(int moderatorId, PagingDto pagingDto, SortingDto<ReportEnum.ReportSortCriterial> sortingDto)
+    {
+        IQueryable<DataTier.Entities.Report> query = _reportRepository.GetReports();
+
+        DataTier.Entities.Area? area = _areaAccountRepository
+            .GetAreaAccount()
+            .Where(a => a.AccountId == moderatorId)
+            .Include(a => a.Area)
+            .Include(a => a.Area.Gardens)
+            .FirstOrDefault()
+            ?.Area;
+        if (area == null)
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "ID Moderator not found");
+        }
+
+        var garder = area.Gardens;
+        
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
 
         var result = query.GetWithPaging<ReportDetail, DataTier.Entities.Report>(pagingDto, _mapper);

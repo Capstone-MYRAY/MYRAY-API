@@ -11,6 +11,11 @@ public interface IReportService
         PagingDto pagingDto,
         SortingDto<ReportEnum.ReportSortCriterial> sortingDto);
 
+    ResponseDto.CollectiveResponse<ReportDetail> GetReports(
+        int moderatorId,
+        PagingDto pagingDto,
+        SortingDto<ReportEnum.ReportSortCriterial> sortingDto);
+    
     Task<List<ReportDetail>?> GetReportByReportedId(int reported);
     Task<ReportDetail> GetReportById(int id);
     Task<ReportDetail> GetOneReportById(int jobPostId, int reportedId, int createById);
