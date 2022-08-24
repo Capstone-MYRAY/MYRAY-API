@@ -145,6 +145,33 @@ public class AttendanceController : ControllerBase
     }
     
     /// <summary>
+    /// [Landowner] Endpoint for check attendance for task job .
+    /// </summary>
+    /// <returns>Check Attendance</returns>
+    /// <exception cref="Exception">Error if input is empty</exception>
+    /// <response code="201">Returns the attendance</response>
+    /// <response code="400">Returns if attendance input is empty or create error</response>
+    [HttpPost("task")]
+    [Authorize(Roles = UserRole.LANDOWNER)]
+    [ProducesResponseType(typeof(AttendanceDetail),StatusCodes.Status201Created)]
+    public async Task<IActionResult> CheckAttendanceForTask([FromBody]CheckAttendanceTask? attendance)
+    {
+        try
+        {
+            if (attendance == null)
+                throw new Exception("Attendance is empty data");
+            var createBy = int.Parse(User.FindFirst("id")?.Value!);
+            var result =  await _salaryTrackingService.CreateAttendanceTask(attendance, createBy);
+
+            return Created(String.Empty, result);
+        }
+        catch (MException e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    
+    /// <summary>
     /// [Farmer] Endpoint for request day off attendance .
     /// </summary>
     /// <returns>Check day off Attendance</returns>

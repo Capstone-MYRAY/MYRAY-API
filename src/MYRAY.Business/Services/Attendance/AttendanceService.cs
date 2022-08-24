@@ -1,7 +1,9 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.DTOs.Attendance;
 using MYRAY.Business.Enums;
+using MYRAY.Business.Exceptions;
 using MYRAY.Business.Repositories.AppliedJob;
 using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.Attendance;
@@ -91,6 +93,71 @@ public class AttendanceService : IAttendanceService
         return result;
     }
 
+    public async Task<AttendanceDetail> CreateAttendanceTask(CheckAttendanceTask attendance, int checkBy)
+    {
+        DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(attendance.JobPostId);
+        if (jobPost == null)
+        {
+            throw new Exception("Job post is not existed");
+        }
+
+        if (jobPost.Status == (int?)JobPostEnum.JobPostStatus.Pending)
+        {
+            throw new Exception("Job post is not approved");
+        }
+
+        if (jobPost.Type.Equals("PayPerHourJob"))
+        {
+            throw new MException(StatusCodes.Status400BadRequest, "Must be Task Job");
+        }
+        PayPerHourJob? payPerHourJob = await _jobPostRepository.GetPayPerHourJob(jobPost.Id);
+        PayPerTaskJob? payPerTaskJob = await _jobPostRepository.GetPayPerTaskJob(jobPost.Id);
+        DataTier.Entities.AppliedJob appliedJob = await
+            _appliedJobRepository.GetByJobAndAccount(jobPost.Id, attendance.AccountId);
+        DataTier.Entities.Attendance? existedAttendance =
+            await _salaryTrackingRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy,
+                attendance.DateAttendance.Date);
+        if (existedAttendance != null)
+        {
+            throw new Exception("You have been attended");
+        }
+
+        bool isHourJob = jobPost.Type.Equals("PayPerHourJob");
+        int point = (attendance.Status == AttendanceEnum.AttendanceStatus.Present
+                     || attendance.Status == AttendanceEnum.AttendanceStatus.End)
+            ? 1
+            : 0;
+        double salary = (double)((attendance.Status == AttendanceEnum.AttendanceStatus.Present
+                                  || attendance.Status == AttendanceEnum.AttendanceStatus.End)
+            ? (isHourJob ? payPerHourJob.Salary : payPerTaskJob.Salary)
+            : 0);
+        DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
+        {
+            Date = attendance.DateAttendance,
+            Salary = attendance.Salary,
+            Status = (int?)attendance.Status,
+            Signature = attendance.Signature,
+            AppliedJobId = appliedJob.Id,
+            AccountId = attendance.AccountId,
+            BonusPoint = point,
+            Reason = attendance.Reason,
+            CreatedDate = DateTime.Now
+        };
+
+        newAttendance = await _salaryTrackingRepository.CreateAttendance(newAttendance);
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            { "type", "present" },
+            {"jobPostId" , jobPost.Id.ToString()}
+        };
+        await PushNotification.SendMessage(newAttendance.AccountId.ToString()
+            , $"Bạn đã được điểm danh",
+            $"Bạn đã được điểm danh cho công việc {jobPost.Title}", data);
+
+        AttendanceDetail result = _mapper.Map<AttendanceDetail>(newAttendance);
+        return result;
+    }
+    
     public async Task<AttendanceDetail> CreateDayOff(RequestDayOff requestDayOff, int accountId)
     {
         DataTier.Entities.JobPost jobPost = await _jobPostRepository.GetJobPostById(requestDayOff.JobPostId);

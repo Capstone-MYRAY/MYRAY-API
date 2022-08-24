@@ -9,6 +9,7 @@ using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Area;
 using MYRAY.Business.Repositories.AreaAccount;
+using MYRAY.Business.Repositories.JobPost;
 using MYRAY.Business.Repositories.Report;
 
 namespace MYRAY.Business.Services.Report;
@@ -19,15 +20,18 @@ public class ReportService : IReportService
     private readonly IReportRepository _reportRepository;
     private readonly IAreaRepository _areaRepository;
     private readonly IAreaAccountRepository _areaAccountRepository;
+    private readonly IJobPostRepository _jobPostRepository;
 
     public ReportService(IMapper mapper, 
         IReportRepository reportRepository,
         IAreaAccountRepository areaAccountRepository,
+        IJobPostRepository jobPostRepository,
         IAreaRepository areaRepository)
     {
         _mapper = mapper;
         _reportRepository = reportRepository;
         _areaAccountRepository = areaAccountRepository;
+        _jobPostRepository = jobPostRepository;
         _areaRepository = areaRepository;
     }
 
@@ -62,7 +66,10 @@ public class ReportService : IReportService
             throw new MException(StatusCodes.Status400BadRequest, "ID Moderator not found");
         }
 
-        var garder = area.Gardens;
+        var gardenIdList = area.Gardens.Select(g => g.Id);
+
+        var x = _jobPostRepository.GetJobPosts()
+            .Where(j => gardenIdList.Contains(j.GardenId));
         
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
 
