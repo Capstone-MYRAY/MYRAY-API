@@ -21,7 +21,6 @@ public class AttendanceRepository : IAttendanceRepository
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.Account>()!;
         _appliedRepository =
             _contextFactory.GetContext<MYRAYContext>().GetRepository<DataTier.Entities.AppliedJob>()!;
-
     }
 
 
@@ -31,38 +30,46 @@ public class AttendanceRepository : IAttendanceRepository
         bool isInsert = true;
         DataTier.Entities.Account? account = await _accountRepository.GetByIdAsync(attendance.AccountId);
         account!.Point += attendance.BonusPoint;
-        DataTier.Entities.AppliedJob? appliedJob = await _appliedRepository.GetFirstOrDefaultAsync(a => a.Id == attendance.AppliedJobId);
+        DataTier.Entities.AppliedJob? appliedJob =
+            await _appliedRepository.GetFirstOrDefaultAsync(a => a.Id == attendance.AppliedJobId);
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.Dismissed)
         {
-            appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
+            appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.Fired;
             appliedJob.EndDate = DateTime.Today;
-            isInsert = false;
+            DataTier.Entities.Attendance? attendanceNow = _attendanceRepository.Get(a =>
+                a.AccountId == attendance.AccountId && a.Date.Value.Date == DateTime.Today.Date).FirstOrDefault();
+            if (attendanceNow != null)
+            {
+                attendanceNow.Reason = attendance.Reason;
+                isInsert = false;
+            }
         }
+
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.End)
         {
             appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
             appliedJob.EndDate = DateTime.Today;
             isInsert = false;
         }
-        if(isInsert)
+
+        if (isInsert)
             await _attendanceRepository.InsertAsync(attendance);
-        
+
         await _contextFactory.SaveAllAsync();
         return attendance;
     }
 
     public async Task<DataTier.Entities.Attendance?> GetAttendance(int appliedJobId, int accountId, DateTime dateTime)
     {
-        DataTier.Entities.Attendance attendance = await 
-            _attendanceRepository.GetFirstOrDefaultAsync(a => a.AppliedJobId == appliedJobId 
-                                                              && a.AccountId == accountId 
+        DataTier.Entities.Attendance attendance = await
+            _attendanceRepository.GetFirstOrDefaultAsync(a => a.AppliedJobId == appliedJobId
+                                                              && a.AccountId == accountId
                                                               && a.Date.Value.Date.Equals(dateTime));
         return attendance;
     }
 
     public async Task<double?> GetTotalExpense(int jobPostId)
     {
-        
         IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a =>
             a.AppliedJob.JobPostId == jobPostId
             && a.Date.Value.Date <= DateTime.Today);
@@ -70,20 +77,21 @@ public class AttendanceRepository : IAttendanceRepository
         return totalExpense;
     }
 
-    public async Task<DataTier.Entities.Attendance> GetAttendanceByDate(int appliedJobId, int accountId, DateTime dateTime)
+    public async Task<DataTier.Entities.Attendance> GetAttendanceByDate(int appliedJobId, int accountId,
+        DateTime dateTime)
     {
-        DataTier.Entities.Attendance attendance = await 
+        DataTier.Entities.Attendance attendance = await
             _attendanceRepository.GetFirstOrDefaultAsync(a => a.Date.Value.Date.Equals(dateTime.Date));
         return attendance;
     }
-    
-    
+
 
     public IQueryable<DataTier.Entities.Attendance> GetListDayOffByJob(int farmerId, int? jobPostId = null)
     {
-        IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a => a.AppliedJob.AppliedBy == farmerId
-            && a.Status == (int?)AttendanceEnum.AttendanceStatus.DayOff
-            && (jobPostId == null || a.AppliedJob.JobPostId == jobPostId))
+        IQueryable<DataTier.Entities.Attendance> query = _attendanceRepository.Get(a =>
+                a.AppliedJob.AppliedBy == farmerId
+                && a.Status == (int?)AttendanceEnum.AttendanceStatus.DayOff
+                && (jobPostId == null || a.AppliedJob.JobPostId == jobPostId))
             .OrderByDescending(m => m.Date.Value);
         return query;
     }
@@ -95,7 +103,7 @@ public class AttendanceRepository : IAttendanceRepository
     }
 
     public async Task<DataTier.Entities.Attendance> CheckAttendance(DataTier.Entities.Attendance attendance)
-    {   
+    {
         _attendanceRepository.Modify(attendance);
 
         await _contextFactory.SaveAllAsync();
@@ -106,7 +114,7 @@ public class AttendanceRepository : IAttendanceRepository
     public async Task<DataTier.Entities.Attendance> RemoveAttendance(int id)
     {
         DataTier.Entities.Attendance attendance = (await _attendanceRepository.GetByIdAsync(id))!;
-        
+
         _attendanceRepository.Delete(attendance);
 
         await _contextFactory.SaveAllAsync();
