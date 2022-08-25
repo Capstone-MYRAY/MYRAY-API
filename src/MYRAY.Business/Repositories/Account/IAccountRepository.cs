@@ -65,13 +65,14 @@ public interface IAccountRepository
     /// <param name="id">Id of account</param>
     /// <returns>An account.</returns>
     Task<MYRAY.DataTier.Entities.Account> UnbanAccountByIdAsync(int id);
-    
+
     /// <summary>
     /// Top up balance for account
     /// </summary>
     /// <param name="id">ID of account</param>
     /// <param name="topUp">number of topup</param>
     /// <param name="createBy">Account Create</param>
+    /// <param name="transactionId">TransactionId</param>
     /// <returns>An account</returns>
-    Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy);
+    Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy, string? transactionId = null);
 }

@@ -163,7 +163,7 @@ public class AccountRepository : IAccountRepository
         return account;
     }
 
-    public async Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy)
+    public async Task<DataTier.Entities.Account> TopUpAccountByIdAsync(int id, float topUp, int createBy, string? transactionId = null)
     {
         DataTier.Entities.Account account = await _accountRepository.GetByIdAsync(id);
         if (account == null)
@@ -199,6 +199,7 @@ public class AccountRepository : IAccountRepository
         DataTier.Entities.PaymentHistory newPayment = new DataTier.Entities.PaymentHistory
         {
             CreatedBy = createBy,
+            TransactionId = transactionId != null ? long.Parse(transactionId) : null,
             Status = (int?)PaymentHistoryEnum.PaymentHistoryStatus.Paid,
             CreatedDate = DateTime.Now,
             ActualPrice = topUp,
