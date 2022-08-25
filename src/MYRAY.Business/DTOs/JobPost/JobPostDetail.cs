@@ -22,6 +22,7 @@ public class JobPostDetail
     public int? WorkTypeId { get; set; }
     public string WorkTypeName { get; set; }
     public int PublishedBy { get; set; }
+    public string PublishedName { get; set; }
     public DateTime? PublishedDate { get; set; }
   
     public DateTime CreatedDate { get; set; }

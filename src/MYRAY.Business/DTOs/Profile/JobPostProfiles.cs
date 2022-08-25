@@ -18,6 +18,8 @@ public static class JobPostProfiles
                 expression => expression.MapFrom(src => src.Garden.ImageUrl))
             .ForMember(des => des.GardenLon,
                 expression => expression.MapFrom(src => src.Garden.Longitudes))
+            .ForMember(des => des.PublishedName,
+                otp => otp.MapFrom(src => src.PublishedByNavigation.Fullname))
             .ForMember(des => des.GardenName,
                 otp => otp.MapFrom(src => src.Garden.Name))
             .ForMember(des => des.WorkTypeName,
