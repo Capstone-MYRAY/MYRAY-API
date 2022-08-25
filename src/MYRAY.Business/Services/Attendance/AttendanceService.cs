@@ -52,7 +52,7 @@ public class AttendanceService : IAttendanceService
         DataTier.Entities.Attendance? existedAttendance =
             await _salaryTrackingRepository.GetAttendance(appliedJob.Id, appliedJob.AppliedBy,
                 attendance.DateAttendance.Date);
-        if (existedAttendance != null)
+        if (existedAttendance != null && attendance.Status != AttendanceEnum.AttendanceStatus.Dismissed)
         {
             throw new Exception("You have been attended");
         }
@@ -69,7 +69,7 @@ public class AttendanceService : IAttendanceService
         DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
         {
             Date = attendance.DateAttendance,
-            Salary = salary,
+            Salary = attendance.Status == AttendanceEnum.AttendanceStatus.Dismissed ? 0 : salary,
             Status = (int?)attendance.Status,
             Signature = attendance.Signature,
             AppliedJobId = appliedJob.Id,
