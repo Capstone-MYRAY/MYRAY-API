@@ -61,6 +61,8 @@ public class JobPostService : IJobPostService
         if (isFarmer)
         {
             query = query.Where(post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted
+                                        || post.Status == (int?)JobPostEnum.JobPostStatus.ShortHandled
+                                        || post.Status == (int?)JobPostEnum.JobPostStatus.Enough
                                         || post.Status == (int?)JobPostEnum.JobPostStatus.Expired);
         }
 

@@ -28,4 +28,8 @@
       <Folder Include="Services" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\MYRAY.Business\MYRAY.Business.csproj" />
+    </ItemGroup>
+
 </Project>
