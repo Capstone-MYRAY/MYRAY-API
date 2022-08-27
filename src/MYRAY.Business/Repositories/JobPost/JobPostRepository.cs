@@ -286,6 +286,7 @@ public class JobPostRepository : IJobPostRepository
         }
 
         jobPost.StatusWork = (int?)JobPostEnum.JobPostWorkStatus.Done;
+        jobPost.Status = (int?)JobPostEnum.JobPostStatus.End;
         jobPost.EndJobDate = DateTime.Now;
         Expression<Func<DataTier.Entities.AppliedJob, object>> expAppliedJob = job => job.AppliedByNavigation; 
         IQueryable<DataTier.Entities.AppliedJob> appliedJobs = 
@@ -307,7 +308,7 @@ public class JobPostRepository : IJobPostRepository
                         { "type", "appliedFarmer" }
                     };
                     await PushNotification.SendMessage(appliedJob.AppliedBy.ToString()
-                        , $"Ứng tuyển không thành công",
+                        , $"Công việc đã kết thúc. Ứng tuyển không thành công",
                         $"{appliedJob.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {jobPost.Title}", data);
 
                 }
@@ -331,7 +332,7 @@ public class JobPostRepository : IJobPostRepository
                         { "type", "appliedFarmer" }
                     };
                     await PushNotification.SendMessage(appliedJob.AppliedBy.ToString()
-                        , $"Ứng tuyển không thành công",
+                        , $"Công việc đã kết thúc. Ứng tuyển không thành công",
                         $"{appliedJob.AppliedByNavigation.Fullname} đã bị từ chối nhận vào công việc {jobPost.Title}", data);
 
                 }
