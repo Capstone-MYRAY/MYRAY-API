@@ -70,6 +70,12 @@ public class JobPostService : IJobPostService
         #region FilterJobPost
 
         // query = query.GetWithSearch(searchJobPost);
+        if (searchJobPost.PostTypeId != null)
+        {
+            query = query.Where(j => j.PostTypeId == searchJobPost.PostTypeId);
+            queryPinPost = queryPinPost.Where(j => j.PostTypeId == searchJobPost.PostTypeId);
+        }
+        
         if (searchJobPost.Title.Length != 0)
         {
             query = query.Where(j => j.Title.ToLower().Contains(searchJobPost.Title.ToLower()));
