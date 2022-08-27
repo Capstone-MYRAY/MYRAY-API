@@ -58,7 +58,7 @@ public class JobPostService : IJobPostService
         List<DataTier.Entities.JobPost> listPin = null;
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.GetJobPosts(publishId);
         IQueryable<DataTier.Entities.JobPost> queryPinPost = _jobPostRepository.GetPinPost()
-            .OrderByDescending(qpp => qpp.PostType.Price);
+            .OrderByDescending(qpp => qpp.PostType.Price).ThenByDescending(jp => jp.CreatedDate);
         if (isFarmer)
         {
             query = query.Where(post => post.Status == (int?)JobPostEnum.JobPostStatus.Posted
