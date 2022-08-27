@@ -73,7 +73,7 @@ public class AccountService : IAccountService
         }
 
         DataTier.Entities.Account queryAccount = await _accountRepository.GetAccountByIdAsync((int)id);
-
+        
         GetAccountDetail accountDto = _mapper.Map<GetAccountDetail>(queryAccount);
 
         return accountDto;
