@@ -70,7 +70,7 @@ public class ExtendTaskJobController : ControllerBase
     /// <param name="jobPostId">Id of job post</param>
     /// <returns>Return if extend job is existed</returns>
     [HttpGet("{jobPostId}")]
-    [Authorize(Roles = UserRole.FARMER)]
+    [Authorize(Roles = UserRole.FARMER+ "," + UserRole.LANDOWNER)]
     [ProducesResponseType(typeof(ExtendTaskJobDetail),StatusCodes.Status200OK)]
     public async Task<IActionResult> GetExtendTaskJobByJobId(int jobPostId)
     {
