@@ -54,7 +54,8 @@ public class FeedbackService : IFeedbackService
             JobPostId = feedback.JobPostId,
             NumStar = feedback.NumStar,
             BelongedId = feedback.BelongedId,
-            CreatedDate = DateTime.Now
+            CreatedDate = DateTime.Now,
+            Content = feedback.Content
         };
             
         feedbackOri = await _feedbackRepository.CreateFeedback(feedbackOri);
