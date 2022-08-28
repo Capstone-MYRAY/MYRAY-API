@@ -674,7 +674,7 @@ public class JobPostRepository : IJobPostRepository
     {
         IQueryable<DataTier.Entities.JobPost> query = _jobPostRepository.Get(j =>
             j.Status == (int?)JobPostEnum.JobPostStatus.Pending &&
-            j.PublishedDate!.Value.Date < DateTime.Today);
+            j.PublishedDate!.Value.Date < DateTime.Today.Date);
         
         List<DataTier.Entities.JobPost> listOutOfDate = query.ToList();
         foreach (var jobPost in listOutOfDate)
@@ -683,7 +683,8 @@ public class JobPostRepository : IJobPostRepository
             DataTier.Entities.PaymentHistory? paymentHistories = await
                 _paymentHistoryRepository.GetFirstOrDefaultAsync(p =>
                     p.JobPostId == jobPost.Id && p.BelongedId == jobPost.PublishedBy);
-            _paymentHistoryRepository.Delete(paymentHistories!);
+            if(paymentHistories != null)
+                _paymentHistoryRepository.Delete(paymentHistories!);
             Console.WriteLine($"Expired: #{jobPost.Id} - {DateTime.Now}",
                 Console.BackgroundColor == ConsoleColor.Yellow);
         }
