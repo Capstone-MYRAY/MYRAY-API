@@ -10,4 +10,5 @@ public class AreaAccountDetail
     public string? Province { get; set; }
     public string? District { get; set; }
     public string? Commune { get; set; }
+    public int AreaId { get; set; }
 }

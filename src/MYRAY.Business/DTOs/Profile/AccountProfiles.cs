@@ -21,7 +21,8 @@ public static class AccountProfiles
                 $"{src.Area.Commune} - {src.Area.District} - {src.Area.Province}"))
             .ForMember(des => des.Commune, map => map.MapFrom(src=> src.Area.Commune))
             .ForMember(des => des.District, map => map.MapFrom(src=> src.Area.District))
-            .ForMember(des => des.Province, map => map.MapFrom(src=> src.Area.Province));
+            .ForMember(des => des.Province, map => map.MapFrom(src=> src.Area.Province))
+            .ForMember(des => des.AreaId, map => map.MapFrom(src=> src.Area.Id));
         
         
     }

@@ -65,7 +65,7 @@ public class ReportController : ControllerBase
     /// <response code="204">Returns if list of report is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
     [HttpGet("area/{areaId}")]
-    // [Authorize]
+    [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<ReportDetail>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetReport(
         int areaId,
