@@ -57,22 +57,22 @@ public class ReportController : ControllerBase
     /// <summary>
     /// [Moderator user] Endpoint for get all report by moderator
     /// </summary>
-    /// <param name="moderatorId">An object contains filter criteria.</param>
+    /// <param name="areaId"></param>
     /// <param name="sortingDto">An object contains sorting criteria.</param>
     /// <param name="pagingDto">An object contains paging criteria.</param>
     /// <returns>List of report</returns>
     /// <response code="200">Returns the list of report.</response>
     /// <response code="204">Returns if list of report is empty.</response>
     /// <response code="403">Returns if token is access denied.</response>
-    [HttpGet("moderator")]
-    [Authorize]
+    [HttpGet("area/{areaId}")]
+    // [Authorize]
     [ProducesResponseType(typeof(ResponseDto.CollectiveResponse<ReportDetail>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetReport(
-        [FromQuery] int moderatorId,
+        int areaId,
         [FromQuery] SortingDto<ReportEnum.ReportSortCriterial> sortingDto,
         [FromQuery] PagingDto pagingDto)
     {
-        var result = _reportService.GetReports(moderatorId, pagingDto, sortingDto);
+        var result = _reportService.GetReports(areaId, pagingDto, sortingDto);
         if (result == null)
         {
             return NoContent();

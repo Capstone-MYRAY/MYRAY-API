@@ -22,7 +22,7 @@ public class ReportService : IReportService
     private readonly IAreaAccountRepository _areaAccountRepository;
     private readonly IJobPostRepository _jobPostRepository;
 
-    public ReportService(IMapper mapper, 
+    public ReportService(IMapper mapper,
         IReportRepository reportRepository,
         IAreaAccountRepository areaAccountRepository,
         IJobPostRepository jobPostRepository,
@@ -50,17 +50,15 @@ public class ReportService : IReportService
         return result;
     }
 
-    public ResponseDto.CollectiveResponse<ReportDetail> GetReports(int moderatorId, PagingDto pagingDto, SortingDto<ReportEnum.ReportSortCriterial> sortingDto)
+    public ResponseDto.CollectiveResponse<ReportDetail> GetReports(int areaId, PagingDto pagingDto,
+        SortingDto<ReportEnum.ReportSortCriterial> sortingDto)
     {
         IQueryable<DataTier.Entities.Report> query = _reportRepository.GetReports();
 
-        DataTier.Entities.Area? area = _areaAccountRepository
-            .GetAreaAccount()
-            .Where(a => a.AccountId == moderatorId)
-            .Include(a => a.Area)
-            .Include(a => a.Area.Gardens)
-            .FirstOrDefault()
-            ?.Area;
+        DataTier.Entities.Area? area = _areaRepository.GetAreas()
+            .Where(area => area.Id == areaId)
+            .Include(a => a.Gardens)
+            .FirstOrDefault();
         if (area == null)
         {
             throw new MException(StatusCodes.Status400BadRequest, "ID Moderator not found");
@@ -73,8 +71,12 @@ public class ReportService : IReportService
             .Include(j => j.Reports)
             .Select(j => j.Id)
             .ToList();
-        query = query.Where(r => listJobPostId.Contains(r.Id));
+
+
+        query = query.Where(r => listJobPostId.Contains(r.JobPostId));
+        
         query = query.GetWithSorting(sortingDto.SortColumn.ToString(), sortingDto.OrderBy);
+        query = query.OrderBy(r => r.Status);
 
         var result = query.GetWithPaging<ReportDetail, DataTier.Entities.Report>(pagingDto, _mapper);
 

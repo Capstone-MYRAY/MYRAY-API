@@ -12,7 +12,7 @@ public interface IReportService
         SortingDto<ReportEnum.ReportSortCriterial> sortingDto);
 
     ResponseDto.CollectiveResponse<ReportDetail> GetReports(
-        int moderatorId,
+        int areaId,
         PagingDto pagingDto,
         SortingDto<ReportEnum.ReportSortCriterial> sortingDto);
     
