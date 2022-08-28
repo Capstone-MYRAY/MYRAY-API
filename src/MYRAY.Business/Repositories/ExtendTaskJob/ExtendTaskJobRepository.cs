@@ -62,6 +62,7 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
             { "type", "extendJob" },
+            { "action", "approved"},
             {"jobPostId" , jobPost.Id.ToString()}
         };
         await PushNotification.SendMessage(extendTaskJob.RequestBy.ToString()!
