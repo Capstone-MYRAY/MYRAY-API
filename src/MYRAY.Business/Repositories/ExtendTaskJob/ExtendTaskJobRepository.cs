@@ -1,5 +1,6 @@
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
+using MYRAY.Business.Services.Notification;
 using MYRAY.DataTier.Entities;
 
 namespace MYRAY.Business.Repositories.ExtendTaskJob;
@@ -41,7 +42,7 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
         {
             throw new Exception("No extend task job existed");
         }
-
+        
         if (extendTaskJob.Status != (int?)ExtendTaskJobEnum.ExtendTaskJobStatus.Pending)
         {
             throw new Exception("Request is not pending");
@@ -57,6 +58,16 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
         _jobPostRepository.Modify(jobPost);
 
         await _contextFactory.SaveAllAsync();
+        
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            { "type", "extendJob" },
+            {"jobPostId" , jobPost.Id.ToString()}
+        };
+        await PushNotification.SendMessage(extendTaskJob.RequestBy.ToString()!
+            , $"Yêu cầu gia hạn của bạn đã được tiếp nhân",
+            $"Bạn đã gia hạn ngày kết thúc cho công việc {jobPost.Title}", data);
+
 
         return extendTaskJob;
 
@@ -82,7 +93,16 @@ public class ExtendTaskJobRepository : IExtendTaskJobRepository
         _extendTaskJobRepository.Modify(extendTaskJob);
         
         await _contextFactory.SaveAllAsync();
-
+        DataTier.Entities.JobPost jobPost = _jobPostRepository.GetById(extendTaskJob.JobPostId);
+        Dictionary<string, string> data = new Dictionary<string, string>()
+        {
+            { "type", "extendJob" },
+            {"jobPostId" , jobPost!.Id.ToString()}
+        };
+        await PushNotification.SendMessage(extendTaskJob.RequestBy.ToString()!
+            , $"Yêu cầu gia hạn của bạn đã bị từ chối.",
+            $"Bạn đã không được gia hạn ngày kết thúc cho công việc {jobPost.Title}", data);
+        
         return extendTaskJob;
     }
 
