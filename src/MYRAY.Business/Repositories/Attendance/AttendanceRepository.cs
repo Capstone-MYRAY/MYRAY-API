@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MYRAY.Business.Enums;
 using MYRAY.Business.Repositories.Interface;
@@ -30,8 +31,9 @@ public class AttendanceRepository : IAttendanceRepository
         bool isInsert = true;
         DataTier.Entities.Account? account = await _accountRepository.GetByIdAsync(attendance.AccountId);
         account!.Point += attendance.BonusPoint;
+        Expression<Func<DataTier.Entities.AppliedJob, object>> expJobPost = applied => applied.JobPost;
         DataTier.Entities.AppliedJob? appliedJob =
-            await _appliedRepository.GetFirstOrDefaultAsync(a => a.Id == attendance.AppliedJobId);
+            await _appliedRepository.GetFirstOrDefaultAsync(a => a.Id == attendance.AppliedJobId, new []{expJobPost});
         if (attendance.Status == (int?)AttendanceEnum.AttendanceStatus.Dismissed)
         {
             appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.Fired;
@@ -49,7 +51,8 @@ public class AttendanceRepository : IAttendanceRepository
         {
             appliedJob!.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
             appliedJob.EndDate = DateTime.Today;
-            isInsert = false;
+            if (!appliedJob.JobPost.Type.Equals("PayPerTaskJob"))
+               isInsert = false;
         }
 
         if (isInsert)

@@ -337,25 +337,25 @@ public class JobPostRepository : IJobPostRepository
 
                 }
 
-                if (appliedJob.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve)
-                {
-                    appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
-                    // TODO: them attendance
-                    DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
-                    {
-                        Date = DateTime.Today,
-                        Salary = payPerTaskJob.Salary,
-                        Status = (int?)AttendanceEnum.AttendanceStatus.Present,
-                        AccountId = appliedJob.AppliedBy,
-                        AppliedJob = appliedJob,
-                        CreatedDate = DateTime.Now,
-                        AppliedJobId = appliedJob.Id,
-                        BonusPoint = 1
-                    };
-                    
-                   await _attendanceRepository.InsertAsync(newAttendance);
-
-                }
+                // if (appliedJob.Status == (int?)AppliedJobEnum.AppliedJobStatus.Approve)
+                // {
+                //     appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.End;
+                //     // TODO: them attendance
+                //     DataTier.Entities.Attendance newAttendance = new DataTier.Entities.Attendance()
+                //     {
+                //         Date = DateTime.Today,
+                //         Salary = payPerTaskJob.Salary,
+                //         Status = (int?)AttendanceEnum.AttendanceStatus.Present,
+                //         AccountId = appliedJob.AppliedBy,
+                //         AppliedJob = appliedJob,
+                //         CreatedDate = DateTime.Now,
+                //         AppliedJobId = appliedJob.Id,
+                //         BonusPoint = 1
+                //     };
+                //     
+                //    await _attendanceRepository.InsertAsync(newAttendance);
+                //
+                // }
             }
         }
         
