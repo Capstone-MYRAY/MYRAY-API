@@ -44,9 +44,9 @@ public class AreaAccountRepository : IAreaAccountRepository
         List<DataTier.Entities.AreaAccount> list = await query.ToListAsync();
         if (list.Count > 0)
         {
-            foreach (var VARIABLE in list)
+            foreach (var areaAccount in list)
             {
-                _areaAccountRepository.Delete(VARIABLE);
+                _areaAccountRepository.Delete(areaAccount);
             }
         }
 

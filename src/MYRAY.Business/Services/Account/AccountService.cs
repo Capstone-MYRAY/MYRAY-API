@@ -208,8 +208,8 @@ public class AccountService : IAccountService
                 throw new MException(StatusCodes.Status400BadRequest, "Id is null");
             }
 
+            await _areaRepository.DeleteAreaAccountByAccountId((int)id);
             DataTier.Entities.Account banAccount = await _accountRepository.BanAccountByIdAsync((int)id);
-            await _areaRepository.DeleteAreaAccountByAccountId((int)id, true);
             return true;
         }
         catch (Exception e)
