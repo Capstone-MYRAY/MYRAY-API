@@ -79,7 +79,7 @@ public class AccountRepository : IAccountRepository
     public IQueryable<DataTier.Entities.Account> GetAccounts()
     {
         IQueryable<DataTier.Entities.Account> queryAccount =
-            _accountRepository!.Get();
+            _accountRepository!.Get(a => a.Status != (int?)AccountEnum.AccountStatus.Inactive);
         return queryAccount;
     }
 
