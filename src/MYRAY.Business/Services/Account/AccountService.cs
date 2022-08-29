@@ -209,7 +209,7 @@ public class AccountService : IAccountService
             }
 
             DataTier.Entities.Account banAccount = await _accountRepository.BanAccountByIdAsync((int)id);
-            await _areaRepository.DeleteAreaAccountByAccountId((int)id);
+            await _areaRepository.DeleteAreaAccountByAccountId((int)id, true);
             return true;
         }
         catch (Exception e)

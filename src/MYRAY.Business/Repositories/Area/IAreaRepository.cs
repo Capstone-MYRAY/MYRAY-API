@@ -46,7 +46,7 @@ public interface IAreaRepository
     /// <returns>object affected.</returns>
     Task<DataTier.Entities.Area> DeleteAreaAsync(int id);
 
-    Task DeleteAreaAccountByAccountId(int accountId);
+    Task DeleteAreaAccountByAccountId(int accountId, bool saveChange = false);
 
 
 }

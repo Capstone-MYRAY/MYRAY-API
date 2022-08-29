@@ -36,13 +36,13 @@ public class AreaAccountRepository : IAreaAccountRepository
 
         return areaAccount;
     }
-    
 
-    public async Task DeleteAreaAccountByAccount(int accountId)
+
+    public async Task DeleteAreaAccountByAccount(int accountId, bool saveChange = false)
     {
         IQueryable<DataTier.Entities.AreaAccount> query = _areaAccountRepository.Get(aa => aa.AccountId == accountId);
         List<DataTier.Entities.AreaAccount> list = await query.ToListAsync();
-        if(list.Count > 0)
+        if (list.Count > 0)
         {
             foreach (var VARIABLE in list)
             {
@@ -50,14 +50,15 @@ public class AreaAccountRepository : IAreaAccountRepository
             }
         }
 
-        // await _contextFactory.SaveAllAsync();
+        if (saveChange)
+            await _contextFactory.SaveAllAsync();
     }
 
     public async Task DeleteAreaAccountByArea(int areaId)
     {
         IQueryable<DataTier.Entities.AreaAccount> query = _areaAccountRepository.Get(aa => aa.AreaId == areaId);
         List<DataTier.Entities.AreaAccount> list = await query.ToListAsync();
-        if(list.Count > 0)
+        if (list.Count > 0)
         {
             foreach (var VARIABLE in list)
             {
