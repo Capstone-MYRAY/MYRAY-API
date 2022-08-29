@@ -117,7 +117,7 @@ public class AppliedJobService : IAppliedJobService
             // Sent noti
             Dictionary<string, string> data = new Dictionary<string, string>()
             {
-                { "type", "appliedFarmer" }
+                { "type", "appliedResponse" }
             };
             await PushNotification.SendMessage(result.AppliedBy.ToString()
                 , $"Ứng tuyển thành công",
@@ -140,7 +140,7 @@ public class AppliedJobService : IAppliedJobService
         // // Sent noti
         Dictionary<string, string> data = new Dictionary<string, string>()
         {
-            { "type", "appliedFarmer" }
+            { "type", "appliedResponse" }
         };
         await PushNotification.SendMessage(result.AppliedBy.ToString()
             , $"Ứng tuyển không thành công",
