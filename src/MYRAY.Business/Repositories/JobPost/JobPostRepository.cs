@@ -306,7 +306,7 @@ public class JobPostRepository : IJobPostRepository
                     appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.Reject;
                     Dictionary<string, string> data = new Dictionary<string, string>()
                     {
-                        { "type", "appliedFarmer" }
+                        { "type", "appliedResponse" }
                     };
                     await PushNotification.SendMessage(appliedJob.AppliedBy.ToString()
                         , $"Công việc đã kết thúc. Ứng tuyển không thành công",
@@ -330,7 +330,7 @@ public class JobPostRepository : IJobPostRepository
                     appliedJob.Status = (int?)AppliedJobEnum.AppliedJobStatus.Reject;
                     Dictionary<string, string> data = new Dictionary<string, string>()
                     {
-                        { "type", "appliedFarmer" }
+                        { "type", "appliedResponse" }
                     };
                     await PushNotification.SendMessage(appliedJob.AppliedBy.ToString()
                         , $"Công việc đã kết thúc. Ứng tuyển không thành công",

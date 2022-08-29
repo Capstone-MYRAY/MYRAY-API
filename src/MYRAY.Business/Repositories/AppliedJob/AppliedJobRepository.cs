@@ -149,7 +149,7 @@ public class AppliedJobRepository : IAppliedJobRepository
                 // // Sent noti
                 Dictionary<string, string> data = new Dictionary<string, string>()
                 {
-                    { "type", "appliedFarmer" }
+                    { "type", "appliedResponse" }
                 };
                 await SendMessage(la.AppliedBy.ToString()
                     , $"Ứng tuyển không thành công",
@@ -181,7 +181,7 @@ public class AppliedJobRepository : IAppliedJobRepository
                     // // Sent noti
                     Dictionary<string, string> data = new Dictionary<string, string>()
                     {
-                        { "type", "appliedFarmer" }
+                        { "type", "appliedResponse" }
                     };
                     await SendMessage(la.AppliedBy.ToString()
                         , $"Ứng tuyển không thành công",
@@ -205,7 +205,7 @@ public class AppliedJobRepository : IAppliedJobRepository
                     // // Sent noti
                     Dictionary<string, string> data = new Dictionary<string, string>()
                     {
-                        { "type", "appliedFarmer" }
+                        { "type", "appliedResponse" }
                     };
                     await SendMessage(la.AppliedBy.ToString()
                         , $"Ứng tuyển không thành công",
