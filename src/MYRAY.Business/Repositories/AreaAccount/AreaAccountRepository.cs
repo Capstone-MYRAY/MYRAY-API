@@ -27,7 +27,8 @@ public class AreaAccountRepository : IAreaAccountRepository
         DataTier.Entities.AreaAccount areaAccount = new DataTier.Entities.AreaAccount()
         {
             AreaId = areaId,
-            AccountId = accountId
+            AccountId = accountId,
+            CreatedDate = DateTime.Now
         };
         await _areaAccountRepository.InsertAsync(areaAccount);
 
