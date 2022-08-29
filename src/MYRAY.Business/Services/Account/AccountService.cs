@@ -10,6 +10,7 @@ using MYRAY.Business.Exceptions;
 using MYRAY.Business.Helpers;
 using MYRAY.Business.Helpers.Paging;
 using MYRAY.Business.Repositories.Account;
+using MYRAY.Business.Repositories.Area;
 
 namespace MYRAY.Business.Services.Account;
 
@@ -20,16 +21,20 @@ public class AccountService : IAccountService
 {
     private readonly IMapper _mapper;
     private readonly IAccountRepository _accountRepository;
+    private readonly IAreaRepository _areaRepository;
 
     /// <summary>
     /// Initialize new instance of the <see cref="AccountService"/> class.
     /// </summary>
     /// <param name="mapper">Injection of <see cref="IMapper"/></param>
     /// <param name="accountRepository">Injection of <see cref="IAccountRepository"/></param>
-    public AccountService(IMapper mapper, IAccountRepository accountRepository)
+    public AccountService(IMapper mapper, 
+        IAccountRepository accountRepository,
+        IAreaRepository areaRepository)
     {
         _mapper = mapper;
         _accountRepository = accountRepository;
+        _areaRepository = areaRepository;
     }
 
     /// <inheritdoc cref="IAccountService.GetAccounts"/>
@@ -204,7 +209,7 @@ public class AccountService : IAccountService
             }
 
             DataTier.Entities.Account banAccount = await _accountRepository.BanAccountByIdAsync((int)id);
-
+            await _areaRepository.DeleteAreaAccountByAccountId((int)id);
             return true;
         }
         catch (Exception e)

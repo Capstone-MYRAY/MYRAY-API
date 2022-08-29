@@ -110,5 +110,8 @@ public class AreaRepository : IAreaRepository
         return await DeleteAreaAsync(area);
     }
 
-   
+    public async Task DeleteAreaAccountByAccountId(int accountId)
+    {
+        await _areaAccountRepository.DeleteAreaAccountByAccount(accountId);
+    }
 }
